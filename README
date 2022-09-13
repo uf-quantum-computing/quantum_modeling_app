@@ -1,17 +1,28 @@
+# Tunneling and Interference | Computational Nano Lab, UFL
+
 Run Julia REPL via terminal
 
-The plot backend is gr
+The plot backend is `gr`
 
-Load program:
-    include("tunnel.jl")
-    This should install and precompile all the necessary package.
+## Load program
 
-To run (may take a little longer on first time due to precompliation): 
+`include("tunnel.jl")`
+
+This should install and precompile all the necessary package.
+
+## Run the program
+
+**Note**: May take a little longer on first time due to precompliation)
+
+```julia
     V_tunnel = 4
     run(potential_tunneling, true)
+```
 
-Set to false to save as out.gif without showing a display
+- Set to false to save as out.gif without showing a display
+- Three defined potentials:
+  1. potential_slit
+  2. potential_tunneling
+  3. potential_guassian
 
-Three defined potentials: potential_slit, potential_tunneling, and potential_guassian
-
-To change how long it runs, do T = collect(0.0:0.1:stop_time);
+To change how long it runs, do `T = collect(0.0:0. 1:stop_time);`
