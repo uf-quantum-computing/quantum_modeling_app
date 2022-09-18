@@ -1,16 +1,18 @@
-# Tunneling and Interference | Computational Nano Lab, UFL
+# Quantum Modeling App
 
-Run Julia REPL via terminal
-
-The plot backend is `gr`
+Tunneling and Interference | Computational Nano Lab, UFL
 
 ## Load program
+
+The plot backend is `gr`
 
 `include("tunnel.jl")`
 
 This should install and precompile all the necessary package.
 
 ## Run the program
+
+Run Julia REPL via terminal
 
 **Note**: May take a little longer on first time due to precompliation)
 
@@ -26,3 +28,10 @@ This should install and precompile all the necessary package.
   3. potential_guassian
 
 To change how long it runs, do `T = collect(0.0:0. 1:stop_time);`
+
+---
+
+## Julia
+
+- Julia Documentation - [https://docs.julialang.org/en/v1/](https://docs.julialang.org/en/v1/)
+- Julia Download - [https://julialang.org/downloads/](https://julialang.org/downloads/)
