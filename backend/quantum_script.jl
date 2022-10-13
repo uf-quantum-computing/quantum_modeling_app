@@ -161,4 +161,6 @@ function run(potential::Function, do_display::Bool)
         save_as_gif(density, V_plot, xsample, ysample, T)
     end
 
+    return "Success!"
+
 end
