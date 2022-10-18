@@ -1,12 +1,22 @@
 const express = require("express");
 const { spawn } = require("child_process");
+var cors = require("cors");
 
 const server = express(); // Create a server
-const port = 4000; // Port to listen on
+const port = 9000; // Port to listen on
+server.use(cors());
 
 // ========= ROUTES =========
 
 // GET
+server.get("/", (req, res) => {
+  res.send("Hello World!");
+});
+
+server.get("/test", (req, res) => {
+  res.send("Test!");
+});
+
 server.get("/julia", (req, res) => {
   var dataToSend;
   const julia_script = spawn("julia", ["test.jl"]); // spawn new child process to call the julia_script script
@@ -62,11 +72,15 @@ server.post("/tunneling", (req, res) => {
     res.send(img_to_send); // send data to browser
   });
 });
-
 server.post("/interference", (req, res) => {});
 server.post("/spin", (req, res) => {});
 server.post("/wave_function", (req, res) => {});
 server.post("/potential_barrier", (req, res) => {});
+
+server.post("/test2", (req, res) => {
+  console.log(req.body);
+  res.send("Test!");
+});
 
 //
 server.listen(port, () =>
