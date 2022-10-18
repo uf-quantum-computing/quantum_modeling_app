@@ -37,8 +37,8 @@ export default function App() {
         <Link to="/potential-barriers" style={{ textDecoration: "none" }}>
           <Button variant="outlined">Potential Barriers/Wells</Button>
         </Link>
-        <Link to="/composite-functionality" style={{ textDecoration: "none" }}>
-          <Button variant="outlined">Composite Functionality</Button>
+        <Link to="/test" style={{ textDecoration: "none" }}>
+          <Button variant="outlined">Test</Button>
         </Link>
       </Stack>
 
@@ -51,10 +51,7 @@ export default function App() {
           <Route path="/spin" element={<Spin />} />
           <Route path="/wave-function" element={<Wave_Function />} />
           <Route path="/potential-barriers" element={<Potential_Barriers />} />
-          <Route
-            path="/composite-functionality"
-            element={<Composite_Functionality />}
-          />
+          <Route path="/test" element={<Test_UI />} />
         </Route>
       </Routes>
     </Container>
@@ -62,6 +59,20 @@ export default function App() {
 }
 
 // ============= POST requests =============
+
+function post_test(par_1: any, par_2: any) {
+  axios
+    .post("http://localhost:9000/test2", {
+      par1: par_1,
+      par2: par_2,
+    })
+    .then(function (response: any) {
+      console.log(par_1 + par_2);
+    })
+    .catch(function (error: any) {
+      console.log(error);
+    });
+}
 
 function generate_tunneling_model(params: any) {
   axios
@@ -281,15 +292,20 @@ function Potential_Barriers() {
   );
 }
 
-function Composite_Functionality() {
+function Test_UI() {
   return (
     <div>
       <Typography variant="h4" gutterBottom>
-        Composite Functionality
+        Test UI
       </Typography>
-      <p>
-        <Link to="/">Go to the home page</Link>
-      </p>
+      <Button
+        variant="contained"
+        onClick={() => {
+          post_test("beep", "boop");
+        }}
+      >
+        Generate Model
+      </Button>
     </div>
   );
 }
