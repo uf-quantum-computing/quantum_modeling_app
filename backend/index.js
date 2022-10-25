@@ -5,6 +5,7 @@ var cors = require("cors");
 const server = express(); // Create a server
 const port = 9000; // Port to listen on
 server.use(cors());
+server.use(express.static(__dirname));
 
 // ========= ROUTES =========
 
@@ -12,11 +13,9 @@ server.use(cors());
 server.get("/", (req, res) => {
   res.send("Hello World!");
 });
-
-server.get("/test", (req, res) => {
-  res.send("Test!");
+server.get("/get_test", (req, res) => {
+  res.send("GET Test!");
 });
-
 server.get("/julia", (req, res) => {
   var dataToSend;
   const julia_script = spawn("julia", ["test.jl"]); // spawn new child process to call the julia_script script
@@ -33,7 +32,6 @@ server.get("/julia", (req, res) => {
     res.send(dataToSend); // send data to browser
   });
 });
-
 server.get("/python", (req, res) => {
   var dataToSend;
   console.log("Python script called");
@@ -76,13 +74,23 @@ server.post("/interference", (req, res) => {});
 server.post("/spin", (req, res) => {});
 server.post("/wave_function", (req, res) => {});
 server.post("/potential_barrier", (req, res) => {});
+server.post("/post_test", (req, res) => {
+  console.log("POST Test!");
+  res.send("POST Test!");
+});
+server.post("/julia_test", (req, res) => {
+  const julia_script = spawn("julia", ["test.jl"]); // spawn new child process to call the julia_script script
 
-server.post("/test2", (req, res) => {
-  console.log(req.body);
-  res.send("Test!");
+  // in close event we are sure that stream from child process is closed
+  julia_script.on("close", (code) => {
+    console.log(`Julia child process close all stdio with code ${code}`);
+    // send image to browser
+    // res.send(dataToSend); // send data to browser
+    res.send("julia script works!"); // send data to browser
+  });
 });
 
-//
+// ============= LISTEN =============
 server.listen(port, () =>
   console.log(`Example server listening on port ${port}!`)
 );
