@@ -1,20 +1,23 @@
 # Dynamic Wavefunction Generation
 # Computational Nano Lab, UFL
-using Pkg
+# ====================== imports ======================
 Pkg.add("QuantumOptics")
-using QuantumOptics
 Pkg.add("LinearAlgebra")
-using LinearAlgebra
 Pkg.add("Plots")
-using Plots
 Pkg.add("ProgressMeter")
-using ProgressMeter
 Pkg.add("Images")
+Pkg.add("Colors")
+
+using Pkg
+using QuantumOptics
+using LinearAlgebra
+using Plots
+using ProgressMeter
 using Images
 using ImageCore
-Pkg.add("Colors")
 using Colors
 
+# ====================== imports ======================
 #Pkg.add("pyplot")
 # Had some issue, so make sure they are installed
 #Pkg.add("LaTeXStrings")
@@ -30,15 +33,13 @@ b_momentum = MomentumBasis(b_position)
 xpoints = samplepoints(b_position)
 #setting up bases
 
-#//INPUT VARIABLES
+# INPUT VARIABLES
 mass = 2
-velocity = 2 #EDITING NOTE: need to find min/max for fixed output
+velocity = 2 # EDITING NOTE: need to find min/max for fixed output
 
-
-x0 = -35 #starting position
-sigma0 = 2 #constant for gaussian, don't worry about
+x0 = -35 # starting position
+sigma0 = 2 # constant for gaussian, don't worry about
 p0 = mass * velocity #momentum of particle/packet 
-
 
 Txp = transform(b_position, b_momentum)
 Tpx = transform(b_momentum, b_position)

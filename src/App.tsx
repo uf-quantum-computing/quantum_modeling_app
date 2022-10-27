@@ -1,13 +1,21 @@
+import { useState } from "react";
 import { Routes, Route, Link } from "react-router-dom";
 // ==== UI Components ====
-// import { Home } from "./pages";
-import Container from "@mui/material/Container";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import Stack from "@mui/material/Stack";
-import TextField from "@mui/material/TextField";
+import {
+  Container,
+  Grid,
+  Box,
+  Typography,
+  Button,
+  Stack,
+  TextField,
+  Slider,
+  Select,
+  MenuItem,
+  SelectChangeEvent,
+} from "@mui/material";
+// ==== Images ====
+import { wave_5x5, wave_1x10 } from "./images";
 // ==== Backend Components ====
 const axios = require("axios").default;
 
@@ -18,7 +26,7 @@ export default function App() {
   return (
     <Container maxWidth="lg">
       <Typography variant="h2" gutterBottom style={{ marginTop: "2%" }}>
-        Quantum Modeling
+        <b>Quantum Modeling</b>
       </Typography>
 
       <Stack direction="row" spacing={2} style={{ marginBottom: "2%" }}>
@@ -31,7 +39,7 @@ export default function App() {
         <Link to="/spin" style={{ textDecoration: "none" }}>
           <Button variant="outlined">Spin</Button>
         </Link>
-        <Link to="/wave-function" style={{ textDecoration: "none" }}>
+        <Link to="/wavefunction" style={{ textDecoration: "none" }}>
           <Button variant="outlined">Wave Function</Button>
         </Link>
         <Link to="/potential-barriers" style={{ textDecoration: "none" }}>
@@ -46,7 +54,7 @@ export default function App() {
           <Route path="/tunneling" element={<Tunneling />} />
           <Route path="/interference" element={<Interference />} />
           <Route path="/spin" element={<Spin />} />
-          <Route path="/wave-function" element={<Wave_Function />} />
+          <Route path="/wavefunction" element={<Wavefunction />} />
           <Route path="/potential-barriers" element={<Potential_Barriers />} />
         </Route>
       </Routes>
@@ -180,15 +188,97 @@ function Spin() {
   );
 }
 
-function Wave_Function() {
+function Wavefunction() {
+  const [mass, setMass] = useState("");
+  const [velocity, setVelocity] = useState("");
+  const [wavefunction_img, set_Wavefunction_img] = useState(wave_1x10);
+  const [model_title, set_Model_Title] = useState(
+    "Wavefunction with mass = 1 and velocity = 10 generated!"
+  );
+
+  const handleMass = (event: SelectChangeEvent) => {
+    setMass(event.target.value as string);
+    console.log(event.target.value);
+  };
+
+  const handleVelocity = (event: SelectChangeEvent) => {
+    setVelocity(event.target.value as string);
+    console.log(event.target.value);
+  };
+
+  function handleSubmit(event: any) {
+    event.preventDefault();
+    console.log("mass:", mass);
+    console.log("velocity:", velocity);
+    if (mass == "1" && velocity == "10") {
+      console.log("1x10");
+      set_Wavefunction_img(wave_1x10);
+      set_Model_Title(
+        "Wavefunction with mass = 1 and velocity = 10 generated!"
+      );
+    } else if (mass == "5" && velocity == "5") {
+      console.log("5x5");
+      set_Wavefunction_img(wave_5x5);
+    } else {
+      set_Wavefunction_img(wave_1x10);
+      console.log("Default image is 1x10");
+    }
+  }
+
   return (
     <div>
       <Typography variant="h4" gutterBottom>
         Wave Function
       </Typography>
-      <p>
-        <Link to="/">Go to the home page</Link>
-      </p>
+      <Grid container spacing={2}>
+        <Grid item xs={4}>
+          <Box
+            component="form"
+            sx={{
+              "& > :not(style)": { m: 1, width: "25ch" },
+            }}
+            noValidate
+            autoComplete="off"
+          >
+            <Stack spacing={2}>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={mass}
+                label="Test"
+                onChange={handleMass}
+                defaultValue={"1"}
+              >
+                <MenuItem value={1}>1</MenuItem>
+                <MenuItem value={5}>5</MenuItem>
+                <MenuItem value={10}>10</MenuItem>
+              </Select>
+
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={velocity}
+                label="Test"
+                onChange={handleVelocity}
+                defaultValue={"10"}
+              >
+                <MenuItem value={1}>1</MenuItem>
+                <MenuItem value={5}>5</MenuItem>
+                <MenuItem value={10}>10</MenuItem>
+              </Select>
+
+              <Button variant="contained" onClick={handleSubmit} type="submit">
+                Generate Model
+              </Button>
+
+              <p>{model_title}</p>
+            </Stack>
+          </Box>
+        </Grid>
+        <Grid item xs={4}>
+          <img src={wavefunction_img} alt="wave function" />
+        </Grid>
+      </Grid>
     </div>
   );
 }
