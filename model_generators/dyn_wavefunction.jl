@@ -1,14 +1,13 @@
 # Dynamic Wavefunction Generation
 # Computational Nano Lab, UFL
 # ====================== imports ======================
+using Pkg
 Pkg.add("QuantumOptics")
 Pkg.add("LinearAlgebra")
 Pkg.add("Plots")
 Pkg.add("ProgressMeter")
 Pkg.add("Images")
 Pkg.add("Colors")
-
-using Pkg
 using QuantumOptics
 using LinearAlgebra
 using Plots
@@ -19,7 +18,6 @@ using Colors
 
 # ====================== imports ======================
 #Pkg.add("pyplot")
-# Had some issue, so make sure they are installed
 #Pkg.add("LaTeXStrings")
 #Pkg.add("PyCall")
 gr() # or use pyplot
@@ -34,8 +32,8 @@ xpoints = samplepoints(b_position)
 #setting up bases
 
 # INPUT VARIABLES
-mass = 2
-velocity = 2 # EDITING NOTE: need to find min/max for fixed output
+mass = 10
+velocity = 10 # EDITING NOTE: need to find min/max for fixed output
 
 x0 = -35 # starting position
 sigma0 = 2 # constant for gaussian, don't worry about
@@ -66,5 +64,5 @@ probDensityAnim = @animate for t=1:size(T)[1]
     n = abs.(ψ.data).^2
     plot(xpoints, n, ylims = (0, .2), title = "Probability Density |ψ(x,t)|^2", xlabel = "Position (x)", ylabel = "Probability Density (|ψ(x,t)|^2)", label = "|ψ|^2", alpha=0.3, linewidth = 2)
 end every 2
-gif(waveFunctionAnim, "waveFunctionAnim.gif", fps = 60)
-gif(probDensityAnim, "probDensityAnim.gif", fps = 60)
+gif(waveFunctionAnim, "wave_10x10.gif", fps = 60)
+gif(probDensityAnim, "wave_density_10x10.gif", fps = 60)

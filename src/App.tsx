@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Routes, Route, Link } from "react-router-dom";
-// ==== UI Components ====
+// === UI Components ===
 import {
   Container,
   Grid,
@@ -9,19 +9,30 @@ import {
   Button,
   Stack,
   TextField,
-  Slider,
   Select,
   MenuItem,
   SelectChangeEvent,
+  Alert,
+  Snackbar,
+  Card,
+  CardContent,
 } from "@mui/material";
-// ==== Images ====
-import { wave_5x5, wave_1x10 } from "./images";
-// ==== Backend Components ====
-const axios = require("axios").default;
+// === Images ===
+import {
+  wave_1x1,
+  wave_1x5,
+  wave_1x10,
+  wave_5x1,
+  wave_5x5,
+  wave_5x10,
+  wave_10x1,
+  wave_10x5,
+  wave_10x10,
+} from "./images";
 
-// =========================================
-// ============= App =======================
-// =========================================
+// ============================
+// ========= App ================
+// ============================
 export default function App() {
   return (
     <Container maxWidth="lg">
@@ -55,14 +66,14 @@ export default function App() {
           <Route path="/interference" element={<Interference />} />
           <Route path="/spin" element={<Spin />} />
           <Route path="/wavefunction" element={<Wavefunction />} />
-          <Route path="/potential-barriers" element={<Potential_Barriers />} />
+          <Route path="/potential-barriers" element={<PotentialBarriers />} />
         </Route>
       </Routes>
     </Container>
   );
 }
 
-// ============= PAGES =============
+// ========= PAGES =========
 function NoMatch() {
   return (
     <div>
@@ -192,9 +203,24 @@ function Wavefunction() {
   const [mass, setMass] = useState("");
   const [velocity, setVelocity] = useState("");
   const [wavefunction_img, set_Wavefunction_img] = useState(wave_1x10);
-  const [model_title, set_Model_Title] = useState(
-    "Wavefunction with mass = 1 and velocity = 10 generated!"
+  const [success_msg, set_Success_Msg] = useState(
+    "Wavefunction with mass = 1 & velocity = 10 generated!"
   );
+  const [description_msg, set_Description_Msg] = useState(
+    "Example Description Msg"
+  );
+  const [open, setOpen] = useState(false);
+
+  const handleClose = (
+    event: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
+    // function to close the snackbar
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  };
 
   const handleMass = (event: SelectChangeEvent) => {
     setMass(event.target.value as string);
@@ -208,20 +234,51 @@ function Wavefunction() {
 
   function handleSubmit(event: any) {
     event.preventDefault();
-    console.log("mass:", mass);
-    console.log("velocity:", velocity);
-    if (mass == "1" && velocity == "10") {
+    let mass_str = mass.toString();
+    let velocity_str = velocity.toString();
+    console.log("mass:", mass_str);
+    console.log("velocity:", velocity_str);
+
+    if (mass_str === "1" && velocity_str === "1") {
+      console.log("1x1");
+      set_Wavefunction_img(wave_1x1);
+      set_Success_Msg("Wavefunction with mass = 1 & velocity = 1 generated!");
+      setOpen(true);
+    } else if (mass_str === "1" && velocity_str === "5") {
+      console.log("1x5");
+      set_Wavefunction_img(wave_1x5);
+      set_Success_Msg("Wavefunction with mass = 1 & velocity = 5 generated!");
+      setOpen(true);
+    } else if (mass_str === "1" && velocity_str === "10") {
       console.log("1x10");
       set_Wavefunction_img(wave_1x10);
-      set_Model_Title(
-        "Wavefunction with mass = 1 and velocity = 10 generated!"
-      );
-    } else if (mass == "5" && velocity == "5") {
-      console.log("5x5");
+      set_Success_Msg("Wavefunction with mass = 1 & velocity = 10 generated!");
+      setOpen(true);
+    } else if (mass_str === "5" && velocity_str === "1") {
+      set_Wavefunction_img(wave_5x1);
+      set_Success_Msg("Wavefunction with mass = 5 & velocity = 1 generated!");
+      setOpen(true);
+    } else if (mass_str === "5" && velocity_str === "5") {
       set_Wavefunction_img(wave_5x5);
-    } else {
-      set_Wavefunction_img(wave_1x10);
-      console.log("Default image is 1x10");
+      set_Success_Msg("Wavefunction with mass = 5 & velocity = 5 generated!");
+      setOpen(true);
+    } else if (mass_str === "5" && velocity_str === "10") {
+      set_Wavefunction_img(wave_5x10);
+      set_Success_Msg("Wavefunction with mass = 5 & velocity = 10 generated!");
+      setOpen(true);
+    } else if (mass_str === "10" && velocity_str === "1") {
+      set_Wavefunction_img(wave_10x1);
+      set_Success_Msg("Wavefunction with mass = 10 & velocity = 1 generated!");
+      setOpen(true);
+    } else if (mass_str === "10" && velocity_str === "5") {
+      set_Wavefunction_img(wave_10x5);
+      set_Success_Msg("Wavefunction with mass = 10 & velocity = 5 generated!");
+      setOpen(true);
+    } else if (mass_str === "10" && velocity_str === "10") {
+      console.log("10x10");
+      set_Wavefunction_img(wave_10x10);
+      set_Success_Msg("Wavefunction with mass = 10 & velocity = 10 generated!");
+      setOpen(true);
     }
   }
 
@@ -271,19 +328,42 @@ function Wavefunction() {
                 Generate Model
               </Button>
 
-              <p>{model_title}</p>
+              {/* <Button variant="contained" color="success">
+                {success_msg}
+              </Button> */}
+
+              <Snackbar
+                open={open}
+                autoHideDuration={6000}
+                onClose={handleClose}
+              >
+                <Alert
+                  onClose={handleClose}
+                  severity="success"
+                  sx={{ width: "100%" }}
+                >
+                  {success_msg}
+                </Alert>
+              </Snackbar>
+
+              {/* <p>{success_msg}</p> */}
             </Stack>
           </Box>
         </Grid>
         <Grid item xs={4}>
           <img src={wavefunction_img} alt="wave function" />
+          <Card sx={{ minWidth: 275 }} variant="outlined">
+            <CardContent>
+              <Typography variant="body1">{description_msg}</Typography>
+            </CardContent>
+          </Card>
         </Grid>
       </Grid>
     </div>
   );
 }
 
-function Potential_Barriers() {
+function PotentialBarriers() {
   return (
     <div>
       <Typography variant="h4" gutterBottom>
