@@ -16,6 +16,9 @@ import {
   Snackbar,
   Card,
   CardContent,
+  InputLabel,
+  FormControl,
+  Divider,
 } from "@mui/material";
 // === Images ===
 import {
@@ -35,7 +38,7 @@ import {
 // ============================
 export default function App() {
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="md">
       <Typography variant="h2" gutterBottom style={{ marginTop: "2%" }}>
         <b>Quantum Modeling</b>
       </Typography>
@@ -200,6 +203,7 @@ function Spin() {
 }
 
 function Wavefunction() {
+  // === state ===
   const [mass, setMass] = useState("");
   const [velocity, setVelocity] = useState("");
   const [wavefunction_img, set_Wavefunction_img] = useState(wave_1x10);
@@ -211,6 +215,7 @@ function Wavefunction() {
   );
   const [open, setOpen] = useState(false);
 
+  // === handle functions ===
   const handleClose = (
     event: React.SyntheticEvent | Event,
     reason?: string
@@ -221,17 +226,14 @@ function Wavefunction() {
     }
     setOpen(false);
   };
-
   const handleMass = (event: SelectChangeEvent) => {
     setMass(event.target.value as string);
     console.log(event.target.value);
   };
-
   const handleVelocity = (event: SelectChangeEvent) => {
     setVelocity(event.target.value as string);
     console.log(event.target.value);
   };
-
   function handleSubmit(event: any) {
     event.preventDefault();
     let mass_str = mass.toString();
@@ -282,6 +284,7 @@ function Wavefunction() {
     }
   }
 
+  // === return ===
   return (
     <div>
       <Typography variant="h4" gutterBottom>
@@ -297,12 +300,13 @@ function Wavefunction() {
             noValidate
             autoComplete="off"
           >
-            <Stack spacing={2}>
+            <FormControl fullWidth>
+              <InputLabel id="mass-label">Mass</InputLabel>
               <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
+                labelId="mass-label"
+                id="mass-label-select"
                 value={mass}
-                label="Test"
+                label="Mass"
                 onChange={handleMass}
                 defaultValue={"1"}
               >
@@ -310,10 +314,12 @@ function Wavefunction() {
                 <MenuItem value={5}>5</MenuItem>
                 <MenuItem value={10}>10</MenuItem>
               </Select>
-
+            </FormControl>
+            <FormControl fullWidth>
+              <InputLabel id="velocity-label">Velocity</InputLabel>
               <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
+                labelId="velocity-label"
+                id="velocity-select"
                 value={velocity}
                 label="Test"
                 onChange={handleVelocity}
@@ -323,31 +329,21 @@ function Wavefunction() {
                 <MenuItem value={5}>5</MenuItem>
                 <MenuItem value={10}>10</MenuItem>
               </Select>
+            </FormControl>
 
-              <Button variant="contained" onClick={handleSubmit} type="submit">
-                Generate Model
-              </Button>
+            <Button variant="contained" onClick={handleSubmit} type="submit">
+              Generate Model
+            </Button>
 
-              {/* <Button variant="contained" color="success">
-                {success_msg}
-              </Button> */}
-
-              <Snackbar
-                open={open}
-                autoHideDuration={6000}
+            <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+              <Alert
                 onClose={handleClose}
+                severity="success"
+                sx={{ width: "100%" }}
               >
-                <Alert
-                  onClose={handleClose}
-                  severity="success"
-                  sx={{ width: "100%" }}
-                >
-                  {success_msg}
-                </Alert>
-              </Snackbar>
-
-              {/* <p>{success_msg}</p> */}
-            </Stack>
+                {success_msg}
+              </Alert>
+            </Snackbar>
           </Box>
         </Grid>
         <Grid item xs={4}>
