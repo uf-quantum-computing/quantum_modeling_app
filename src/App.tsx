@@ -8,7 +8,6 @@ import {
   Typography,
   Button,
   Stack,
-  TextField,
   Select,
   MenuItem,
   SelectChangeEvent,
@@ -18,7 +17,6 @@ import {
   CardContent,
   InputLabel,
   FormControl,
-  Divider,
 } from "@mui/material";
 // === Images ===
 import {
@@ -32,9 +30,7 @@ import {
   wave_10x5,
   wave_10x10,
 } from "./images";
-import {
-  gators,
-} from "./images"
+import { gators, bg_gradient } from "./images";
 import {
   tunneling_1x1x1_2d,
   tunneling_1x3x5_2d,
@@ -53,8 +49,11 @@ export default function App() {
       </Typography>
 
       <Stack direction="row" spacing={2} style={{ marginBottom: "2%" }}>
-      <Link to="/" style={{ textDecoration: "none" }}>
+        <Link to="/" style={{ textDecoration: "none" }}>
           <Button variant="outlined">Home</Button>
+        </Link>
+        <Link to="/home2" style={{ textDecoration: "none" }}>
+          <Button variant="outlined">Home2</Button>
         </Link>
         <Link to="/tunneling" style={{ textDecoration: "none" }}>
           <Button variant="outlined">Tunneling</Button>
@@ -75,8 +74,9 @@ export default function App() {
 
       <Routes>
         <Route path="/">
-          <Route index element={<Dashboard />} />
+          <Route index element={<Home />} />
           <Route path="*" element={<NoMatch />} />
+          <Route path="/home2" element={<Home2 />} />
           <Route path="/tunneling" element={<Tunneling />} />
           <Route path="/interference" element={<Interference />} />
           <Route path="/spin" element={<Spin />} />
@@ -100,7 +100,7 @@ function NoMatch() {
   );
 }
 
-function Dashboard() {
+function Home() {
   return (
     <div>
       <Typography variant="h4" gutterBottom>
@@ -109,14 +109,20 @@ function Dashboard() {
       <Grid container spacing={2}>
         <Grid item xs={4}>
           <Typography variant="body1" gutterBottom>
-          Welcome to the Quantum Computing Lab at the University of Florida! Our team
-          works under Dr. Jing Guo in the Electrical Engineering Department and we've 
-          been working on creating more accessibility in the field of quantum computing.
-          We build this website so that anyone can explore and have fun with these concepts. 
+            Welcome to the Quantum Computing Lab at the University of Florida!
+            Our team works under Dr. Jing Guo in the Electrical Engineering
+            Department and we've been working on creating more accessibility in
+            the field of quantum computing. We build this website so that anyone
+            can explore and have fun with these concepts.
           </Typography>
         </Grid>
-      <Grid item xs={4}>
-          <img src={gators} alt="University of Florida" width="90%" height="auto" />
+        <Grid item xs={4}>
+          <img
+            src={gators}
+            alt="University of Florida"
+            width="90%"
+            height="auto"
+          />
         </Grid>
       </Grid>
       <br></br>
@@ -125,11 +131,12 @@ function Dashboard() {
         How this website works:
       </Typography>
       <Typography variant="body1" gutterBottom>
-        Click on one of the buttons below and it will take you to 
-        quantum phenomena you can experiment with. Once you're there, you can try out different inputs
-        and an animation will pop up! For example, you can go to the tunneling phenomena and play around
-        with the momentum and barrier thickness. We'll have descriptions of whats happening on each page, 
-        so you'll be able to understand exactly what's happening. Have fun!
+        Click on one of the buttons below and it will take you to quantum
+        phenomena you can experiment with. Once you're there, you can try out
+        different inputs and an animation will pop up! For example, you can go
+        to the tunneling phenomena and play around with the momentum and barrier
+        thickness. We'll have descriptions of whats happening on each page, so
+        you'll be able to understand exactly what's happening. Have fun!
       </Typography>
       <br></br>
       <br></br>
@@ -150,7 +157,20 @@ function Dashboard() {
           <Button variant="contained">Potential Barriers/Wells</Button>
         </Link>
       </Stack>
+    </div>
+  );
+}
 
+function Home2() {
+  return (
+    <div>
+      <div
+        style={{
+          backgroundImage: `url(${bg_gradient})`,
+          backgroundSize: "cover",
+          minHeight: "100vh",
+        }}
+      ></div>
     </div>
   );
 }
@@ -164,9 +184,9 @@ function Tunneling() {
   const [success_msg, set_Success_Msg] = useState(
     "Wavefunction with mass = 1 & velocity = 10 generated!"
   );
-  const [description_msg, set_Description_Msg] = useState(
-    "Example Description Msg"
-  );
+  // const [description_msg, set_Description_Msg] = useState(
+  //   "Example Description Msg"
+  // );
   const [open, setOpen] = useState(false);
 
   const handleClose = (
@@ -204,52 +224,55 @@ function Tunneling() {
     console.log("thickness:", thickness_str);
     console.log("wave:", wave_str);
 
-    let image_str = 'tunneling_';
+    let image_str = "tunneling_";
 
-    if (barrier_str === "1"){
-      image_str = image_str + '1';
-    } else if (barrier_str === "3"){
-      image_str = image_str + '3';
-    } else if (barrier_str === "5"){
-      image_str = image_str + '5';
+    if (barrier_str === "1") {
+      image_str = image_str + "1";
+    } else if (barrier_str === "3") {
+      image_str = image_str + "3";
+    } else if (barrier_str === "5") {
+      image_str = image_str + "5";
     }
 
-    image_str = image_str + 'x';
+    image_str = image_str + "x";
     console.log("image:", image_str);
 
-    if (thickness_str === "1"){
-      image_str = image_str + '1';
-    } else if (thickness_str === "3"){
-      image_str = image_str + '3';
-    } else if (thickness_str === "5"){
-      image_str = image_str + '5';
+    if (thickness_str === "1") {
+      image_str = image_str + "1";
+    } else if (thickness_str === "3") {
+      image_str = image_str + "3";
+    } else if (thickness_str === "5") {
+      image_str = image_str + "5";
     }
 
-    image_str = image_str + 'x';
+    image_str = image_str + "x";
     console.log("image:", image_str);
 
-    if (wave_str === "1"){
-      image_str = image_str + '1';
-    } else if (wave_str === "5"){
-      image_str = image_str + '5';
-    } else if (wave_str === "10"){
-      image_str = image_str + '10';
+    if (wave_str === "1") {
+      image_str = image_str + "1";
+    } else if (wave_str === "5") {
+      image_str = image_str + "5";
+    } else if (wave_str === "10") {
+      image_str = image_str + "10";
     }
 
     console.log("image:", image_str);
 
-    if(image_str === 'tunneling_1x1x1'){
+    if (image_str === "tunneling_1x1x1") {
       set_Tunneling_img2d(tunneling_1x1x1_2d);
       set_Tunneling_img3d(tunneling_1x1x1_3d);
-      set_Success_Msg("Tunneling Function with barrier: 1, thickness: 1, wave intensity: 1!");
+      set_Success_Msg(
+        "Tunneling Function with barrier: 1, thickness: 1, wave intensity: 1!"
+      );
       setOpen(true);
-    }else if(image_str === 'tunneling_1x3x5'){
+    } else if (image_str === "tunneling_1x3x5") {
       set_Tunneling_img2d(tunneling_1x3x5_2d);
       set_Tunneling_img3d(tunneling_1x3x5_3d);
-      set_Success_Msg("Tunneling Function with barrier: 1, thickness: 3, wave intensity: 5!");
+      set_Success_Msg(
+        "Tunneling Function with barrier: 1, thickness: 3, wave intensity: 5!"
+      );
       setOpen(true);
     }
-
   }
 
   return (
@@ -406,6 +429,7 @@ function Wavefunction() {
       console.log("1x1");
       set_Wavefunction_img(wave_1x1);
       set_Success_Msg("Wavefunction with mass = 1 & velocity = 1 generated!");
+      set_Description_Msg("Example Description Msg");
       setOpen(true);
     } else if (mass_str === "1" && velocity_str === "5") {
       console.log("1x5");
