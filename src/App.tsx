@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Routes, Route, Link } from "react-router-dom";
 // === UI Components ===
 import {
-  Container,
   Grid,
   Box,
   Typography,
@@ -13,8 +12,6 @@ import {
   SelectChangeEvent,
   Alert,
   Snackbar,
-  Card,
-  CardContent,
   InputLabel,
   FormControl,
 } from "@mui/material";
@@ -37,41 +34,31 @@ import {
   tunneling_1x1x1_3d,
   tunneling_1x3x5_3d,
 } from "./images";
+// === Components ===
+import { CustomMenu, CustomDescriptionBox } from "./components";
+// === styles ===
+const sidebar_style = {
+  backgroundColor: "#333333",
+  height: "100vh",
+  display: "flex",
+  // alignItems: "center",
+  justifyContent: "center",
+};
+const select_style = { backgroundColor: "#FFFFFF" };
+const img_style = {
+  borderRadius: "10px",
+  boxShadow: "0 0 5px -1px rgba(0,0,0,0.2)",
+  width: "100%",
+};
 
 // ============================
 // ========= App ================
 // ============================
 export default function App() {
+  // ========= return =========
   return (
-    <Container maxWidth="md">
-      <Typography variant="h2" gutterBottom style={{ marginTop: "2%" }}>
-        <b>Quantum Modeling</b>
-      </Typography>
-
-      <Stack direction="row" spacing={2} style={{ marginBottom: "2%" }}>
-        <Link to="/" style={{ textDecoration: "none" }}>
-          <Button variant="outlined">Home</Button>
-        </Link>
-        <Link to="/home2" style={{ textDecoration: "none" }}>
-          <Button variant="outlined">Home2</Button>
-        </Link>
-        <Link to="/tunneling" style={{ textDecoration: "none" }}>
-          <Button variant="outlined">Tunneling</Button>
-        </Link>
-        <Link to="/interference" style={{ textDecoration: "none" }}>
-          <Button variant="outlined">Interference</Button>
-        </Link>
-        <Link to="/spin" style={{ textDecoration: "none" }}>
-          <Button variant="outlined">Spin</Button>
-        </Link>
-        <Link to="/wavefunction" style={{ textDecoration: "none" }}>
-          <Button variant="outlined">Wave Function</Button>
-        </Link>
-        <Link to="/potential-barriers" style={{ textDecoration: "none" }}>
-          <Button variant="outlined">Potential Barriers/Wells</Button>
-        </Link>
-      </Stack>
-
+    <div>
+      {/* ==============  Routes ============== */}
       <Routes>
         <Route path="/">
           <Route index element={<Home />} />
@@ -84,7 +71,7 @@ export default function App() {
           <Route path="/potential-barriers" element={<PotentialBarriers />} />
         </Route>
       </Routes>
-    </Container>
+    </div>
   );
 }
 
@@ -176,11 +163,16 @@ function Home2() {
 }
 
 function Tunneling() {
+  // ========= states =========
   const [barrier, setBarrier] = useState("");
   const [thickness, setThickness] = useState("");
   const [wave, setWave] = useState("");
-  const [tunneling_img2, set_Tunneling_img2d] = useState(tunneling_1x1x1_2d);
-  const [tunneling_img3, set_Tunneling_img3d] = useState(tunneling_1x1x1_3d);
+  const [tunneling_img2, set_Tunneling_img2d] = useState(
+    "./images/tunneling/2DTunneling_1x1x1.gif"
+  );
+  const [tunneling_img3, set_Tunneling_img3d] = useState(
+    "./images/tunneling/3DTunneling_1x1x1.gif"
+  );
   const [success_msg, set_Success_Msg] = useState(
     "Wavefunction with mass = 1 & velocity = 10 generated!"
   );
@@ -189,6 +181,7 @@ function Tunneling() {
   // );
   const [open, setOpen] = useState(false);
 
+  // ========= handle functions =========
   const handleClose = (
     event: React.SyntheticEvent | Event,
     reason?: string
@@ -199,22 +192,18 @@ function Tunneling() {
     }
     setOpen(false);
   };
-
   const handleBarrier = (event: SelectChangeEvent) => {
     setBarrier(event.target.value as string);
     console.log(event.target.value);
   };
-
   const handleThickness = (event: SelectChangeEvent) => {
     setThickness(event.target.value as string);
     console.log(event.target.value);
   };
-
   const handleWave = (event: SelectChangeEvent) => {
     setWave(event.target.value as string);
     console.log(event.target.value);
   };
-
   function handleSubmit(event: any) {
     event.preventDefault();
     let barrier_str = barrier.toString();
@@ -224,10 +213,11 @@ function Tunneling() {
     console.log("thickness:", thickness_str);
     console.log("wave:", wave_str);
 
-    let image_str = "tunneling_";
-
+    let image_str = "";
+    // ======= GIF logic =======
     if (barrier_str === "1") {
-      image_str = image_str + "1";
+      if (thickness_str === "1") {
+      }
     } else if (barrier_str === "3") {
       image_str = image_str + "3";
     } else if (barrier_str === "5") {
@@ -275,91 +265,113 @@ function Tunneling() {
     }
   }
 
+  // ========= return =========
   return (
     <div>
-      <Typography variant="h4" gutterBottom>
-        Tunneling
-      </Typography>
       <Grid container spacing={2}>
-        <Grid item xs={4}>
-          <Box
-            component="form"
-            sx={{
-              "& > :not(style)": { m: 1, width: "25ch" },
-            }}
-            noValidate
-            autoComplete="off"
-          >
-            <Stack spacing={3}>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={barrier}
-                label="Test"
-                onChange={handleBarrier}
-                defaultValue={"1"}
-              >
-                <MenuItem value={1}>1</MenuItem>
-                <MenuItem value={3}>3</MenuItem>
-                <MenuItem value={5}>5</MenuItem>
-              </Select>
+        {/* ================== left col ================== */}
+        <Grid item xs={3} style={sidebar_style}>
+          <div>
+            <Box
+              component="form"
+              sx={{
+                "& > :not(style)": { m: 1, width: "25ch" },
+              }}
+              noValidate
+              autoComplete="off"
+            >
+              <Stack spacing={3}>
+                <FormControl variant="filled">
+                  <InputLabel id="barrier-select">Barrier</InputLabel>
+                  <Select
+                    labelId="barrier-select"
+                    id="barrier-select"
+                    value={barrier}
+                    label="Test"
+                    onChange={handleBarrier}
+                    defaultValue={"1"}
+                    style={select_style}
+                  >
+                    <MenuItem value={1}>1</MenuItem>
+                    <MenuItem value={3}>3</MenuItem>
+                    <MenuItem value={5}>5</MenuItem>
+                  </Select>
+                </FormControl>
+                <FormControl variant="filled">
+                  <InputLabel id="thickness-select">Thickness</InputLabel>
+                  <Select
+                    labelId="thickness-select-label"
+                    id="thickness-select"
+                    value={thickness}
+                    label="Thickness"
+                    onChange={handleThickness}
+                    defaultValue={"10"}
+                    style={select_style}
+                  >
+                    <MenuItem value={1}>1</MenuItem>
+                    <MenuItem value={3}>3</MenuItem>
+                    <MenuItem value={5}>5</MenuItem>
+                  </Select>
+                </FormControl>
 
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={thickness}
-                label="Test"
-                onChange={handleThickness}
-                defaultValue={"10"}
-              >
-                <MenuItem value={1}>1</MenuItem>
-                <MenuItem value={3}>3</MenuItem>
-                <MenuItem value={5}>5</MenuItem>
-              </Select>
+                <FormControl variant="filled">
+                  <InputLabel id="wave-input-label">Wave</InputLabel>
+                  <Select
+                    labelId="wave-select-label"
+                    id="wave-select"
+                    value={wave}
+                    label="Wave"
+                    onChange={handleWave}
+                    defaultValue={"1"}
+                    style={select_style}
+                  >
+                    <MenuItem value={1}>1</MenuItem>
+                    <MenuItem value={5}>5</MenuItem>
+                    <MenuItem value={10}>10</MenuItem>
+                  </Select>
+                </FormControl>
 
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={wave}
-                label="Test"
-                onChange={handleWave}
-                defaultValue={"1"}
-              >
-                <MenuItem value={1}>1</MenuItem>
-                <MenuItem value={5}>5</MenuItem>
-                <MenuItem value={10}>10</MenuItem>
-              </Select>
-
-              <Button variant="contained" onClick={handleSubmit} type="submit">
-                Generate Model
-              </Button>
-
-              <Snackbar
-                open={open}
-                autoHideDuration={6000}
-                onClose={handleClose}
-              >
-                <Alert
-                  onClose={handleClose}
-                  severity="success"
-                  sx={{ width: "100%" }}
+                <Button
+                  variant="contained"
+                  onClick={handleSubmit}
+                  type="submit"
                 >
-                  {success_msg}
-                </Alert>
-              </Snackbar>
+                  Generate Model
+                </Button>
 
-              {/* <p>{success_msg}</p> */}
-            </Stack>
-          </Box>
+                <Snackbar
+                  open={open}
+                  autoHideDuration={6000}
+                  onClose={handleClose}
+                >
+                  <Alert
+                    onClose={handleClose}
+                    severity="success"
+                    sx={{ width: "100%" }}
+                  >
+                    {success_msg}
+                  </Alert>
+                </Snackbar>
+
+                {/* <p>{success_msg}</p> */}
+              </Stack>
+            </Box>
+          </div>
         </Grid>
-        <Grid item xs={4}>
-          <img src={tunneling_img2} alt="2D tunneling function" />
+
+        {/* ================== right col ================== */}
+        <Grid item>
+          <Typography variant="h3" gutterBottom>
+            Tunneling
+          </Typography>
+          <CustomMenu />
+          <img
+            src={tunneling_img2}
+            alt="2D tunneling function"
+            style={img_style}
+          />
           <img src={tunneling_img3} alt="3D tunneling function" />
-          <Card sx={{ minWidth: 400 }} variant="outlined">
-            <CardContent>
-              <Typography variant="body1">{success_msg}</Typography>
-            </CardContent>
-          </Card>
+          <CustomDescriptionBox msg={success_msg} />
         </Grid>
       </Grid>
     </div>
@@ -372,6 +384,7 @@ function Interference() {
       <Typography variant="h4" gutterBottom>
         Interference
       </Typography>
+      <CustomMenu />
     </div>
   );
 }
@@ -382,6 +395,7 @@ function Spin() {
       <Typography variant="h4" gutterBottom>
         Spin
       </Typography>
+      <CustomMenu />
     </div>
   );
 }
@@ -425,6 +439,7 @@ function Wavefunction() {
     console.log("mass:", mass_str);
     console.log("velocity:", velocity_str);
 
+    // === generate wavefunction ===
     if (mass_str === "1" && velocity_str === "1") {
       console.log("1x1");
       set_Wavefunction_img(wave_1x1);
@@ -472,72 +487,80 @@ function Wavefunction() {
   // === return ===
   return (
     <div>
-      <Typography variant="h4" gutterBottom>
-        Wave Function
-      </Typography>
       <Grid container spacing={2}>
-        <Grid item xs={4}>
-          <Box
-            component="form"
-            sx={{
-              "& > :not(style)": { m: 1, width: "25ch" },
-            }}
-            noValidate
-            autoComplete="off"
-          >
-            <FormControl fullWidth>
-              <InputLabel id="mass-label">Mass</InputLabel>
-              <Select
-                labelId="mass-label"
-                id="mass-label-select"
-                value={mass}
-                label="Mass"
-                onChange={handleMass}
-                defaultValue={"1"}
-              >
-                <MenuItem value={1}>1</MenuItem>
-                <MenuItem value={5}>5</MenuItem>
-                <MenuItem value={10}>10</MenuItem>
-              </Select>
-            </FormControl>
-            <FormControl fullWidth>
-              <InputLabel id="velocity-label">Velocity</InputLabel>
-              <Select
-                labelId="velocity-label"
-                id="velocity-select"
-                value={velocity}
-                label="Test"
-                onChange={handleVelocity}
-                defaultValue={"10"}
-              >
-                <MenuItem value={1}>1</MenuItem>
-                <MenuItem value={5}>5</MenuItem>
-                <MenuItem value={10}>10</MenuItem>
-              </Select>
-            </FormControl>
+        {/* ================== left col ================== */}
+        <Grid item xs={3} style={sidebar_style}>
+          <div>
+            <Box
+              component="form"
+              sx={{
+                "& > :not(style)": { m: 1, width: "25ch" },
+              }}
+              noValidate
+              autoComplete="off"
+            >
+              <FormControl fullWidth variant="filled">
+                <InputLabel id="mass-label">Mass</InputLabel>
+                <Select
+                  labelId="mass-label"
+                  id="mass-label-select"
+                  value={mass}
+                  label="Mass"
+                  onChange={handleMass}
+                  defaultValue={"1"}
+                  style={select_style}
+                >
+                  <MenuItem value={1}>1</MenuItem>
+                  <MenuItem value={5}>5</MenuItem>
+                  <MenuItem value={10}>10</MenuItem>
+                </Select>
+              </FormControl>
+              <FormControl fullWidth variant="filled">
+                <InputLabel id="velocity-label">Velocity</InputLabel>
+                <Select
+                  labelId="velocity-label"
+                  id="velocity-select"
+                  value={velocity}
+                  label="Test"
+                  onChange={handleVelocity}
+                  defaultValue={"10"}
+                  style={select_style}
+                >
+                  <MenuItem value={1}>1</MenuItem>
+                  <MenuItem value={5}>5</MenuItem>
+                  <MenuItem value={10}>10</MenuItem>
+                </Select>
+              </FormControl>
 
-            <Button variant="contained" onClick={handleSubmit} type="submit">
-              Generate Model
-            </Button>
+              <Button variant="contained" onClick={handleSubmit} type="submit">
+                Generate Model
+              </Button>
 
-            <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-              <Alert
+              <Snackbar
+                open={open}
+                autoHideDuration={6000}
                 onClose={handleClose}
-                severity="success"
-                sx={{ width: "100%" }}
               >
-                {success_msg}
-              </Alert>
-            </Snackbar>
-          </Box>
+                <Alert
+                  onClose={handleClose}
+                  severity="success"
+                  sx={{ width: "100%" }}
+                >
+                  {success_msg}
+                </Alert>
+              </Snackbar>
+            </Box>
+          </div>
         </Grid>
-        <Grid item xs={4}>
-          <img src={wavefunction_img} alt="wave function" />
-          <Card sx={{ minWidth: 275 }} variant="outlined">
-            <CardContent>
-              <Typography variant="body1">{description_msg}</Typography>
-            </CardContent>
-          </Card>
+
+        {/* ================== right col ================== */}
+        <Grid item>
+          <Typography variant="h3" gutterBottom>
+            Wave Function
+          </Typography>
+          <CustomMenu />
+          <img src={wavefunction_img} alt="wave function" style={img_style} />
+          <CustomDescriptionBox msg={description_msg} />
         </Grid>
       </Grid>
     </div>
@@ -550,6 +573,7 @@ function PotentialBarriers() {
       <Typography variant="h4" gutterBottom>
         Potential Barriers/Wells
       </Typography>
+      <CustomMenu />
     </div>
   );
 }
