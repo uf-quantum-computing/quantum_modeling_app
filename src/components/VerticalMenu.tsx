@@ -6,11 +6,28 @@ const stack_style = {
   marginTop: "5%",
   marginBottom: "5%",
 };
-const CustomMenu = () => {
+const custom_divider = (
+  <div style={{ textAlign: "center" }}>
+    <hr
+      style={{
+        color: "#444444",
+        height: "0.1px",
+        width: "100%",
+      }}
+    />
+  </div>
+);
+
+const VerticalMenu = () => {
   return (
     <div>
       {/* ==============  Menu ============== */}
-      <Stack direction="row" spacing={2} style={stack_style}>
+
+      {custom_divider}
+
+      <h3 style={{ color: "white" }}>Menu</h3>
+
+      <Stack spacing={2} style={stack_style}>
         {/* <Link to="/" style={{ textDecoration: "none" }}>
           <Button variant="outlined">Home</Button>
         </Link>
@@ -37,4 +54,4 @@ const CustomMenu = () => {
   );
 };
 
-export default CustomMenu;
+export default VerticalMenu;

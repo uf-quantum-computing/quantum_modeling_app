@@ -16,6 +16,7 @@
     "@types/node": "^16.11.59",
     "@types/react": "^18.0.20",
     "@types/react-dom": "^18.0.6",
+    "antd": "^4.24.1",
     "axios": "^1.1.2",
     "express": "^4.18.2",
     "react": "^18.2.0",
