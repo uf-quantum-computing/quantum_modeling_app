@@ -2,17 +2,18 @@
 
 using Pkg
 Pkg.add("QuantumOptics")
-using QuantumOptics
 Pkg.add("LinearAlgebra")
-using LinearAlgebra
 Pkg.add("Plots")
-using Plots
 Pkg.add("ProgressMeter")
-using ProgressMeter
 Pkg.add("Images")
+Pkg.add("ImageCore")
+Pkg.add("Colors")
+using QuantumOptics
+using LinearAlgebra
+using Plots
+using ProgressMeter
 using Images
 using ImageCore
-Pkg.add("Colors")
 using Colors
 
 #Pkg.add("pyplot")
@@ -153,5 +154,5 @@ Hkiny_FFT = LazyProduct(Txp, Hkiny, Tpx);
 
 
 
- gif(anim1, "3DInterference.gif", fps=60)
- gif(anim2, "2DInterferenceProbDensity.gif", fps=60)#may add another 2D function for just wavefunction
+ gif(anim1, "interference_3D.gif", fps=60)
+ gif(anim2, "interference_2D_probDensity.gif", fps=60)#may add another 2D function for just wavefunction

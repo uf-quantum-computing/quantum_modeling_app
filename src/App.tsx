@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Routes, Route, Link } from "react-router-dom";
 // === UI Components ===
+import { Layout } from "antd";
 import {
   Grid,
   Box,
@@ -16,33 +17,22 @@ import {
   FormControl,
 } from "@mui/material";
 // === Images ===
-import {
-  wave_1x1,
-  wave_1x5,
-  wave_1x10,
-  wave_5x1,
-  wave_5x5,
-  wave_5x10,
-  wave_10x1,
-  wave_10x5,
-  wave_10x10,
-} from "./images";
 import { gators, bg_gradient } from "./images";
-import {
-  tunneling_1x1x1_2d,
-  tunneling_1x3x5_2d,
-  tunneling_1x1x1_3d,
-  tunneling_1x3x5_3d,
-} from "./images";
 // === Components ===
-import { CustomMenu, CustomDescriptionBox } from "./components";
+import {
+  CustomMenu,
+  VerticalMenu,
+  CustomDescriptionBox,
+  CustomPageHeader,
+  CustomTitle,
+} from "./components";
+// === sub component imports ===
+const { Header, Content, Footer, Sider } = Layout;
 // === styles ===
 const sidebar_style = {
   backgroundColor: "#333333",
   height: "100vh",
-  display: "flex",
-  // alignItems: "center",
-  justifyContent: "center",
+  minHeight: "100vh",
 };
 const select_style = { backgroundColor: "#FFFFFF" };
 const img_style = {
@@ -50,10 +40,15 @@ const img_style = {
   boxShadow: "0 0 5px -1px rgba(0,0,0,0.2)",
   width: "100%",
 };
+const horizontal_center = {
+  display: "flex",
+  // alignItems: "center",  # vertical center
+  justifyContent: "center",
+};
 
-// ============================
-// ========= App ================
-// ============================
+// ========================================================
+// ========= App ==========================================
+// ========================================================
 export default function App() {
   // ========= return =========
   return (
@@ -64,18 +59,21 @@ export default function App() {
           <Route index element={<Home />} />
           <Route path="*" element={<NoMatch />} />
           <Route path="/home2" element={<Home2 />} />
+          <Route path="/test" element={<Test />} />
           <Route path="/tunneling" element={<Tunneling />} />
-          <Route path="/interference" element={<Interference />} />
-          <Route path="/spin" element={<Spin />} />
           <Route path="/wavefunction" element={<Wavefunction />} />
-          <Route path="/potential-barriers" element={<PotentialBarriers />} />
+          <Route path="/interference" element={<Interference />} />
+          {/* <Route path="/spin" element={<Spin />} /> */}
+          {/* <Route path="/potential-barriers" element={<PotentialBarriers />} /> */}
         </Route>
       </Routes>
     </div>
   );
 }
 
-// ========= PAGES =========
+// ========================================================
+// ========= Pages ========================================
+// ========================================================
 function NoMatch() {
   return (
     <div>
@@ -168,12 +166,15 @@ function Tunneling() {
   const [thickness, setThickness] = useState("");
   const [wave, setWave] = useState("");
   const [tunneling_img2, set_Tunneling_img2d] = useState(
-    "./images/tunneling/2DTunneling_1x1x1.gif"
+    "./model_images/tunneling/2DTunneling_1x1x1.gif"
   );
   const [tunneling_img3, set_Tunneling_img3d] = useState(
-    "./images/tunneling/3DTunneling_1x1x1.gif"
+    "./model_images/tunneling/3DTunneling_1x1x1.gif"
   );
   const [success_msg, set_Success_Msg] = useState(
+    "Wavefunction with mass = 1 & velocity = 10 generated!"
+  );
+  const [description_text, set_Description_Text] = useState(
     "Wavefunction with mass = 1 & velocity = 10 generated!"
   );
   // const [description_msg, set_Description_Msg] = useState(
@@ -213,56 +214,40 @@ function Tunneling() {
     console.log("thickness:", thickness_str);
     console.log("wave:", wave_str);
 
-    let image_str = "";
-    // ======= GIF logic =======
-    if (barrier_str === "1") {
-      if (thickness_str === "1") {
-      }
-    } else if (barrier_str === "3") {
-      image_str = image_str + "3";
-    } else if (barrier_str === "5") {
-      image_str = image_str + "5";
-    }
-
-    image_str = image_str + "x";
-    console.log("image:", image_str);
-
-    if (thickness_str === "1") {
-      image_str = image_str + "1";
-    } else if (thickness_str === "3") {
-      image_str = image_str + "3";
-    } else if (thickness_str === "5") {
-      image_str = image_str + "5";
-    }
-
-    image_str = image_str + "x";
-    console.log("image:", image_str);
-
-    if (wave_str === "1") {
-      image_str = image_str + "1";
-    } else if (wave_str === "5") {
-      image_str = image_str + "5";
-    } else if (wave_str === "10") {
-      image_str = image_str + "10";
-    }
-
-    console.log("image:", image_str);
-
-    if (image_str === "tunneling_1x1x1") {
-      set_Tunneling_img2d(tunneling_1x1x1_2d);
-      set_Tunneling_img3d(tunneling_1x1x1_3d);
-      set_Success_Msg(
-        "Tunneling Function with barrier: 1, thickness: 1, wave intensity: 1!"
-      );
-      setOpen(true);
-    } else if (image_str === "tunneling_1x3x5") {
-      set_Tunneling_img2d(tunneling_1x3x5_2d);
-      set_Tunneling_img3d(tunneling_1x3x5_3d);
-      set_Success_Msg(
-        "Tunneling Function with barrier: 1, thickness: 3, wave intensity: 5!"
-      );
-      setOpen(true);
-    }
+    let img_path_2D =
+      "./model_images/tunneling/2DTunneling_" +
+      barrier_str +
+      "x" +
+      thickness_str +
+      "x" +
+      wave_str +
+      ".gif";
+    let img_path_3D =
+      "./model_images/tunneling/3DTunneling_" +
+      barrier_str +
+      "x" +
+      thickness_str +
+      "x" +
+      wave_str +
+      ".gif";
+    set_Tunneling_img2d(img_path_2D);
+    set_Tunneling_img3d(img_path_3D);
+    set_Description_Text(
+      "Wavefunction with mass = " +
+        barrier_str +
+        " & velocity = " +
+        wave_str +
+        " generated!"
+    );
+    set_Success_Msg(
+      "Wavefunction with barrier = " +
+        barrier_str +
+        " & thickness = " +
+        thickness_str +
+        " & wave = " +
+        wave_str +
+        " generated!"
+    );
   }
 
   // ========= return =========
@@ -271,131 +256,108 @@ function Tunneling() {
       <Grid container spacing={2}>
         {/* ================== left col ================== */}
         <Grid item xs={3} style={sidebar_style}>
-          <div>
-            <Box
-              component="form"
-              sx={{
-                "& > :not(style)": { m: 1, width: "25ch" },
-              }}
-              noValidate
-              autoComplete="off"
-            >
-              <Stack spacing={3}>
-                <FormControl variant="filled">
-                  <InputLabel id="barrier-select">Barrier</InputLabel>
-                  <Select
-                    labelId="barrier-select"
-                    id="barrier-select"
-                    value={barrier}
-                    label="Test"
-                    onChange={handleBarrier}
-                    defaultValue={"1"}
-                    style={select_style}
-                  >
-                    <MenuItem value={1}>1</MenuItem>
-                    <MenuItem value={3}>3</MenuItem>
-                    <MenuItem value={5}>5</MenuItem>
-                  </Select>
-                </FormControl>
-                <FormControl variant="filled">
-                  <InputLabel id="thickness-select">Thickness</InputLabel>
-                  <Select
-                    labelId="thickness-select-label"
-                    id="thickness-select"
-                    value={thickness}
-                    label="Thickness"
-                    onChange={handleThickness}
-                    defaultValue={"10"}
-                    style={select_style}
-                  >
-                    <MenuItem value={1}>1</MenuItem>
-                    <MenuItem value={3}>3</MenuItem>
-                    <MenuItem value={5}>5</MenuItem>
-                  </Select>
-                </FormControl>
-
-                <FormControl variant="filled">
-                  <InputLabel id="wave-input-label">Wave</InputLabel>
-                  <Select
-                    labelId="wave-select-label"
-                    id="wave-select"
-                    value={wave}
-                    label="Wave"
-                    onChange={handleWave}
-                    defaultValue={"1"}
-                    style={select_style}
-                  >
-                    <MenuItem value={1}>1</MenuItem>
-                    <MenuItem value={5}>5</MenuItem>
-                    <MenuItem value={10}>10</MenuItem>
-                  </Select>
-                </FormControl>
-
-                <Button
-                  variant="contained"
-                  onClick={handleSubmit}
-                  type="submit"
-                >
-                  Generate Model
-                </Button>
-
-                <Snackbar
-                  open={open}
-                  autoHideDuration={6000}
-                  onClose={handleClose}
-                >
-                  <Alert
-                    onClose={handleClose}
-                    severity="success"
-                    sx={{ width: "100%" }}
-                  >
-                    {success_msg}
-                  </Alert>
-                </Snackbar>
-
-                {/* <p>{success_msg}</p> */}
-              </Stack>
-            </Box>
+          <div style={horizontal_center}>
+            <CustomTitle />
           </div>
+
+          <Box
+            component="form"
+            sx={{
+              "& > :not(style)": { m: 1, width: "25ch" },
+            }}
+            noValidate
+            autoComplete="off"
+            style={horizontal_center}
+          >
+            <Stack spacing={3}>
+              {/* ====== Select Inputs ====== */}
+              <FormControl variant="filled">
+                <InputLabel id="barrier-select">Barrier</InputLabel>
+                <Select
+                  labelId="barrier-select"
+                  id="barrier-select"
+                  value={barrier}
+                  label="Test"
+                  onChange={handleBarrier}
+                  defaultValue={"1"}
+                  style={select_style}
+                >
+                  <MenuItem value={1}>1</MenuItem>
+                  <MenuItem value={3}>3</MenuItem>
+                  <MenuItem value={5}>5</MenuItem>
+                </Select>
+              </FormControl>
+              <FormControl variant="filled">
+                <InputLabel id="thickness-select">Thickness</InputLabel>
+                <Select
+                  labelId="thickness-select-label"
+                  id="thickness-select"
+                  value={thickness}
+                  label="Thickness"
+                  onChange={handleThickness}
+                  defaultValue={"10"}
+                  style={select_style}
+                >
+                  <MenuItem value={1}>1</MenuItem>
+                  <MenuItem value={3}>3</MenuItem>
+                  <MenuItem value={5}>5</MenuItem>
+                </Select>
+              </FormControl>
+
+              <FormControl variant="filled">
+                <InputLabel id="wave-input-label">Wave</InputLabel>
+                <Select
+                  labelId="wave-select-label"
+                  id="wave-select"
+                  value={wave}
+                  label="Wave"
+                  onChange={handleWave}
+                  defaultValue={"1"}
+                  style={select_style}
+                >
+                  <MenuItem value={1}>1</MenuItem>
+                  <MenuItem value={5}>5</MenuItem>
+                  <MenuItem value={10}>10</MenuItem>
+                </Select>
+              </FormControl>
+
+              {/* ====== Submit Button ====== */}
+              <Button variant="contained" onClick={handleSubmit} type="submit">
+                Generate Model
+              </Button>
+
+              {/* ====== VerticalMenu ====== */}
+              <VerticalMenu />
+
+              {/* ====== Snackbar ====== */}
+              <Snackbar
+                open={open}
+                autoHideDuration={6000}
+                onClose={handleClose}
+              >
+                <Alert
+                  onClose={handleClose}
+                  severity="success"
+                  sx={{ width: "100%" }}
+                >
+                  {success_msg}
+                </Alert>
+              </Snackbar>
+
+              {/* <p>{success_msg}</p> */}
+            </Stack>
+          </Box>
         </Grid>
 
         {/* ================== right col ================== */}
-        <Grid item>
-          <Typography variant="h3" gutterBottom>
-            Tunneling
-          </Typography>
-          <CustomMenu />
-          <img
-            src={tunneling_img2}
-            alt="2D tunneling function"
-            style={img_style}
-          />
+        <Grid item xs={8}>
+          <CustomPageHeader text="Tunneling" size="h3" />
+
+          <img src={tunneling_img2} alt="2D tunneling" style={img_style} />
           <img src={tunneling_img3} alt="3D tunneling function" />
-          <CustomDescriptionBox msg={success_msg} />
+          <CustomDescriptionBox msg={description_text} />
         </Grid>
       </Grid>
-    </div>
-  );
-}
-
-function Interference() {
-  return (
-    <div>
-      <Typography variant="h4" gutterBottom>
-        Interference
-      </Typography>
-      <CustomMenu />
-    </div>
-  );
-}
-
-function Spin() {
-  return (
-    <div>
-      <Typography variant="h4" gutterBottom>
-        Spin
-      </Typography>
-      <CustomMenu />
     </div>
   );
 }
@@ -404,7 +366,12 @@ function Wavefunction() {
   // === state ===
   const [mass, setMass] = useState("");
   const [velocity, setVelocity] = useState("");
-  const [wavefunction_img, set_Wavefunction_img] = useState(wave_1x10);
+  const [wavefunction_img1, set_Wavefunction_Img1] = useState(
+    "./model_images/wavefunction/wave_1x1.gif"
+  );
+  const [wavefunction_img2, set_Wavefunction_Img2] = useState(
+    "./model_images/wavefunction/wave_density_1x1.gif"
+  );
   const [success_msg, set_Success_Msg] = useState(
     "Wavefunction with mass = 1 & velocity = 10 generated!"
   );
@@ -439,49 +406,31 @@ function Wavefunction() {
     console.log("mass:", mass_str);
     console.log("velocity:", velocity_str);
 
-    // === generate wavefunction ===
-    if (mass_str === "1" && velocity_str === "1") {
-      console.log("1x1");
-      set_Wavefunction_img(wave_1x1);
-      set_Success_Msg("Wavefunction with mass = 1 & velocity = 1 generated!");
-      set_Description_Msg("Example Description Msg");
-      setOpen(true);
-    } else if (mass_str === "1" && velocity_str === "5") {
-      console.log("1x5");
-      set_Wavefunction_img(wave_1x5);
-      set_Success_Msg("Wavefunction with mass = 1 & velocity = 5 generated!");
-      setOpen(true);
-    } else if (mass_str === "1" && velocity_str === "10") {
-      console.log("1x10");
-      set_Wavefunction_img(wave_1x10);
-      set_Success_Msg("Wavefunction with mass = 1 & velocity = 10 generated!");
-      setOpen(true);
-    } else if (mass_str === "5" && velocity_str === "1") {
-      set_Wavefunction_img(wave_5x1);
-      set_Success_Msg("Wavefunction with mass = 5 & velocity = 1 generated!");
-      setOpen(true);
-    } else if (mass_str === "5" && velocity_str === "5") {
-      set_Wavefunction_img(wave_5x5);
-      set_Success_Msg("Wavefunction with mass = 5 & velocity = 5 generated!");
-      setOpen(true);
-    } else if (mass_str === "5" && velocity_str === "10") {
-      set_Wavefunction_img(wave_5x10);
-      set_Success_Msg("Wavefunction with mass = 5 & velocity = 10 generated!");
-      setOpen(true);
-    } else if (mass_str === "10" && velocity_str === "1") {
-      set_Wavefunction_img(wave_10x1);
-      set_Success_Msg("Wavefunction with mass = 10 & velocity = 1 generated!");
-      setOpen(true);
-    } else if (mass_str === "10" && velocity_str === "5") {
-      set_Wavefunction_img(wave_10x5);
-      set_Success_Msg("Wavefunction with mass = 10 & velocity = 5 generated!");
-      setOpen(true);
-    } else if (mass_str === "10" && velocity_str === "10") {
-      console.log("10x10");
-      set_Wavefunction_img(wave_10x10);
-      set_Success_Msg("Wavefunction with mass = 10 & velocity = 10 generated!");
-      setOpen(true);
-    }
+    let wave_img1_path =
+      "./model_images/wavefunction/wave_" +
+      mass_str +
+      "x" +
+      velocity_str +
+      ".gif";
+    let wave_img2_path =
+      "./model_images/wavefunction/wave_density_" +
+      mass_str +
+      "x" +
+      velocity_str +
+      ".gif";
+    console.log(wave_img1_path);
+    console.log(wave_img2_path);
+    set_Wavefunction_Img1(wave_img1_path);
+    set_Wavefunction_Img2(wave_img2_path);
+    set_Success_Msg(
+      "Wavefunction with mass = " +
+        mass_str +
+        " & velocity = " +
+        velocity_str +
+        " generated!"
+    );
+    set_Description_Msg("Example Description Msg");
+    setOpen(true);
   }
 
   // === return ===
@@ -491,6 +440,9 @@ function Wavefunction() {
         {/* ================== left col ================== */}
         <Grid item xs={3} style={sidebar_style}>
           <div>
+            <div style={horizontal_center}>
+              <CustomTitle />
+            </div>
             <Box
               component="form"
               sx={{
@@ -498,68 +450,78 @@ function Wavefunction() {
               }}
               noValidate
               autoComplete="off"
+              style={horizontal_center}
             >
-              <FormControl fullWidth variant="filled">
-                <InputLabel id="mass-label">Mass</InputLabel>
-                <Select
-                  labelId="mass-label"
-                  id="mass-label-select"
-                  value={mass}
-                  label="Mass"
-                  onChange={handleMass}
-                  defaultValue={"1"}
-                  style={select_style}
-                >
-                  <MenuItem value={1}>1</MenuItem>
-                  <MenuItem value={5}>5</MenuItem>
-                  <MenuItem value={10}>10</MenuItem>
-                </Select>
-              </FormControl>
-              <FormControl fullWidth variant="filled">
-                <InputLabel id="velocity-label">Velocity</InputLabel>
-                <Select
-                  labelId="velocity-label"
-                  id="velocity-select"
-                  value={velocity}
-                  label="Test"
-                  onChange={handleVelocity}
-                  defaultValue={"10"}
-                  style={select_style}
-                >
-                  <MenuItem value={1}>1</MenuItem>
-                  <MenuItem value={5}>5</MenuItem>
-                  <MenuItem value={10}>10</MenuItem>
-                </Select>
-              </FormControl>
+              <Stack spacing={3}>
+                {/* selects */}
+                <FormControl fullWidth variant="filled">
+                  <InputLabel id="mass-label">Mass</InputLabel>
+                  <Select
+                    labelId="mass-label"
+                    id="mass-label-select"
+                    value={mass}
+                    label="Mass"
+                    onChange={handleMass}
+                    defaultValue={"1"}
+                    style={select_style}
+                  >
+                    <MenuItem value={1}>1</MenuItem>
+                    <MenuItem value={5}>5</MenuItem>
+                    <MenuItem value={10}>10</MenuItem>
+                  </Select>
+                </FormControl>
+                <FormControl fullWidth variant="filled">
+                  <InputLabel id="velocity-label">Velocity</InputLabel>
+                  <Select
+                    labelId="velocity-label"
+                    id="velocity-select"
+                    value={velocity}
+                    label="Test"
+                    onChange={handleVelocity}
+                    defaultValue={"10"}
+                    style={select_style}
+                  >
+                    <MenuItem value={1}>1</MenuItem>
+                    <MenuItem value={5}>5</MenuItem>
+                    <MenuItem value={10}>10</MenuItem>
+                  </Select>
+                </FormControl>
 
-              <Button variant="contained" onClick={handleSubmit} type="submit">
-                Generate Model
-              </Button>
+                {/* submit button */}
+                <Button
+                  variant="contained"
+                  onClick={handleSubmit}
+                  type="submit"
+                >
+                  Generate Model
+                </Button>
 
-              <Snackbar
-                open={open}
-                autoHideDuration={6000}
-                onClose={handleClose}
-              >
-                <Alert
+                <VerticalMenu />
+
+                <Snackbar
+                  open={open}
+                  autoHideDuration={6000}
                   onClose={handleClose}
-                  severity="success"
-                  sx={{ width: "100%" }}
                 >
-                  {success_msg}
-                </Alert>
-              </Snackbar>
+                  <Alert
+                    onClose={handleClose}
+                    severity="success"
+                    sx={{ width: "100%" }}
+                  >
+                    {success_msg}
+                  </Alert>
+                </Snackbar>
+              </Stack>
             </Box>
           </div>
         </Grid>
 
         {/* ================== right col ================== */}
-        <Grid item>
-          <Typography variant="h3" gutterBottom>
-            Wave Function
-          </Typography>
-          <CustomMenu />
-          <img src={wavefunction_img} alt="wave function" style={img_style} />
+        <Grid item xs={8}>
+          <CustomPageHeader text="Wavefunction" size="h3" />
+
+          <img src={wavefunction_img1} alt="wave function" style={img_style} />
+          <img src={wavefunction_img2} alt="wave function" style={img_style} />
           <CustomDescriptionBox msg={description_msg} />
         </Grid>
       </Grid>
@@ -567,13 +529,48 @@ function Wavefunction() {
   );
 }
 
-function PotentialBarriers() {
+function Interference() {
   return (
     <div>
       <Typography variant="h4" gutterBottom>
-        Potential Barriers/Wells
+        Interference
       </Typography>
       <CustomMenu />
     </div>
   );
 }
+
+function Test() {
+  return (
+    <Layout>
+      <Sider>Sider</Sider>
+      <Layout>
+        <Header>Header</Header>
+        <Content>Content</Content>
+        <Footer>Footer</Footer>
+      </Layout>
+    </Layout>
+  );
+}
+
+// function Spin() {
+//   return (
+//     <div>
+//       <Typography variant="h4" gutterBottom>
+//         Spin
+//       </Typography>
+//       <CustomMenu />
+//     </div>
+//   );
+// }
+
+// function PotentialBarriers() {
+//   return (
+//     <div>
+//       <Typography variant="h4" gutterBottom>
+//         Potential Barriers/Wells
+//       </Typography>
+//       <CustomMenu />
+//     </div>
+//   );
+// }

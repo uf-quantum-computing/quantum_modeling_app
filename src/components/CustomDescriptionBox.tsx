@@ -4,6 +4,8 @@ import { Card, CardContent } from "@mui/material";
 // ========== styles ==========
 const card_style = {
   backgroundColor: "#F2F2F2",
+  marginTop: "2%",
+  marginBottom: "2%",
 };
 
 // ========== CustomDescriptionBox ==========
