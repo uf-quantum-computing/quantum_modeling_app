@@ -22,6 +22,15 @@
 
     - The images can then be easily retrieved by the frontend by querying the database for the image with the name `phenomena_name_par1xpar2xpar3.png`
 
+- Deploy application
+
+  - [Top Free Services To Deploy Full-Stack Applications](https://akashrajpurohit.com/blog/top-free-services-to-deploy-full-stack-applications/)
+    - Heroku
+      - [Deploying a Full-Stack App with Heroku](https://www.codecademy.com/article/deploying-a-full-stack-app-with-heroku)
+    - [Vercel](https://vercel.com/)
+      - [Node.js/MongoDB Backend example w/ Vercel](https://github.com/vercel/next.js/tree/canary/examples/with-mongodb-mongoose)
+    - AWS
+
 ## Potential Challenges
 
 - Storage management
