@@ -2,15 +2,11 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Button, Stack } from "@mui/material";
 // styles
-const stack_style = {
-  marginTop: "5%",
-  marginBottom: "5%",
-};
 const CustomMenu = () => {
   return (
     <div>
       {/* ==============  Menu ============== */}
-      <Stack direction="row" spacing={2} style={stack_style}>
+      <Stack direction="row" spacing={2}>
         {/* <Link to="/" style={{ textDecoration: "none" }}>
           <Button variant="outlined">Home</Button>
         </Link>

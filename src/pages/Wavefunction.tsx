@@ -14,6 +14,8 @@ import {
   InputLabel,
   FormControl,
 } from "@mui/material";
+import { Layout } from "antd";
+import "antd/dist/antd.min.css";
 // === Components ===
 import {
   VerticalMenu,
@@ -21,6 +23,8 @@ import {
   CustomPageHeader,
   CustomTitle,
 } from "../components";
+// === sub component imports ===
+const { Sider, Content } = Layout;
 // === styles ===
 const sidebar_style = {
   backgroundColor: "#333333",
@@ -114,6 +118,120 @@ const Wavefunction = () => {
   // === return ===
   return (
     <div>
+      <Layout style={{ minHeight: "100vh" }}>
+        {/* ============== Sider ============== */}
+        <Sider
+          // collapsible
+          // collapsed={collapsed}
+          // onCollapse={(value) => setCollapsed(value)}
+          style={{ padding: "1%" }}
+        >
+          <div>
+            <div style={horizontal_center}>
+              <CustomTitle />
+            </div>
+            <Box
+              component="form"
+              sx={{
+                "& > :not(style)": { m: 1, width: "25ch" },
+              }}
+              noValidate
+              autoComplete="off"
+              style={horizontal_center}
+            >
+              <Stack spacing={3}>
+                {/* selects */}
+                <FormControl fullWidth variant="filled">
+                  <InputLabel id="mass-label">Mass</InputLabel>
+                  <Select
+                    labelId="mass-label"
+                    id="mass-label-select"
+                    value={mass}
+                    label="Mass"
+                    onChange={handleMass}
+                    defaultValue={"1"}
+                    style={select_style}
+                  >
+                    <MenuItem value={1}>1</MenuItem>
+                    <MenuItem value={5}>5</MenuItem>
+                    <MenuItem value={10}>10</MenuItem>
+                  </Select>
+                </FormControl>
+                <FormControl fullWidth variant="filled">
+                  <InputLabel id="velocity-label">Velocity</InputLabel>
+                  <Select
+                    labelId="velocity-label"
+                    id="velocity-select"
+                    value={velocity}
+                    label="Test"
+                    onChange={handleVelocity}
+                    defaultValue={"10"}
+                    style={select_style}
+                  >
+                    <MenuItem value={1}>1</MenuItem>
+                    <MenuItem value={5}>5</MenuItem>
+                    <MenuItem value={10}>10</MenuItem>
+                  </Select>
+                </FormControl>
+
+                {/* submit button */}
+                <Button
+                  variant="contained"
+                  onClick={handleSubmit}
+                  type="submit"
+                >
+                  Generate Model
+                </Button>
+
+                <VerticalMenu />
+
+                <Snackbar
+                  open={open}
+                  autoHideDuration={6000}
+                  onClose={handleClose}
+                >
+                  <Alert
+                    onClose={handleClose}
+                    severity="success"
+                    sx={{ width: "100%" }}
+                  >
+                    {success_msg}
+                  </Alert>
+                </Snackbar>
+              </Stack>
+            </Box>
+          </div>
+        </Sider>
+        {/* ============ Right Content ============ */}
+        <Layout style={{ margin: "5%" }}>
+          <Content>
+            <CustomPageHeader text="Wavefunction" size="h3" />
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <img
+                  src={wavefunction_img1}
+                  alt="wave function"
+                  style={img_style}
+                />
+              </Grid>
+
+              <Grid item xs={6}>
+                <img
+                  src={wavefunction_img2}
+                  alt="wave function"
+                  style={img_style}
+                />
+              </Grid>
+            </Grid>
+            <CustomDescriptionBox
+              msg={
+                "A wave function mathematically describes the wave characteristics of quantum particles, usually electrons."
+              }
+            />
+          </Content>
+        </Layout>
+      </Layout>
+
       <Grid container spacing={2}>
         {/* ================== left col ================== */}
         <Grid item xs={3} style={sidebar_style}>
@@ -197,6 +315,11 @@ const Wavefunction = () => {
         {/* ================== right col ================== */}
         <Grid item xs={8}>
           <CustomPageHeader text="Wavefunction" size="h3" />
+          <CustomDescriptionBox
+            msg={
+              "A wave function mathematically describes the wave characteristics of quantum particles, usually electrons."
+            }
+          />
 
           <img src={wavefunction_img1} alt="wave function" style={img_style} />
           <img src={wavefunction_img2} alt="wave function" style={img_style} />
