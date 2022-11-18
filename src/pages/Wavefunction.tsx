@@ -26,11 +26,6 @@ import {
 // === sub component imports ===
 const { Sider, Content } = Layout;
 // === styles ===
-const sidebar_style = {
-  backgroundColor: "#333333",
-  height: "100vh",
-  minHeight: "100vh",
-};
 const select_style = { backgroundColor: "#FFFFFF" };
 const img_style = {
   borderRadius: "10px",
@@ -55,9 +50,6 @@ const Wavefunction = () => {
   );
   const [success_msg, set_Success_Msg] = useState(
     "Wavefunction with mass = 1 & velocity = 10 generated!"
-  );
-  const [description_msg, set_Description_Msg] = useState(
-    "Example Description Msg"
   );
   const [open, setOpen] = useState(false);
 
@@ -111,7 +103,7 @@ const Wavefunction = () => {
         velocity_str +
         " generated!"
     );
-    set_Description_Msg("Example Description Msg");
+
     setOpen(true);
   }
 
@@ -231,101 +223,6 @@ const Wavefunction = () => {
           </Content>
         </Layout>
       </Layout>
-
-      <Grid container spacing={2}>
-        {/* ================== left col ================== */}
-        <Grid item xs={3} style={sidebar_style}>
-          <div>
-            <div style={horizontal_center}>
-              <CustomTitle />
-            </div>
-            <Box
-              component="form"
-              sx={{
-                "& > :not(style)": { m: 1, width: "25ch" },
-              }}
-              noValidate
-              autoComplete="off"
-              style={horizontal_center}
-            >
-              <Stack spacing={3}>
-                {/* selects */}
-                <FormControl fullWidth variant="filled">
-                  <InputLabel id="mass-label">Mass</InputLabel>
-                  <Select
-                    labelId="mass-label"
-                    id="mass-label-select"
-                    value={mass}
-                    label="Mass"
-                    onChange={handleMass}
-                    defaultValue={"1"}
-                    style={select_style}
-                  >
-                    <MenuItem value={1}>1</MenuItem>
-                    <MenuItem value={5}>5</MenuItem>
-                    <MenuItem value={10}>10</MenuItem>
-                  </Select>
-                </FormControl>
-                <FormControl fullWidth variant="filled">
-                  <InputLabel id="velocity-label">Velocity</InputLabel>
-                  <Select
-                    labelId="velocity-label"
-                    id="velocity-select"
-                    value={velocity}
-                    label="Test"
-                    onChange={handleVelocity}
-                    defaultValue={"10"}
-                    style={select_style}
-                  >
-                    <MenuItem value={1}>1</MenuItem>
-                    <MenuItem value={5}>5</MenuItem>
-                    <MenuItem value={10}>10</MenuItem>
-                  </Select>
-                </FormControl>
-
-                {/* submit button */}
-                <Button
-                  variant="contained"
-                  onClick={handleSubmit}
-                  type="submit"
-                >
-                  Generate Model
-                </Button>
-
-                <VerticalMenu />
-
-                <Snackbar
-                  open={open}
-                  autoHideDuration={6000}
-                  onClose={handleClose}
-                >
-                  <Alert
-                    onClose={handleClose}
-                    severity="success"
-                    sx={{ width: "100%" }}
-                  >
-                    {success_msg}
-                  </Alert>
-                </Snackbar>
-              </Stack>
-            </Box>
-          </div>
-        </Grid>
-
-        {/* ================== right col ================== */}
-        <Grid item xs={8}>
-          <CustomPageHeader text="Wavefunction" size="h3" />
-          <CustomDescriptionBox
-            msg={
-              "A wave function mathematically describes the wave characteristics of quantum particles, usually electrons."
-            }
-          />
-
-          <img src={wavefunction_img1} alt="wave function" style={img_style} />
-          <img src={wavefunction_img2} alt="wave function" style={img_style} />
-          <CustomDescriptionBox msg={description_msg} />
-        </Grid>
-      </Grid>
     </div>
   );
 };
