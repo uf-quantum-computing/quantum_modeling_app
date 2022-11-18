@@ -20,7 +20,9 @@ const Home = () => {
         }}
       >
         <div style={{ textAlign: "center" }}>
-          <h1 style={{ fontSize: "128px" }}>Quantum Modeling</h1>
+          <h1 style={{ fontSize: "128px", color: "white" }}>
+            Quantum Modeling
+          </h1>
           <p>Quantum phenomena visualized & explained.</p>
 
           <Link

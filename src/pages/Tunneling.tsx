@@ -13,6 +13,8 @@ import {
   InputLabel,
   FormControl,
 } from "@mui/material";
+import { Layout } from "antd";
+import "antd/dist/antd.min.css";
 // === Components ===
 import {
   VerticalMenu,
@@ -21,12 +23,8 @@ import {
   CustomTitle,
 } from "../components";
 // === sub component imports ===
+const { Sider, Content } = Layout;
 // === styles ===
-const sidebar_style = {
-  backgroundColor: "#333333",
-  height: "100vh",
-  minHeight: "100vh",
-};
 const select_style = { backgroundColor: "#FFFFFF" };
 const img_style = {
   borderRadius: "10px",
@@ -53,12 +51,6 @@ const Tunneling = () => {
   const [success_msg, set_Success_Msg] = useState(
     "Wavefunction with mass = 1 & velocity = 10 generated!"
   );
-  const [description_text, set_Description_Text] = useState(
-    "Wavefunction with mass = 1 & velocity = 10 generated!"
-  );
-  // const [description_msg, set_Description_Msg] = useState(
-  //   "Example Description Msg"
-  // );
   const [open, setOpen] = useState(false);
 
   // ========= handle functions =========
@@ -111,13 +103,6 @@ const Tunneling = () => {
       ".gif";
     set_Tunneling_img2d(img_path_2D);
     set_Tunneling_img3d(img_path_3D);
-    set_Description_Text(
-      "Wavefunction with mass = " +
-        barrier_str +
-        " & velocity = " +
-        wave_str +
-        " generated!"
-    );
     set_Success_Msg(
       "Wavefunction with barrier = " +
         barrier_str +
@@ -132,13 +117,15 @@ const Tunneling = () => {
   // ========= return =========
   return (
     <div>
-      <Grid container spacing={2}>
-        {/* ================== left col ================== */}
-        <Grid item xs={3} style={sidebar_style}>
-          <div style={horizontal_center}>
-            <CustomTitle />
-          </div>
-
+      <Layout style={{ minHeight: "100vh" }}>
+        {/* ======================== Sider ======================== */}
+        <Sider
+          // collapsible
+          // collapsed={collapsed}
+          // onCollapse={(value) => setCollapsed(value)}
+          style={{ padding: "1%" }}
+        >
+          <CustomTitle />
           <Box
             component="form"
             sx={{
@@ -182,7 +169,6 @@ const Tunneling = () => {
                   <MenuItem value={5}>5</MenuItem>
                 </Select>
               </FormControl>
-
               <FormControl variant="filled">
                 <InputLabel id="wave-input-label">Wave</InputLabel>
                 <Select
@@ -204,39 +190,54 @@ const Tunneling = () => {
               <Button variant="contained" onClick={handleSubmit} type="submit">
                 Generate Model
               </Button>
-
-              {/* ====== VerticalMenu ====== */}
-              <VerticalMenu />
-
-              {/* ====== Snackbar ====== */}
-              <Snackbar
-                open={open}
-                autoHideDuration={6000}
-                onClose={handleClose}
-              >
-                <Alert
-                  onClose={handleClose}
-                  severity="success"
-                  sx={{ width: "100%" }}
-                >
-                  {success_msg}
-                </Alert>
-              </Snackbar>
-
-              {/* <p>{success_msg}</p> */}
             </Stack>
           </Box>
-        </Grid>
 
-        {/* ================== right col ================== */}
-        <Grid item xs={8}>
-          <CustomPageHeader text="Tunneling" size="h3" />
+          {/* ====== VerticalMenu ====== */}
+          <VerticalMenu />
 
-          <img src={tunneling_img2} alt="2D tunneling" style={img_style} />
-          <img src={tunneling_img3} alt="3D tunneling function" />
-          <CustomDescriptionBox msg={description_text} />
-        </Grid>
-      </Grid>
+          {/* ====== Snackbar ====== */}
+          <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+            <Alert
+              onClose={handleClose}
+              severity="success"
+              sx={{ width: "100%" }}
+            >
+              {success_msg}
+            </Alert>
+          </Snackbar>
+        </Sider>
+
+        {/* ======================== Content ======================== */}
+        <Layout style={{ margin: "5%" }}>
+          <Content>
+            <CustomPageHeader text="Tunneling" size="h3" />
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <img
+                  src={tunneling_img3}
+                  alt="3D tunneling function"
+                  style={img_style}
+                />
+              </Grid>
+
+              <Grid item xs={6}>
+                <img
+                  src={tunneling_img2}
+                  alt="2D tunneling"
+                  style={img_style}
+                />
+              </Grid>
+            </Grid>
+
+            <CustomDescriptionBox
+              msg={
+                "Quantum tunneling, also known as tunneling is a quantum mechanical phenomenon whereby a wavefunction can propagate through a potential barrier. The transmission through the barrier can be finite and depends exponentially on the barrier height and barrier width."
+              }
+            />
+          </Content>
+        </Layout>
+      </Layout>
     </div>
   );
 };

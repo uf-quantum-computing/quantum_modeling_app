@@ -1,26 +1,33 @@
 import React from "react";
+import { Card } from "@mui/material";
 
-const custom_divider = (
-  <div style={{ textAlign: "center" }}>
-    <hr
-      style={{
-        color: "#444444",
-        height: "0.1px",
-        width: "100%",
-      }}
-    />
-  </div>
-);
+const card_style = {
+  backgroundColor: "rgba(52, 52, 52, 0)",
+  border: "1px solid #FFFFFF",
+  margin: "2%",
+  boxShadow: "0 0 5px -1px rgba(0,0,0,0.2)",
+  padding: "2%",
+};
 // ==========================================
 // ==============  CustomTitle ==============
 // ==========================================
 const CustomTitle = () => {
   return (
     <div>
-      <h2 style={{ color: "#FFFFFF", textAlign: "center" }}>
-        Quantum Modeling App
-      </h2>
-      {custom_divider}
+      <Card style={card_style}>
+        <p style={{ textAlign: "center" }}>
+          {" "}
+          <h2
+            style={{
+              color: "#FFFFFF",
+              textAlign: "center",
+              fontWeight: "bolder",
+            }}
+          >
+            Quantum Modeling App
+          </h2>
+        </p>
+      </Card>
     </div>
   );
 };
