@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - main
-      - static_website
+      - branch-*
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
