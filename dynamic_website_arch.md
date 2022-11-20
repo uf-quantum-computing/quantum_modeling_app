@@ -7,12 +7,13 @@
   - Use **Styled Components** for small, reusable components
   - Use **Redux** for state management and eliminate the need to use props or callbacks.
 
-- Create API endpoints with **Node.js** & **Express**
+- Create a server & API endpoints with **Node.js** & **Express**
 
   - The API endpoints will be used by the frontend to:
     1. run the respective julia script and generate data/images
     2. store the images in the database
     3. retrieve the images from the database
+  - [Use Julia to perform computations on a webpage](https://stackoverflow.com/questions/36730830/use-julia-to-perform-computations-on-a-webpage)
 
 - Create a database with **MongoDB**
 
