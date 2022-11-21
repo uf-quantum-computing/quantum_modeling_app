@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { Card } from "@mui/material";
 
 const card_style = {
@@ -14,20 +15,23 @@ const card_style = {
 const CustomTitle = () => {
   return (
     <div>
-      <Card style={card_style}>
-        <p style={{ textAlign: "center" }}>
-          {" "}
-          <h2
-            style={{
-              color: "#FFFFFF",
-              textAlign: "center",
-              fontWeight: "bolder",
-            }}
-          >
-            Quantum Modeling App
-          </h2>
-        </p>
-      </Card>
+      <Link to="/" style={{ textDecoration: "none" }}>
+        <Card style={card_style}>
+          <p style={{ textAlign: "center" }}>
+            <h2
+              style={{
+                color: "#FFFFFF",
+                fontWeight: "bolder",
+                paddingTop: "3%",
+                paddingBottom: "3%",
+                margin: 0,
+              }}
+            >
+              Quantum Modeling App
+            </h2>
+          </p>
+        </Card>
+      </Link>
     </div>
   );
 };

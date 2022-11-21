@@ -23,8 +23,8 @@ gr() # or use pyplot
 
 # INPUT VARIABLES
 V_tunnel = 1 #intensity of barrier (1-5)
-BarrierThickness = 3 #thickness of barrier (not the same as intensity but related) (1-5)
-Momentum = 5 #intensity of wave (1-10)
+BarrierThickness = 1 #thickness of barrier (not the same as intensity but related) (1-5)
+Momentum = 1 #intensity of wave (1-10)
 
 # Values for initial guassian
 x0 = -5
@@ -134,6 +134,8 @@ Hkiny_FFT = LazyProduct(Txp, Hkiny, Tpx);
         n = abs.(ψ.data).^2
         plot(xsample, n, xlims = (0, 120), ylims = (0, .3), title = "Probability Density |ψ(x,t)|^2", xlabel = "Position (x)", ylabel = "Probability Density (|ψ(x,t)|^2)", label = "|ψ|^2", alpha=0.3, linewidth = 2)
     end 
-
-    gif(anim1, "3DTunneling.gif", fps=60)
-    gif(anim2, "2DTunneling.gif", fps=60)
+    # ============== generate GIFs ==============
+    tunneling_3D_img_string = "tunneling_3D_" * string(V_tunnel) * "x" * string(BarrierThickness) * "x" * string(Momentum) * ".gif"
+    tunneling_2D_img_string = "tunneling_2D_" * string(V_tunnel) * "x" * string(BarrierThickness) * "x" * string(Momentum) * ".gif"
+    gif(anim1, tunneling_3D_img_string, fps=60)
+    gif(anim2, tunneling_2D_img_string, fps=60)
