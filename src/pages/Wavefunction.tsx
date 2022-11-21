@@ -119,9 +119,8 @@ const Wavefunction = () => {
           style={{ padding: "1%" }}
         >
           <div>
-            <div style={horizontal_center}>
-              <CustomTitle />
-            </div>
+            <CustomTitle />
+
             <Box
               component="form"
               sx={{
@@ -169,6 +168,7 @@ const Wavefunction = () => {
                 {/* submit button */}
                 <Button
                   variant="contained"
+                  color="success"
                   onClick={handleSubmit}
                   type="submit"
                 >
@@ -217,7 +217,7 @@ const Wavefunction = () => {
             </Grid>
             <CustomDescriptionBox
               msg={
-                "A wave function mathematically describes the wave characteristics of quantum particles, usually electrons."
+                "A wavefunction mathematically describes the wave characteristics of quantum particles, usually electrons."
               }
             />
           </Content>

@@ -23,9 +23,9 @@ using Colors
 gr() # or use pyplot
 
 # INPUT VARIABLES
-Momentum = 10 #intensity of wave (1-10)
+Momentum = 1 #intensity of wave (1-10)
 Spacing = 1 #size of the slit spaces (1-10)
-SlitSeparation = 5 #spacing of the slits relative to the incoming wave (1-5)
+SlitSeparation = 1 #spacing of the slits relative to the incoming wave (1-5)
 V_tunnel = 150 #DON'T MESS WITH THIS UNLESS YOU WANT TUNNELING
 
 # Values for initial guassian
@@ -151,8 +151,8 @@ Hkiny_FFT = LazyProduct(Txp, Hkiny, Tpx);
      plot(xsample, n, ylims = (0, .3), title = "Probability Density |ψ(x,t)|^2", xlabel = "Position (x)", ylabel = "Probability Density (|ψ(x,t)|^2)", label = "|ψ|^2", alpha=0.3, linewidth = 2)
  end 
 
-
-
-
- gif(anim1, "interference_3D.gif", fps=60)
- gif(anim2, "interference_2D_probDensity.gif", fps=60)#may add another 2D function for just wavefunction
+# ============== generate GIFs ==============
+interference_3D_img_string = "interference_3D_" * string(Momentum) * "x" * string(Spacing) * "x" * string(SlitSeparation) * ".gif"
+interference_2D_img_string = "interference_2D_" * string(Momentum) * "x" * string(Spacing) * "x" * string(SlitSeparation) * ".gif"
+ gif(anim1, interference_3D_img_string, fps=60)
+ gif(anim2, interference_2D_img_string, fps=60) # may add another 2D function for just wavefunction

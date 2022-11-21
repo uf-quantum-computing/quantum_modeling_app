@@ -43,13 +43,13 @@ const Tunneling = () => {
   const [thickness, setThickness] = useState("");
   const [wave, setWave] = useState("");
   const [tunneling_img2, set_Tunneling_img2d] = useState(
-    "./model_images/tunneling/2DTunneling_1x1x1.gif"
+    "./model_images/tunneling/tunneling_2D_1x1x1.gif"
   );
   const [tunneling_img3, set_Tunneling_img3d] = useState(
-    "./model_images/tunneling/3DTunneling_1x1x1.gif"
+    "./model_images/tunneling/tunneling_3D_1x1x1.gif"
   );
   const [success_msg, set_Success_Msg] = useState(
-    "Wavefunction with mass = 1 & velocity = 10 generated!"
+    "Tunneling model generated with barrier = 1, thickness = 1, and wave = 1!"
   );
   const [open, setOpen] = useState(false);
 
@@ -86,7 +86,7 @@ const Tunneling = () => {
     console.log("wave:", wave_str);
 
     let img_path_2D =
-      "./model_images/tunneling/2DTunneling_" +
+      "./model_images/tunneling/tunneling_2D_" +
       barrier_str +
       "x" +
       thickness_str +
@@ -94,7 +94,7 @@ const Tunneling = () => {
       wave_str +
       ".gif";
     let img_path_3D =
-      "./model_images/tunneling/3DTunneling_" +
+      "./model_images/tunneling/tunneling_3D_" +
       barrier_str +
       "x" +
       thickness_str +
@@ -104,13 +104,13 @@ const Tunneling = () => {
     set_Tunneling_img2d(img_path_2D);
     set_Tunneling_img3d(img_path_3D);
     set_Success_Msg(
-      "Wavefunction with barrier = " +
+      "Tunneling model generated with barrier = " +
         barrier_str +
-        " & thickness = " +
+        ", thickness = " +
         thickness_str +
-        " & wave = " +
+        ", and wave = " +
         wave_str +
-        " generated!"
+        "!"
     );
   }
 
@@ -126,6 +126,7 @@ const Tunneling = () => {
           style={{ padding: "1%" }}
         >
           <CustomTitle />
+
           <Box
             component="form"
             sx={{
@@ -187,7 +188,12 @@ const Tunneling = () => {
               </FormControl>
 
               {/* ====== Submit Button ====== */}
-              <Button variant="contained" onClick={handleSubmit} type="submit">
+              <Button
+                variant="contained"
+                onClick={handleSubmit}
+                type="submit"
+                color="success"
+              >
                 Generate Model
               </Button>
             </Stack>
