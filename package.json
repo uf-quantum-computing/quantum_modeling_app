@@ -54,14 +54,5 @@
   "devDependencies": {
     "@types/styled-components": "^5.1.26",
     "jest-sonar-reporter": "^2.0.0"
-  },
-  "jest": {
-    "testEnvironment": "node",
-    "collectCoverage": true,
-    "testResultsProcessor": "jest-sonar-reporter",
-    "coveragePathIgnorePatterns": [
-      "/node_modules/",
-      "/test/"
-    ]
   }
 }
