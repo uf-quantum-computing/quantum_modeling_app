@@ -23,9 +23,9 @@ using Colors
 gr() # or use pyplot
 
 # INPUT VARIABLES
-Momentum = 1 #intensity of wave (1-10)
-Spacing = 1 #size of the slit spaces (1-10)
-SlitSeparation = 1 #spacing of the slits relative to the incoming wave (1-5)
+Momentum = 1        # intensity of wave (1-10)
+Spacing = 1         # size of the slit spaces (1-10)
+SlitSeparation = 3  # spacing of the slits relative to the incoming wave (1-5)
 V_tunnel = 150 #DON'T MESS WITH THIS UNLESS YOU WANT TUNNELING
 
 # Values for initial guassian
@@ -44,8 +44,6 @@ xmin = -30
 xmax = 50
 ymin = -20
 ymax = 20
-
-
 
 # Simple potential function for a double-slit
 function potential_slit(x,y)

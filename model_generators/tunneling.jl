@@ -54,6 +54,15 @@ function potential_tunneling(x,y)
 
 end
 
+function potential_tunneling2D(x)
+    # Fill the rest of the wall
+    if x > 13 - (BarrierThickness/2) && x < 13 + (BarrierThickness/2)
+        return V_tunnel
+    else
+        return 0
+    end
+
+end
 potential_guassian(x,y) = exp(-(x^2 + y^2)/15.0) 
 
 ## =================== END POTENTIALS =================== ##
@@ -94,7 +103,7 @@ Hkiny_FFT = LazyProduct(Txp, Hkiny, Tpx);
     ψ = QuantumOpticsBase.tensor(ψx, ψy)
 
 
-    T = collect(0.0:0.1:15.0)
+    T = collect(0.0:0.1:20.0)
     tout, ψt = timeevolution.schroedinger(T, ψ, H);
 
     density = [Array(transpose(reshape((ψ.data), (xres, yres)))) for ψ=ψt]
@@ -121,19 +130,27 @@ Hkiny_FFT = LazyProduct(Txp, Hkiny, Tpx);
 
     Txp2D = transform(b_position, b_momentum)
     Tpx2D = transform(b_momentum, b_position)
-    H2D = LazyProduct(Txp2D, momentum(b_momentum)^2/2, Tpx2D) 
+
     
-    
+    Kinetic = LazyProduct(Txp2D, momentum(b_momentum)^2/2, Tpx2D) 
+
+    V2D = potentialoperator(b_position, potential_tunneling2D)
+    H2D = LazySum(Kinetic, V2D)
+ 
+    ψ2D = gaussianstate(b_position, x0, p0_x, σ)
     ψ2D = gaussianstate(b_position, x0, p0_x, σ)
     
     tout, ψt2D = timeevolution.schroedinger(T, ψ2D, H2D);
 
+    rectangle(w, h, x, y) = Shape(x .+ [0,w,w,0], y .+ [0,0,h,h]) #rectangle function for barrier
     anim2 = @animate for t=1:size(T)[1]
 
         ψ = ψt2D[t]
         n = abs.(ψ.data).^2
-        plot(xsample, n, xlims = (0, 120), ylims = (0, .3), title = "Probability Density |ψ(x,t)|^2", xlabel = "Position (x)", ylabel = "Probability Density (|ψ(x,t)|^2)", label = "|ψ|^2", alpha=0.3, linewidth = 2)
+        plot(xsample, n, ylims = (0, .3), xlabel = "Position (x)", ylabel = "Probability Density", legend = false, linewidth = 3, background_color = "black", seriescolor = "deepskyblue2")
+        plot!(rectangle(BarrierThickness,1,13 - (BarrierThickness/2),0), color = "white", opacity = 0.5)
     end 
+
     # ============== generate GIFs ==============
     tunneling_3D_img_string = "tunneling_3D_" * string(V_tunnel) * "x" * string(BarrierThickness) * "x" * string(Momentum) * ".gif"
     tunneling_2D_img_string = "tunneling_2D_" * string(V_tunnel) * "x" * string(BarrierThickness) * "x" * string(Momentum) * ".gif"

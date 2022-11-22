@@ -23,8 +23,10 @@ import {
   CustomPageHeader,
   CustomTitle,
 } from "../components";
+
 // === sub component imports ===
 const { Sider, Content } = Layout;
+
 // === styles ===
 const select_style = { backgroundColor: "#FFFFFF" };
 const img_style = {
@@ -43,15 +45,15 @@ const Wavefunction = () => {
   const [mass, setMass] = useState("");
   const [velocity, setVelocity] = useState("");
   const [wavefunction_img1, set_Wavefunction_Img1] = useState(
-    "./model_images/wavefunction/wave_1x1.gif"
+    "./model_images/wavefunction/wavefunction_1x1.gif"
   );
   const [wavefunction_img2, set_Wavefunction_Img2] = useState(
-    "./model_images/wavefunction/wave_density_1x1.gif"
+    "./model_images/wavefunction/wavefunction_probDensity_1x1.gif"
   );
   const [success_msg, set_Success_Msg] = useState(
     "Wavefunction with mass = 1 & velocity = 10 generated!"
   );
-  const [open, setOpen] = useState(false);
+  const [open, setOpenSnackbar] = useState(false);
 
   // === handle functions ===
   const handleClose = (
@@ -62,7 +64,7 @@ const Wavefunction = () => {
     if (reason === "clickaway") {
       return;
     }
-    setOpen(false);
+    setOpenSnackbar(false);
   };
   const handleMass = (event: SelectChangeEvent) => {
     setMass(event.target.value as string);
@@ -80,13 +82,13 @@ const Wavefunction = () => {
     console.log("velocity:", velocity_str);
 
     let wave_img1_path =
-      "./model_images/wavefunction/wave_" +
+      "./model_images/wavefunction/wavefunction_" +
       mass_str +
       "x" +
       velocity_str +
       ".gif";
     let wave_img2_path =
-      "./model_images/wavefunction/wave_density_" +
+      "./model_images/wavefunction/wavefunction_probDensity_" +
       mass_str +
       "x" +
       velocity_str +
@@ -103,8 +105,7 @@ const Wavefunction = () => {
         velocity_str +
         " generated!"
     );
-
-    setOpen(true);
+    setOpenSnackbar(true); // open snackbar
   }
 
   // === return ===
@@ -143,9 +144,9 @@ const Wavefunction = () => {
                     defaultValue={"1"}
                     style={select_style}
                   >
+                    <MenuItem value={0.5}>0.5</MenuItem>
                     <MenuItem value={1}>1</MenuItem>
-                    <MenuItem value={5}>5</MenuItem>
-                    <MenuItem value={10}>10</MenuItem>
+                    <MenuItem value={2}>2</MenuItem>
                   </Select>
                 </FormControl>
                 <FormControl fullWidth variant="filled">
@@ -156,12 +157,12 @@ const Wavefunction = () => {
                     value={velocity}
                     label="Test"
                     onChange={handleVelocity}
-                    defaultValue={"10"}
+                    defaultValue={"1"}
                     style={select_style}
                   >
+                    <MenuItem value={0.5}>0.5</MenuItem>
                     <MenuItem value={1}>1</MenuItem>
-                    <MenuItem value={5}>5</MenuItem>
-                    <MenuItem value={10}>10</MenuItem>
+                    <MenuItem value={2}>2</MenuItem>
                   </Select>
                 </FormControl>
 
@@ -181,6 +182,7 @@ const Wavefunction = () => {
                   open={open}
                   autoHideDuration={6000}
                   onClose={handleClose}
+                  anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
                 >
                   <Alert
                     onClose={handleClose}
@@ -194,8 +196,12 @@ const Wavefunction = () => {
             </Box>
           </div>
         </Sider>
+
         {/* ============ Right Content ============ */}
         <Layout style={{ margin: "5%" }}>
+          {/* <Header style={{ borderRadius: "10px" }}>
+            <CustomMenu />
+          </Header> */}
           <Content>
             <CustomPageHeader text="Wavefunction" size="h3" />
             <Grid container spacing={2}>
