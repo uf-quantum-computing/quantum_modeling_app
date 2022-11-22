@@ -1,5 +1,6 @@
 # Dynamic Wavefunction Generation
 # Computational Nano Lab, UFL
+
 # ====================== imports ======================
 using Pkg
 Pkg.add("QuantumOptics")
@@ -16,14 +17,13 @@ using Images
 using ImageCore
 using Colors
 
-# ====================== imports ======================
-
 #Pkg.add("pyplot")
 # Had some issue, so make sure they are installed
 #Pkg.add("LaTeXStrings")
 #Pkg.add("PyCall")
 gr() # or use pyplot
 
+# ====================== Wavefunction ======================
 xmin = -50
 xmax = 50
 Npoints = 200

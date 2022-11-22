@@ -1,5 +1,7 @@
 #Tunneling 2D + 3D
+# Computational Nano Lab, UFL
 
+# ================== import packages ==================
 using Pkg
 Pkg.add("QuantumOptics")
 Pkg.add("LinearAlgebra")
@@ -21,6 +23,7 @@ using Colors
 #Pkg.add("PyCall")
 gr() # or use pyplot
 
+# ================== Tunneling ==================
 # INPUT VARIABLES
 V_tunnel = 1 #intensity of barrier (1-5)
 BarrierThickness = 1 #thickness of barrier (not the same as intensity but related) (1-5)
