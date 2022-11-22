@@ -17,7 +17,9 @@ using ImageCore
 using Colors
 
 # ====================== imports ======================
+
 #Pkg.add("pyplot")
+# Had some issue, so make sure they are installed
 #Pkg.add("LaTeXStrings")
 #Pkg.add("PyCall")
 gr() # or use pyplot
@@ -31,13 +33,15 @@ b_momentum = MomentumBasis(b_position)
 xpoints = samplepoints(b_position)
 #setting up bases
 
-# INPUT VARIABLES
-mass = 10
-velocity = 10 # EDITING NOTE: need to find min/max for fixed output
+#//INPUT VARIABLES
+mass = 2 #0.25 - 2
+velocity = 2 #0.25 - 2
 
-x0 = -35 # starting position
-sigma0 = 2 # constant for gaussian, don't worry about
-p0 = mass * velocity #momentum of particle/packet 
+
+x0 = -35 #starting position
+sigma0 = 2 #constant for gaussian, don't worry about
+p0 = mass * velocity #momentum of particle/packet IMPORTANT: product cannot be more than 5 or it starts interfering with itself
+
 
 Txp = transform(b_position, b_momentum)
 Tpx = transform(b_momentum, b_position)
@@ -55,14 +59,17 @@ waveFunctionAnim = @animate for t=1:size(T)[1]
 
     ψ = ψt[t]
     n = ψ.data
-    plot(xpoints, n, ylims = (-1, 1), zlims = (-1, 1), title = "Wavefunction ψ(x,t)", xlabel = "Position (x)", ylabel = "Position (y)", zlabel = "Position(z)", label = "ψ", alpha=0.3, linewidth = 2)
-end every 2
+    plot(xpoints, n, ylims = (-1, 1), zlims = (-1, 1), xlabel = "Position (x)", ylabel = "Position (y)", zlabel = "Position(z)", legend = false, linewidth = 1.5, background_color = "black", seriescolor = "deepskyblue2")
+end 
 
 probDensityAnim = @animate for t=1:size(T)[1]
 
     ψ = ψt[t]
     n = abs.(ψ.data).^2
-    plot(xpoints, n, ylims = (0, .2), title = "Probability Density |ψ(x,t)|^2", xlabel = "Position (x)", ylabel = "Probability Density (|ψ(x,t)|^2)", label = "|ψ|^2", alpha=0.3, linewidth = 2)
-end every 2
-gif(waveFunctionAnim, "wave_10x10.gif", fps = 60)
-gif(probDensityAnim, "wave_density_10x10.gif", fps = 60)
+    plot(xpoints, n, ylims = (0, .3), xlabel = "Position (x)", ylabel = "Probability Density", legend = false, linewidth = 3, background_color = "black", seriescolor = "deepskyblue2")
+end 
+
+wavefuntion_img_string = "wavefunction_" * string(mass) * "x" * string(velocity) * ".gif"
+wavefuntion_probDensity_img_string = "wavefunction_probDensity_" * string(mass) * "x" * string(velocity) * ".gif"
+gif(waveFunctionAnim, wavefuntion_img_string, fps = 60)
+gif(probDensityAnim, wavefuntion_probDensity_img_string, fps = 60)

@@ -25,6 +25,7 @@ import {
 } from "../components";
 
 // === styles ===
+import { sidebar_style } from "../global_styles";
 const select_style = { backgroundColor: "#FFFFFF" };
 const img_style = {
   borderRadius: "10px",
@@ -55,7 +56,7 @@ const Interference = () => {
   const [success_msg, setSuccessMsg] = useState(
     "Interference model generated with momentum = 1, spacing = 1, and slit separation = 1!"
   );
-  const [open, setOpen] = useState(false);
+  const [open, setOpenSnackbar] = useState(false);
 
   // ========= handle functions =========
   const handleClose = (
@@ -66,7 +67,7 @@ const Interference = () => {
     if (reason === "clickaway") {
       return;
     }
-    setOpen(false);
+    setOpenSnackbar(false);
   };
   const handleMomentum = (event: SelectChangeEvent) => {
     setMomentum(event.target.value as string);
@@ -116,6 +117,7 @@ const Interference = () => {
         slit_separation_str +
         "!"
     );
+    setOpenSnackbar(true); // open snackbar
   }
 
   return (
@@ -124,7 +126,7 @@ const Interference = () => {
         // collapsible
         // collapsed={collapsed}
         // onCollapse={(value) => setCollapsed(value)}
-        style={{ padding: "1%" }}
+        style={sidebar_style}
       >
         <CustomTitle />
         <Box
@@ -150,8 +152,8 @@ const Interference = () => {
                 style={select_style}
               >
                 <MenuItem value={1}>1</MenuItem>
-                <MenuItem value={3}>3</MenuItem>
                 <MenuItem value={5}>5</MenuItem>
+                <MenuItem value={10}>10</MenuItem>
               </Select>
             </FormControl>
             <FormControl variant="filled">
@@ -166,8 +168,8 @@ const Interference = () => {
                 style={select_style}
               >
                 <MenuItem value={1}>1</MenuItem>
-                <MenuItem value={3}>3</MenuItem>
                 <MenuItem value={5}>5</MenuItem>
+                <MenuItem value={10}>10</MenuItem>
               </Select>
             </FormControl>
             <FormControl variant="filled">
@@ -184,8 +186,8 @@ const Interference = () => {
                 style={select_style}
               >
                 <MenuItem value={1}>1</MenuItem>
+                <MenuItem value={3}>3</MenuItem>
                 <MenuItem value={5}>5</MenuItem>
-                <MenuItem value={10}>10</MenuItem>
               </Select>
             </FormControl>
 
@@ -198,20 +200,26 @@ const Interference = () => {
             >
               Generate Model
             </Button>
+
+            <VerticalMenu />
+
+            {/* ====== Snackbar ====== */}
+            <Snackbar
+              open={open}
+              autoHideDuration={6000}
+              onClose={handleClose}
+              anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+            >
+              <Alert
+                onClose={handleClose}
+                severity="success"
+                sx={{ width: "100%" }}
+              >
+                {success_msg}
+              </Alert>
+            </Snackbar>
           </Stack>
         </Box>
-
-        {/* ====== Snackbar ====== */}
-        <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-          <Alert
-            onClose={handleClose}
-            severity="success"
-            sx={{ width: "100%" }}
-          >
-            {success_msg}
-          </Alert>
-        </Snackbar>
-        <VerticalMenu />
       </Sider>
       <Content className="site-layout" style={{ margin: "5%" }}>
         <CustomPageHeader text="Interference" size="h3" />
@@ -235,7 +243,7 @@ const Interference = () => {
 
         <CustomDescriptionBox
           msg={
-            "Quantum tunneling, also known as tunneling is a quantum mechanical phenomenon whereby a wavefunction can propagate through a potential barrier. The transmission through the barrier can be finite and depends exponentially on the barrier height and barrier width."
+            "Quantum interference states that elementary particles can not only be in more than one place at any given time (through superposition), but that an individual particle, such as a photon (light particles) can cross its own trajectory and interfere with the direction of its path."
           }
         />
       </Content>

@@ -18,7 +18,7 @@ const card_style = {
 
 const VerticalMenu = () => {
   return (
-    <div style={{ textAlign: "center", marginTop: "5%" }}>
+    <div style={{ textAlign: "center", marginTop: "50%" }}>
       {/* ==============  Menu ============== */}
 
       <Stack spacing={2} style={stack_style}>

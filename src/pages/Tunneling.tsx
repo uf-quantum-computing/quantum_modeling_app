@@ -15,16 +15,22 @@ import {
 } from "@mui/material";
 import { Layout } from "antd";
 import "antd/dist/antd.min.css";
-// === Components ===
+
+// === Custom Global Styles ===
+import { sidebar_style } from "../global_styles";
+
+// === Custom Components ===
 import {
   VerticalMenu,
   CustomDescriptionBox,
   CustomPageHeader,
   CustomTitle,
 } from "../components";
+
 // === sub component imports ===
 const { Sider, Content } = Layout;
-// === styles ===
+
+// ======== local styles ========
 const select_style = { backgroundColor: "#FFFFFF" };
 const img_style = {
   borderRadius: "10px",
@@ -51,7 +57,7 @@ const Tunneling = () => {
   const [success_msg, set_Success_Msg] = useState(
     "Tunneling model generated with barrier = 1, thickness = 1, and wave = 1!"
   );
-  const [open, setOpen] = useState(false);
+  const [open, setOpenSnackbar] = useState(false);
 
   // ========= handle functions =========
   const handleClose = (
@@ -62,7 +68,7 @@ const Tunneling = () => {
     if (reason === "clickaway") {
       return;
     }
-    setOpen(false);
+    setOpenSnackbar(false);
   };
   const handleBarrier = (event: SelectChangeEvent) => {
     setBarrier(event.target.value as string);
@@ -112,6 +118,7 @@ const Tunneling = () => {
         wave_str +
         "!"
     );
+    setOpenSnackbar(true); // open snackbar
   }
 
   // ========= return =========
@@ -203,7 +210,12 @@ const Tunneling = () => {
           <VerticalMenu />
 
           {/* ====== Snackbar ====== */}
-          <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+          <Snackbar
+            open={open}
+            autoHideDuration={6000}
+            onClose={handleClose}
+            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          >
             <Alert
               onClose={handleClose}
               severity="success"
@@ -215,7 +227,7 @@ const Tunneling = () => {
         </Sider>
 
         {/* ======================== Content ======================== */}
-        <Layout style={{ margin: "5%" }}>
+        <Layout style={sidebar_style}>
           <Content>
             <CustomPageHeader text="Tunneling" size="h3" />
             <Grid container spacing={2}>
