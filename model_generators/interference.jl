@@ -1,5 +1,7 @@
 # Interference 2D + 3D
+# Computational Nano Lab, UFL
 
+# ================== import packages ==================
 using Pkg
 Pkg.add("QuantumOptics")
 Pkg.add("LinearAlgebra")
@@ -22,10 +24,12 @@ using Colors
 #Pkg.add("PyCall")
 gr() # or use pyplot
 
+# ================== Interference ==================
+
 # INPUT VARIABLES
-Momentum = 1        # intensity of wave (1-10)
-Spacing = 1         # size of the slit spaces (1-10)
-SlitSeparation = 3  # spacing of the slits relative to the incoming wave (1-5)
+Momentum = 5 #intensity of wave (1-5)
+Spacing = 1 #size of the slit spaces (1-10)
+SlitSeparation = 5 #spacing of the slits relative to the incoming wave (1-5)
 V_tunnel = 150 #DON'T MESS WITH THIS UNLESS YOU WANT TUNNELING
 
 # Values for initial guassian
@@ -45,6 +49,8 @@ xmax = 50
 ymin = -20
 ymax = 20
 
+
+
 # Simple potential function for a double-slit
 function potential_slit(x,y)
     # Create the slits
@@ -61,7 +67,7 @@ function potential_slit(x,y)
     end
 end
 
-function potential_slit2D(x) 
+function potential_slit2D_at0(x) 
         if x > 20 && x < 25
             return V_tunnel
         else
@@ -135,18 +141,21 @@ Hkiny_FFT = LazyProduct(Txp, Hkiny, Tpx);
  Tpx2D = transform(b_momentum, b_position)
  Kinetic = LazyProduct(Txp2D, momentum(b_momentum)^2/2, Tpx2D) 
 
- V2D = potentialoperator(b_position, potential_slit2D)
- H2D = LazySum(Kinetic, V2D)
+ V2D_at0 = potentialoperator(b_position, potential_slit2D_at0)
+ H2D_at0 = LazySum(Kinetic, V2D_at0)
  
- ψ2D = gaussianstate(b_position, x0, p0_x, σ)
+ ψ2D_at0 = gaussianstate(b_position, x0, p0_x, σ)
  
- tout, ψt2D = timeevolution.schroedinger(T, ψ2D, H2D);
+ tout_at0, ψt2D_at0 = timeevolution.schroedinger(T, ψ2D_at0, H2D_at0);
+
+ rectangle(w, h, x, y) = Shape(x .+ [0,w,w,0], y .+ [0,0,h,h]) #rectangle function for barrier
 
  anim2 = @animate for t=1:size(T)[1]
 
-     ψ = ψt2D[t]
+     ψ = ψt2D_at0[t]
      n = abs.(ψ.data).^2
-     plot(xsample, n, ylims = (0, .3), title = "Probability Density |ψ(x,t)|^2", xlabel = "Position (x)", ylabel = "Probability Density (|ψ(x,t)|^2)", label = "|ψ|^2", alpha=0.3, linewidth = 2)
+     plot(xsample, n, ylims = (0, .3), xlabel = "Position (x)", ylabel = "Probability Density", legend = false, linewidth = 3, background_color = "black", seriescolor = "deepskyblue2")
+     plot!(rectangle(5,1,20,0), color = "white", opacity = 0.5)
  end 
 
 # ============== generate GIFs ==============
