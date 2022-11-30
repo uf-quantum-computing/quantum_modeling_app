@@ -18,7 +18,7 @@ import "antd/dist/antd.min.css";
 
 // === Custom Components ===
 import {
-  VerticalMenu,
+  Dashboard,
   CustomTitle,
   CustomPageHeader,
   CustomDescriptionBox,
@@ -201,7 +201,8 @@ const Interference = () => {
               Generate Model
             </Button>
 
-            <VerticalMenu />
+            {/* ====== Dashboard ====== */}
+              <Dashboard />
 
             {/* ====== Snackbar ====== */}
             <Snackbar

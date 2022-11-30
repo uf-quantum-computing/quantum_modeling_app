@@ -18,7 +18,7 @@ import { Layout } from "antd";
 import "antd/dist/antd.min.css";
 // === Components ===
 import {
-  VerticalMenu,
+  Dashboard,
   CustomDescriptionBox,
   CustomPageHeader,
   CustomTitle,
@@ -176,8 +176,10 @@ const Wavefunction = () => {
                   Generate Model
                 </Button>
 
-                <VerticalMenu />
+                {/* ====== Dashboard ====== */}
+                  <Dashboard />
 
+                {/* ====== Snackbar ====== */}
                 <Snackbar
                   open={open}
                   autoHideDuration={6000}

@@ -31,7 +31,7 @@ const Home = () => {
               textDecoration: "none",
             }}
           >
-            <p
+            <h2
               style={{
                 color: "white",
                 // padding: "0.25em 1em",
@@ -40,7 +40,7 @@ const Home = () => {
               }}
             >
               <b>Start Modeling</b>
-            </p>
+            </h2>
           </Link>
         </div>
       </div>

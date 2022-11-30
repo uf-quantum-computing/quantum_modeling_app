@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link, useNavigate  } from "react-router-dom";
 // === UI Components ===
 import {
   Grid,
@@ -25,6 +26,7 @@ import {
   CustomDescriptionBox,
   CustomPageHeader,
   CustomTitle,
+  Dashboard,
 } from "../components";
 
 // === sub component imports ===
@@ -44,6 +46,9 @@ const horizontal_center = {
 };
 
 const Tunneling = () => {
+
+  let navigate = useNavigate();
+
   // ========= states =========
   const [barrier, setBarrier] = useState("");
   const [thickness, setThickness] = useState("");
@@ -206,8 +211,8 @@ const Tunneling = () => {
             </Stack>
           </Box>
 
-          {/* ====== VerticalMenu ====== */}
-          <VerticalMenu />
+          {/* ====== Dashboard ====== */}
+          <Dashboard />
 
           {/* ====== Snackbar ====== */}
           <Snackbar
