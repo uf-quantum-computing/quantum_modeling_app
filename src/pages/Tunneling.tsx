@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Link, useNavigate  } from "react-router-dom";
 // === UI Components ===
 import {
   Grid,
@@ -22,7 +21,6 @@ import { sidebar_style } from "../global_styles";
 
 // === Custom Components ===
 import {
-  VerticalMenu,
   CustomDescriptionBox,
   CustomPageHeader,
   CustomTitle,
@@ -46,9 +44,6 @@ const horizontal_center = {
 };
 
 const Tunneling = () => {
-
-  let navigate = useNavigate();
-
   // ========= states =========
   const [barrier, setBarrier] = useState("");
   const [thickness, setThickness] = useState("");
