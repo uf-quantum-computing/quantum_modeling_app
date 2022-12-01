@@ -16,9 +16,6 @@ import {
 import { Layout } from "antd";
 import "antd/dist/antd.min.css";
 
-// === Custom Global Styles ===
-import { sidebar_style } from "../global_styles";
-
 // === Custom Components ===
 import {
   CustomDescriptionBox,
@@ -227,7 +224,7 @@ const Tunneling = () => {
         </Sider>
 
         {/* ======================== Content ======================== */}
-        <Layout style={sidebar_style}>
+        <Layout style={{ margin: "5%" }}>
           <Content>
             <CustomPageHeader text="Tunneling" size="h3" />
             <Grid container spacing={2}>

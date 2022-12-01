@@ -177,7 +177,7 @@ const Wavefunction = () => {
                 </Button>
 
                 {/* ====== Dashboard ====== */}
-                  <Dashboard />
+                <Dashboard />
 
                 {/* ====== Snackbar ====== */}
                 <Snackbar
@@ -201,9 +201,6 @@ const Wavefunction = () => {
 
         {/* ============ Right Content ============ */}
         <Layout style={{ margin: "5%" }}>
-          {/* <Header style={{ borderRadius: "10px" }}>
-            <CustomMenu />
-          </Header> */}
           <Content>
             <CustomPageHeader text="Wavefunction" size="h3" />
             <Grid container spacing={2}>
