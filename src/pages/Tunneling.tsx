@@ -88,6 +88,17 @@ const Tunneling = () => {
     console.log("thickness:", thickness_str);
     console.log("wave:", wave_str);
 
+    // if no input, set to default
+    if (barrier_str === "") {
+      barrier_str = "1";
+    }
+    if (thickness_str === "") {
+      thickness_str = "1";
+    }
+    if (wave_str === "") {
+      wave_str = "1";
+    }
+
     let img_path_2D =
       "./model_images/tunneling/tunneling_2D_" +
       barrier_str +
