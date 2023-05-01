@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Link, useNavigate  } from "react-router-dom";
 // === UI Components ===
 import {
   Grid,
@@ -17,12 +16,8 @@ import {
 import { Layout } from "antd";
 import "antd/dist/antd.min.css";
 
-// === Custom Global Styles ===
-import { sidebar_style } from "../global_styles";
-
 // === Custom Components ===
 import {
-  VerticalMenu,
   CustomDescriptionBox,
   CustomPageHeader,
   CustomTitle,
@@ -46,9 +41,6 @@ const horizontal_center = {
 };
 
 const Tunneling = () => {
-
-  let navigate = useNavigate();
-
   // ========= states =========
   const [barrier, setBarrier] = useState("");
   const [thickness, setThickness] = useState("");
@@ -95,6 +87,17 @@ const Tunneling = () => {
     console.log("barrier:", barrier_str);
     console.log("thickness:", thickness_str);
     console.log("wave:", wave_str);
+
+    // if no input, set to default
+    if (barrier_str === "") {
+      barrier_str = "1";
+    }
+    if (thickness_str === "") {
+      thickness_str = "1";
+    }
+    if (wave_str === "") {
+      wave_str = "1";
+    }
 
     let img_path_2D =
       "./model_images/tunneling/tunneling_2D_" +
@@ -232,7 +235,7 @@ const Tunneling = () => {
         </Sider>
 
         {/* ======================== Content ======================== */}
-        <Layout style={sidebar_style}>
+        <Layout style={{ margin: "5%" }}>
           <Content>
             <CustomPageHeader text="Tunneling" size="h3" />
             <Grid container spacing={2}>

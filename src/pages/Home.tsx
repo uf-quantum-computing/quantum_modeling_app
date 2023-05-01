@@ -70,13 +70,13 @@ const Home = () => {
         </p>
         <h2>How this website works</h2>
         <p>
-          Click on one of the buttons below and it will take you to quantum
+          Click on "Start Modeling" above and it will take you to quantum
           phenomena you can experiment with. Once you're there, you can try out
-          different inputs and an animation will pop up! For example, you can go
-          to the tunneling phenomena and play around with the momentum and
-          barrier thickness. We'll have descriptions of whats happening on each
-          page, so you'll be able to understand exactly what's happening. Have
-          fun!
+          different inputs and their simulations will pop up! For example, you
+          can go to the tunneling phenomena and play around with the momentum
+          and barrier thickness. We'll have descriptions of whats happening on
+          each page, so you'll be able to understand exactly what's happening.
+          Have fun!
         </p>
         <h2>Try it yourself</h2>
         <p>

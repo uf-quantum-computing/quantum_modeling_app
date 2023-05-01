@@ -81,6 +81,14 @@ const Wavefunction = () => {
     console.log("mass:", mass_str);
     console.log("velocity:", velocity_str);
 
+    // if no input is selected, set to default values
+    if (mass_str === "") {
+      mass_str = "0.5";
+    }
+    if (velocity_str === "") {
+      velocity_str = "0.5";
+    }
+
     let wave_img1_path =
       "./model_images/wavefunction/wavefunction_" +
       mass_str +
@@ -177,7 +185,7 @@ const Wavefunction = () => {
                 </Button>
 
                 {/* ====== Dashboard ====== */}
-                  <Dashboard />
+                <Dashboard />
 
                 {/* ====== Snackbar ====== */}
                 <Snackbar
@@ -201,9 +209,6 @@ const Wavefunction = () => {
 
         {/* ============ Right Content ============ */}
         <Layout style={{ margin: "5%" }}>
-          {/* <Header style={{ borderRadius: "10px" }}>
-            <CustomMenu />
-          </Header> */}
           <Content>
             <CustomPageHeader text="Wavefunction" size="h3" />
             <Grid container spacing={2}>

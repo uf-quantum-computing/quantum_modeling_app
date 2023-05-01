@@ -90,6 +90,17 @@ const Interference = () => {
     console.log("spacing:", spacing_str);
     console.log("slit_separation:", slit_separation_str);
 
+    // if no values are selected, set to default values
+    if (momentum_str === "") {
+      momentum_str = "1";
+    }
+    if (spacing_str === "") {
+      spacing_str = "1";
+    }
+    if (slit_separation_str === "") {
+      slit_separation_str = "1";
+    }
+
     let img_path_2D =
       "./model_images/interference/interference_2D_" +
       momentum_str +
@@ -202,7 +213,7 @@ const Interference = () => {
             </Button>
 
             {/* ====== Dashboard ====== */}
-              <Dashboard />
+            <Dashboard />
 
             {/* ====== Snackbar ====== */}
             <Snackbar
