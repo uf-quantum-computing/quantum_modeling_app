@@ -32,6 +32,17 @@ const CustomTitle = () => {
           </p>
         </Card>
       </Link>
+      <h5
+        style={{
+          color: "#FFFFFF",
+          textAlign: "center",
+          paddingTop: "3%", 
+          paddingBottom: "3%",
+          margin: 0,
+        }}
+      >
+        Click on the drop-down boxes to change the values for the model and press Generate Model when you're ready!
+      </h5>
     </div>
   );
 };

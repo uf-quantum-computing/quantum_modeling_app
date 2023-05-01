@@ -224,9 +224,17 @@ const Wavefunction = () => {
               </Grid>
             </Grid>
             <CustomDescriptionBox
-              msg={
-                "A wavefunction mathematically describes the wave characteristics of quantum particles, usually electrons."
-              }
+              msg={`
+                A wavefunction mathematically describes the wave characteristics of quantum particles, usually electrons.
+
+                In classical mechanics, objects are typically depicted as free bodies with a known kinetic and potential energy relative to their environment, like a ball at the top of a slope. Objects in quantum mechanics, typically subatomic particles like photons and electrons, are also described in a similar way where theirkinetic and potential energies are combined to describe their behavior. This is known as the Hamiltonian operator. This is the core of how we talk about systems in quantum physics. It dictates what is known about the energy of the system and applies it to the wave function of a particle to represent its movement relative to time, much like how knowing the total energy of a ball allows us to understand how it will move down a slope and thereby where it might be at any given time.
+                
+                Shown is a wave function of a particle where assuming no potential energy in the system, just kinetic energy as dictated by its mass and velocity. Notice as the particle propagates in the x-direction, it causes perturbations in the y and z directions.
+                
+                The other example shown is the particle’s “probability density”. This is how likely the particle will be at a location at a given time. In classical physics, we can know with certainty where a ball will be with great precision as it travels down a slope. If the probability density of a ball were plotted, it would result in a sharp point traveling smoothly along at 1 or 100%. However, when considering the quantum realm, we lose this certainty. The Heisenberg Uncertainty Principle dictates that the position and momentum in a single direction of a particle can not be simultaneously known. This is due to the fact that particles at such small scale behave more erratically than those on a classical scale. The result in this case is a curved probability density traveling in time as shown.
+
+                Try altering the mass and velocity of the particle. How does this affect its propagation? How does it change the shape of its wave function? How does the probability density change relative to its kinetic energy?
+                `}
             />
           </Content>
         </Layout>

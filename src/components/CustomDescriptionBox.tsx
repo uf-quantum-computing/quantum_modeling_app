@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, CardContent } from "@mui/material";
+import { Card, CardContent, Typography } from "@mui/material";
 
 // ========== styles ==========
 const card_style = {
@@ -16,7 +16,9 @@ const CustomDescriptionBox = (props: any) => {
     <div>
       <Card style={card_style}>
         <CardContent>
+        <Typography whiteSpace="pre-line">
           <p style={{ textAlign: "center", margin: 0 }}>{props.msg}</p>
+          </Typography>
         </CardContent>
       </Card>
     </div>
