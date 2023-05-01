@@ -1,6 +1,5 @@
 import { bg_gradient } from "../images";
 import { Link } from "react-router-dom";
-import Button from "@mui/material/Button";
 
 const Home = () => {
   return (
