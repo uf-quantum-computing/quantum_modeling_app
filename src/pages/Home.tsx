@@ -1,5 +1,6 @@
 import { bg_gradient } from "../images";
 import { Link } from "react-router-dom";
+import Button from "@mui/material/Button";
 
 const Home = () => {
   return (
@@ -39,7 +40,20 @@ const Home = () => {
                 // borderRadius: "3px",
               }}
             >
-              <b>Start Modeling</b>
+              
+              <button
+              style={{
+                backgroundColor: "white",
+                borderRadius: "5px",
+                borderStyle: "none",
+                color: "navy",
+                fontSize: "25px",
+                padding: "10px"
+
+             }} > Start Modeling</button>
+
+              <div className="down-arrow"></div>
+              
             </h2>
           </Link>
         </div>
