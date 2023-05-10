@@ -13,8 +13,10 @@ import {
   InputLabel,
   FormControl,
 } from "@mui/material";
+import CircularProgress from '@mui/joy/CircularProgress';
 import { Layout } from "antd";
 import "antd/dist/antd.min.css";
+import axios from "axios";
 
 // === Custom Components ===
 import {
@@ -41,6 +43,7 @@ const horizontal_center = {
 };
 
 const Tunneling = () => {
+  const [loading, setLoading] = useState(false);
   // ========= states =========
   const [barrier, setBarrier] = useState("");
   const [thickness, setThickness] = useState("");
@@ -55,6 +58,17 @@ const Tunneling = () => {
     "Tunneling model generated with barrier = 1, thickness = 1, and wave = 1!"
   );
   const [open, setOpenSnackbar] = useState(false);
+
+  async function getGifFromServer(request_url: string) {
+    try {
+      const response = await axios.get(request_url);
+      const base64Gif2D = response.data['2D'];
+      const base64Gif3D = response.data['3D'];
+      return { base64Gif2D, base64Gif3D };
+    } catch (error) {
+      console.error("Error fetching gif from server:", error);
+    }
+  }
 
   // ========= handle functions =========
   const handleClose = (
@@ -79,7 +93,8 @@ const Tunneling = () => {
     setWave(event.target.value as string);
     console.log(event.target.value);
   };
-  function handleSubmit(event: any) {
+  async function handleSubmit(event: any) {
+    setLoading(true);
     event.preventDefault();
     let barrier_str = barrier.toString();
     let thickness_str = thickness.toString();
@@ -87,6 +102,7 @@ const Tunneling = () => {
     console.log("barrier:", barrier_str);
     console.log("thickness:", thickness_str);
     console.log("wave:", wave_str);
+    let base_url = "http://44.227.0.52:59059/v1/hello?"
 
     // if no input, set to default
     if (barrier_str === "") {
@@ -99,33 +115,31 @@ const Tunneling = () => {
       wave_str = "1";
     }
 
-    let img_path_2D =
-      "./model_images/tunneling/tunneling_2D_" +
-      barrier_str +
-      "x" +
-      thickness_str +
-      "x" +
-      wave_str +
-      ".gif";
-    let img_path_3D =
-      "./model_images/tunneling/tunneling_3D_" +
-      barrier_str +
-      "x" +
-      thickness_str +
-      "x" +
-      wave_str +
-      ".gif";
-    set_Tunneling_img2d(img_path_2D);
-    set_Tunneling_img3d(img_path_3D);
-    set_Success_Msg(
-      "Tunneling model generated with barrier = " +
-        barrier_str +
-        ", thickness = " +
-        thickness_str +
-        ", and wave = " +
-        wave_str +
-        "!"
-    );
+    let final_url =
+      base_url + "intensity=" + barrier_str +
+      "&thickness=" + thickness_str +
+      "&momentum=" + wave_str;
+    
+    const gifData = await getGifFromServer(final_url);
+    if (gifData) {
+      const { base64Gif2D, base64Gif3D } = gifData;
+      if (base64Gif2D) {
+        set_Tunneling_img2d(`${base64Gif2D}`);
+      }
+      if (base64Gif3D) {
+        set_Tunneling_img3d(`${base64Gif3D}`);
+      }
+      set_Success_Msg(
+        "Tunneling model generated with barrier = " +
+          barrier_str +
+          ", thickness = " +
+          thickness_str +
+          ", and wave = " +
+          wave_str +
+          "!"
+      );
+      setLoading(false);
+    }
     setOpenSnackbar(true); // open snackbar
   }
 
@@ -203,14 +217,18 @@ const Tunneling = () => {
               </FormControl>
 
               {/* ====== Submit Button ====== */}
-              <Button
-                variant="contained"
-                onClick={handleSubmit}
-                type="submit"
-                color="success"
-              >
-                Generate Model
-              </Button>
+              {loading ? (
+                <CircularProgress />
+              ) : (
+                <Button
+                  variant="contained"
+                  onClick={handleSubmit}
+                  type="submit"
+                  color="success"
+                >
+                  Generate Model
+                </Button>
+              )}
             </Stack>
           </Box>
 
