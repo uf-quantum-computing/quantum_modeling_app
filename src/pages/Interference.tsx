@@ -254,15 +254,12 @@ const Interference = () => {
         </Grid>
 
         <CustomDescriptionBox
-          msg={`Quantum interference states that elementary particles can not only be in more than one place at any given time (through superposition), but that an individual particle, such as a photon (light particles) can cross its own trajectory and interfere with the direction of its path.
-          
-          Particles in quantum mechanics behave very differently from those that we observe day-to-day in the realm of classical physics. Each particle behaves both as a solid object with a calculable energy and momentum and a wave with a calculable frequency and wavelength. This is only possible at incredibly low scale due to a phenomenon known as the “Wave-Particle Duality” as described by the DeBroglie Wavelength which dictates that all entities have a known frequency relative to the Planck’s Constant (6.63 * 10^-23) and its momentum.
-          
-          F = p/h
-          
-          Note that the frequency increases very quickly with momentum and thus the wavelength quickly becomes incalculably small unless the momentum is also suitably small, like for example, an electron or a photon as shown in this example.
-          
-          Shown is a classic demonstration of the Wave-Particle Duality by showing photons interfering with each other. Normally, when a light is shown at an object, the resulting shadow would simply be the negative of that object. However, in this example, where a beam of light is shown at a pair of slits, two slits do not form as a negative on the resulting side, but rather a periodic spectrum of dashes of diminishing intensity. If the photons were only particles, they should have been able to pass through theslits and carried on as there should have been no interfering obstacle but they not only appear to splash outwards from the slits, thus hinting at their wave-like nature, but the resulting waves interfere with each other thus suggesting contact interactions among the particles of each resultant waves. Shown is a top-down view of the experiment and a representation of reflection from the barrier to demonstrate that no interference is resultant from tunneling but only from the two resultant waves intersecting at regular angular intervals. Try altering the spacing and width of the slits and kinetic energy of the wave. How does the wavelengthof the incoming wave appear to change the size and frequency of the dashes on the wall? Does increasing or decreasing the kinetic energy of the wave affect the interference pattern? Why or why not?
+          msg={`
+
+          In quantum mechanics, particles like electrons and photons exhibit both wave-like and particle-like behavior, which is known as wave-particle duality. This is due to the fact that all particles have a wavelength associated with them, as described by the DeBroglie wavelength equation (λ = h/p), where λ is the wavelength, h is Planck's constant, and p is the momentum of the particle. At the quantum scale, the wavelength becomes significant, and the particle's behavior is best described by a wave function. This allows particles to exhibit phenomena like interference and superposition, which are not observed in classical physics. 
+
+          Shown is a classic demonstration of the Wave-Particle Duality by showing photons interfering with each other. Normally, when a light is shown at an object, the resulting shadow would simply be the negative of that object. However, in this example, where a beam of light is shown at a pair of slits, two slits do not form as a negative on the resulting side, but rather a periodic spectrum of dashes of diminishing intensity. If the photons were only particles, they should have been able to pass through the slits and carried on as there should have been no interfering obstacle but they not only appear to splash outwards from the slits, thus hinting at their wave-like nature, but the resulting waves interfere with each other thus suggesting contact interactions among the particles of each resultant waves. Shown is a top-down view of the experiment and a representation of reflection from the barrier to demonstrate that no interference is resultant from tunneling but only from the two resultant waves intersecting at regular angular intervals. 
+
           `}
         />
       </Content>
