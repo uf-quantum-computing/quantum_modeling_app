@@ -5,18 +5,32 @@ import {
   Box,
   Button,
   Stack,
-  Select,
-  MenuItem,
   SelectChangeEvent,
   Alert,
   Snackbar,
   InputLabel,
   FormControl,
+  Slider
 } from "@mui/material";
 import CircularProgress from '@mui/joy/CircularProgress';
 import { Layout } from "antd";
 import "antd/dist/antd.min.css";
 import axios from "axios";
+
+// // === Flask API ===
+// const sendDataToAPI = async (barrierValue, thickness, waveValue) => {
+//   try {
+//     const response = await axios.post('/receive_data', {
+//       barrier_value: barrierValue,
+//       thickness: thickness,
+//       wave_value: waveValue,
+//     });
+
+//     console.log(response.data.message); // Assuming the API returns a success message
+//   } catch (error) {
+//     console.error('Error sending data:', error);
+//   }
+// };
 
 // === Custom Components ===
 import {
@@ -102,9 +116,11 @@ const Tunneling = () => {
     console.log("barrier:", barrier_str);
     console.log("thickness:", thickness_str);
     console.log("wave:", wave_str);
-    let base_url = "http://44.227.0.52:59059/v1/hello?"
+    // Change url below
+    let base_url = "http://127.0.0.1:39022/v1/hello?"
 
     // if no input, set to default
+    //TODO: need to pass in the values into the api 
     if (barrier_str === "") {
       barrier_str = "1";
     }
@@ -167,53 +183,61 @@ const Tunneling = () => {
           >
             <Stack spacing={3}>
               {/* ====== Select Inputs ====== */}
+              {/* ====== Barrier Slider ====== */}
               <FormControl variant="filled">
-                <InputLabel id="barrier-select">Barrier</InputLabel>
-                <Select
-                  labelId="barrier-select"
+                <InputLabel 
                   id="barrier-select"
-                  value={barrier}
-                  label="Test"
-                  onChange={handleBarrier}
-                  defaultValue={"1"}
-                  style={select_style}
-                >
-                  <MenuItem value={1}>1</MenuItem>
-                  <MenuItem value={3}>3</MenuItem>
-                  <MenuItem value={5}>5</MenuItem>
-                </Select>
+                  style={{color: "white", marginTop: "10px",  marginBottom: "10px",textAlign: "center"}}
+                  >
+                  Barrier
+                  </InputLabel>
+                <Slider
+                  sx={{ color: "#FFFFFF" }}
+                  aria-label="barrier-select"
+                  min={1}
+                  max={10}
+                  defaultValue={1}
+                  valueLabelDisplay="auto"
+                  step={1}
+                />
               </FormControl>
+
+              {/* ====== Thickness Slider ====== */}
               <FormControl variant="filled">
-                <InputLabel id="thickness-select">Thickness</InputLabel>
-                <Select
-                  labelId="thickness-select-label"
+                <InputLabel 
                   id="thickness-select"
-                  value={thickness}
-                  label="Thickness"
-                  onChange={handleThickness}
-                  defaultValue={"10"}
-                  style={select_style}
-                >
-                  <MenuItem value={1}>1</MenuItem>
-                  <MenuItem value={3}>3</MenuItem>
-                  <MenuItem value={5}>5</MenuItem>
-                </Select>
+                  style={{color: "white", marginTop: "10px", marginBottom: "10px",textAlign: "center"}}
+                  >  
+                  Thickness
+                  </InputLabel>
+                <Slider
+                  sx={{ color: "#FFFFFF" }}
+                  aria-label="spacing-select"
+                  min={1}
+                  max={10}
+                  defaultValue={1}
+                  valueLabelDisplay="auto"
+                  step={1}
+                />
               </FormControl>
+
+              {/* ====== Wave Select ====== */}
               <FormControl variant="filled">
-                <InputLabel id="wave-input-label">Wave</InputLabel>
-                <Select
-                  labelId="wave-select-label"
+                <InputLabel 
                   id="wave-select"
-                  value={wave}
-                  label="Wave"
-                  onChange={handleWave}
-                  defaultValue={"1"}
-                  style={select_style}
-                >
-                  <MenuItem value={1}>1</MenuItem>
-                  <MenuItem value={5}>5</MenuItem>
-                  <MenuItem value={10}>10</MenuItem>
-                </Select>
+                  style={{color: "white", marginTop: "10px", marginBottom: "10px",textAlign: "center"}}
+                  >  
+                  Wave
+                  </InputLabel>
+                <Slider
+                  sx={{ color: "#FFFFFF" }}
+                  aria-label="spacing-select"
+                  min={1}
+                  max={10}
+                  defaultValue={1}
+                  valueLabelDisplay="auto"
+                  step={1}
+                />
               </FormControl>
 
               {/* ====== Submit Button ====== */}

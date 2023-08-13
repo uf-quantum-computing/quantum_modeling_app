@@ -6,13 +6,12 @@ import {
   Box,
   Button,
   Stack,
-  Select,
-  MenuItem,
   SelectChangeEvent,
   Alert,
   Snackbar,
   InputLabel,
   FormControl,
+  Slider
 } from "@mui/material";
 import { Layout } from "antd";
 import "antd/dist/antd.min.css";
@@ -139,39 +138,46 @@ const Wavefunction = () => {
               autoComplete="off"
               style={horizontal_center}
             >
+              {/* ====== Sliders ====== */}
+
+              {/* ====== Mass Slider ====== */}
               <Stack spacing={3}>
                 {/* selects */}
-                <FormControl fullWidth variant="filled">
-                  <InputLabel id="mass-label">Mass</InputLabel>
-                  <Select
-                    labelId="mass-label"
-                    id="mass-label-select"
-                    value={mass}
-                    label="Mass"
-                    onChange={handleMass}
-                    defaultValue={"1"}
-                    style={select_style}
-                  >
-                    <MenuItem value={0.5}>0.5</MenuItem>
-                    <MenuItem value={1}>1</MenuItem>
-                    <MenuItem value={2}>2</MenuItem>
-                  </Select>
+                <FormControl variant="filled">
+                  <InputLabel 
+                    id="mass-select"
+                    style={{color: "white", marginTop: "10px", marginBottom: "10px",textAlign: "center"}}
+                    >  
+                    Mass
+                    </InputLabel>
+                  <Slider
+                    sx={{ color: "#FFFFFF" }}
+                    aria-label="mass-select"
+                    min={1}
+                    max={10}
+                    defaultValue={1}
+                    valueLabelDisplay="auto"
+                    step={1}
+                  />
                 </FormControl>
-                <FormControl fullWidth variant="filled">
-                  <InputLabel id="velocity-label">Velocity</InputLabel>
-                  <Select
-                    labelId="velocity-label"
+
+                {/* ====== Velocity Slider ====== */}
+                <FormControl variant="filled">
+                  <InputLabel 
                     id="velocity-select"
-                    value={velocity}
-                    label="Test"
-                    onChange={handleVelocity}
-                    defaultValue={"1"}
-                    style={select_style}
-                  >
-                    <MenuItem value={0.5}>0.5</MenuItem>
-                    <MenuItem value={1}>1</MenuItem>
-                    <MenuItem value={2}>2</MenuItem>
-                  </Select>
+                    style={{color: "white", marginTop: "10px", marginBottom: "10px",textAlign: "center"}}
+                    >  
+                    Velocity
+                    </InputLabel>
+                  <Slider
+                    sx={{ color: "#FFFFFF" }}
+                    aria-label="velocity-select"
+                    min={1}
+                    max={10}
+                    defaultValue={1}
+                    valueLabelDisplay="auto"
+                    step={1}
+                  />
                 </FormControl>
 
                 {/* submit button */}
