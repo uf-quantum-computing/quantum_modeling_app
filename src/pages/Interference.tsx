@@ -5,13 +5,12 @@ import {
   Box,
   Button,
   Stack,
-  Select,
-  MenuItem,
   SelectChangeEvent,
   Alert,
   Snackbar,
   InputLabel,
   FormControl,
+  Slider,
 } from "@mui/material";
 import { Layout } from "antd";
 import "antd/dist/antd.min.css";
@@ -86,6 +85,7 @@ const Interference = () => {
     let momentum_str = momentum.toString();
     let spacing_str = spacing.toString();
     let slit_separation_str = slit_separation.toString();
+    //TODO: need to edit to be able to display the right message prompt
     console.log("momentum:", momentum_str);
     console.log("spacing:", spacing_str);
     console.log("slit_separation:", slit_separation_str);
@@ -139,7 +139,7 @@ const Interference = () => {
         // onCollapse={(value) => setCollapsed(value)}
         style={sidebar_style}
       >
-        <CustomTitle />
+        <CustomTitle/>
         <Box
           component="form"
           sx={{
@@ -149,68 +149,81 @@ const Interference = () => {
           autoComplete="off"
           style={horizontal_center}
         >
+
           <Stack spacing={3}>
+            
             {/* ====== Select Inputs ====== */}
+            {/* Momentum Slider*/}
             <FormControl variant="filled">
-              <InputLabel id="momentum-select">Momentum</InputLabel>
-              <Select
-                labelId="barrier-select"
-                id="barrier-select"
-                value={momentum}
-                label="Test"
-                onChange={handleMomentum}
-                defaultValue={"1"}
-                style={select_style}
-              >
-                <MenuItem value={1}>1</MenuItem>
-                <MenuItem value={5}>5</MenuItem>
-                <MenuItem value={10}>10</MenuItem>
-              </Select>
+              <InputLabel 
+                id="momentum-select"
+                style={{color: "white", marginTop: "10px",  marginBottom: "10px",textAlign: "center"}}
+                >  
+                Momentum
+                </InputLabel>
+              <Slider
+                sx={{ color: "#FFFFFF" }}
+                aria-label="momentum-select"
+                min={1}
+                max={10}
+                defaultValue={1}
+                valueLabelDisplay="auto"
+                step={1}
+              />
             </FormControl>
+
+            {/* Spacing slider */}
             <FormControl variant="filled">
-              <InputLabel id="spacing-select">Spacing</InputLabel>
-              <Select
-                labelId="spacing-select-label"
+              <InputLabel 
                 id="spacing-select"
-                value={spacing}
-                label="Spacing"
-                onChange={handleSpacing}
-                defaultValue={"10"}
-                style={select_style}
-              >
-                <MenuItem value={1}>1</MenuItem>
-                <MenuItem value={5}>5</MenuItem>
-                <MenuItem value={10}>10</MenuItem>
-              </Select>
+                style={{color: "white", marginTop: "10px", marginBottom: "10px",textAlign: "center"}}
+                >  
+                Spacing
+                </InputLabel>
+              <Slider
+                sx={{ color: "#FFFFFF" }}
+                aria-label="spacing-select"
+                min={1}
+                max={10}
+                defaultValue={1}
+                valueLabelDisplay="auto"
+                step={1}
+              />
             </FormControl>
+
+            {/* Slit Seperation slider */}
             <FormControl variant="filled">
-              <InputLabel id="slit-separation-input-label">
+              <InputLabel 
+                id="slit-select"
+                style={{color: "white", marginTop: "10px", marginBottom: "10px", textAlign: "center"}}
+                >  
                 Slit Separation
-              </InputLabel>
-              <Select
-                labelId="slit_separation-select-label"
-                id="slit_separation-select"
-                value={slit_separation}
-                label="slit_separation"
-                onChange={handleSlitSeparation}
-                defaultValue={"1"}
-                style={select_style}
-              >
-                <MenuItem value={1}>1</MenuItem>
-                <MenuItem value={3}>3</MenuItem>
-                <MenuItem value={5}>5</MenuItem>
-              </Select>
+                </InputLabel>
+              <Slider
+                sx={{ color: "#FFFFFF" }}
+                aria-label="slit-separation-select"
+                min={1}
+                max={10}
+                defaultValue={1}
+                valueLabelDisplay="auto"
+                step={1}
+              />
             </FormControl>
 
             {/* ====== Submit Button ====== */}
-            <Button
-              variant="contained"
-              onClick={handleSubmit}
-              type="submit"
-              color="success"
-            >
-              Generate Model
-            </Button>
+            <div style ={{ marginTop: "10px", marginBottom: "10px", textAlign: "center"}}>
+              <Button
+                variant="contained"
+                onClick={handleSubmit}
+                type="submit"
+                color="success"
+                sx={{
+                  marginTop: "50px", // Adds space above the button
+                }}
+              >
+                Generate Model
+              </Button>
+            </div>
 
             {/* ====== Dashboard ====== */}
             <Dashboard />

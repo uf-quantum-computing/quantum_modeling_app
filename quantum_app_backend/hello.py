@@ -4,8 +4,9 @@ from flask import request
 from subprocess import Popen, PIPE
 
 
-pc = Popen(['/home/UFAD/qimao.yang/julia-1.8.5/bin/julia'], stdin=PIPE, stdout=PIPE)
-pc.stdin.write(b'include("/home/UFAD/qimao.yang/quantum_app_backend/functions.jl")\n')
+pc = Popen(['C:/Users/willr/AppData/Local/Programs/Julia-1.9.1/bin/julia.exe'], stdin=PIPE, stdout=PIPE)
+pc.stdin.write(b'include("quantum_modeling_app/quantum_app_backend/functions.jl")\n')
+
 pc.stdin.flush()
 print(repr(pc.stdout.readline()))
 # init api namespace
