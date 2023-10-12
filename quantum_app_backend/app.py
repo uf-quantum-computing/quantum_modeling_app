@@ -4,30 +4,30 @@ from flask_cors import CORS
 from watchdog.events import FileSystemEvent
 
 
-# #set swagger info
-# api: Api = Api(
-#     title='quantum_modeling',
-#     version='1.0',
-#     description='v1.0',
-#     prefix='/v1'
-# )
+#set swagger info
+api: Api = Api(
+    title='quantum_modeling',
+    version='1.0',
+    description='v1.0',
+    prefix='/v1'
+)
 
 app = Flask(__name__)
 
-# api.init_app(app)
+api.init_app(app)
 
-#CORS added
-# CORS(app, supports_credentials=True)
+# CORS added
+CORS(app, supports_credentials=True)
 
-# @app.route('/recieve_data', methods=['POST'])
-# def recieve_data():
-#     data = request.get_json()
-#     barrier = data['barrier']
-#     thickness = data['thickness']
-#     wave = data['wave']
-#     # now we want to pass this into the tunneling.py function
-#     # and return the data to the frontend
-#     return jsonify({'message': 'Data recieved'})
+@app.route('/receive_data', methods=['POST'])
+def receive_data():
+    data = request.get_json()
+    barrier = data['barrier']
+    thickness = data['thickness']
+    wave = data['wave']
+    # now we want to pass this into the tunneling.py function
+    # and return the data to the frontend
+    return jsonify({'message': 'Data received'})
 
 @app.route('/', methods=['GET', 'POST'])
 def welcome():
