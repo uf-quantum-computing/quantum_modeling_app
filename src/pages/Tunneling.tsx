@@ -59,9 +59,9 @@ const horizontal_center = {
 const Tunneling = () => {
   const [loading, setLoading] = useState(false);
   // ========= states =========
-  const [barrier, setBarrier] = useState("");
-  const [thickness, setThickness] = useState("");
-  const [wave, setWave] = useState("");
+  const [barrier, setBarrier] = useState<number>(0.5);
+  const [thickness, setThickness] = useState<number>(0.5);
+  const [wave, setWave] = useState<number>(0.5);
   const [tunneling_img2, set_Tunneling_img2d] = useState(
     "./model_images/tunneling/tunneling_2D_1x1x1.gif"
   );
@@ -69,9 +69,10 @@ const Tunneling = () => {
     "./model_images/tunneling/tunneling_3D_1x1x1.gif"
   );
   const [success_msg, set_Success_Msg] = useState(
-    "Tunneling model generated with barrier = 1, thickness = 1, and wave = 1!"
+    "Tunneling model generated with barrier = " + barrier.toString() + ", thickness = " + thickness.toString() + ", and wave = " + wave.toString() + "!"
   );
   const [open, setOpenSnackbar] = useState(false);
+  const [url, setUrl] = useState("");
 
   async function getGifFromServer(request_url: string) {
     try {
@@ -95,18 +96,18 @@ const Tunneling = () => {
     }
     setOpenSnackbar(false);
   };
-  const handleBarrier = (event: SelectChangeEvent) => {
-    setBarrier(event.target.value as string);
-    console.log(event.target.value);
+  const handleBarrier = (event: Event, barrierValue: number | number[]) => {
+    setBarrier(barrierValue as number);
   };
-  const handleThickness = (event: SelectChangeEvent) => {
-    setThickness(event.target.value as string);
-    console.log(event.target.value);
+  
+  const handleThickness = (event: Event, thicknessValue: number | number[]) => {
+    setThickness(thicknessValue as number);
   };
-  const handleWave = (event: SelectChangeEvent) => {
-    setWave(event.target.value as string);
-    console.log(event.target.value);
+  
+  const handleWave = (event: Event, waveValue: number | number[]) => {
+    setWave(waveValue as number);
   };
+  
   async function handleSubmit(event: any) {
     setLoading(true);
     event.preventDefault();
@@ -117,8 +118,14 @@ const Tunneling = () => {
     console.log("thickness:", thickness_str);
     console.log("wave:", wave_str);
     // Change url below
-    let base_url = "http://127.0.0.1:39022/v1/hello?"
 
+    set_Success_Msg(
+      "Tunneling model generated with barrier = " + barrier_str +
+      ", thickness = " + thickness_str +
+      ", and wave = " + wave_str + "!"
+    );
+
+    
     // if no input, set to default
     //TODO: need to pass in the values into the api 
     if (barrier_str === "") {
@@ -131,10 +138,14 @@ const Tunneling = () => {
       wave_str = "1";
     }
 
+    // TODO: change the url to the correct url
+    let base_url = "http://127.0.0.1:39022/v1/hello?"
     let final_url =
       base_url + "intensity=" + barrier_str +
       "&thickness=" + thickness_str +
       "&momentum=" + wave_str;
+
+    setUrl(final_url)
     
     const gifData = await getGifFromServer(final_url);
     if (gifData) {
@@ -194,11 +205,13 @@ const Tunneling = () => {
                 <Slider
                   sx={{ color: "#FFFFFF" }}
                   aria-label="barrier-select"
+                  value={barrier}
+                  onChange={handleBarrier}
                   min={1}
                   max={10}
                   defaultValue={1}
                   valueLabelDisplay="auto"
-                  step={1}
+                  step={0.1}
                 />
               </FormControl>
 
@@ -207,17 +220,19 @@ const Tunneling = () => {
                 <InputLabel 
                   id="thickness-select"
                   style={{color: "white", marginTop: "10px", marginBottom: "10px",textAlign: "center"}}
-                  >  
+                  >
                   Thickness
                   </InputLabel>
                 <Slider
                   sx={{ color: "#FFFFFF" }}
                   aria-label="spacing-select"
+                  value = {thickness}
+                  onChange={handleThickness}
                   min={1}
                   max={10}
                   defaultValue={1}
                   valueLabelDisplay="auto"
-                  step={1}
+                  step={0.1}
                 />
               </FormControl>
 
@@ -232,11 +247,13 @@ const Tunneling = () => {
                 <Slider
                   sx={{ color: "#FFFFFF" }}
                   aria-label="spacing-select"
+                  value={wave}
+                  onChange={handleWave}
                   min={1}
                   max={10}
                   defaultValue={1}
                   valueLabelDisplay="auto"
-                  step={1}
+                  step={0.1}
                 />
               </FormControl>
 
