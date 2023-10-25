@@ -1,6 +1,7 @@
-import matplotlib; matplotlib.use("TkAgg")
+import matplotlib;
 import matplotlib.pyplot as plt
 from matplotlib.colors import hsv_to_rgb
+from matplotlib.animation import PillowWriter
 import scipy as sp
 from scipy.sparse import linalg as ln
 from scipy import sparse as sparse
@@ -114,12 +115,15 @@ class Animator3D:
         self.img = self.ax.imshow(complex_to_rgba(self.wave_packet.psi_plot[0], max_val=1.0), origin="lower", interpolation="bilinear")
 
         self.animation_data = {'t': 0, 'ax': self.ax ,'frame': 0}
+        self.ax.set_ylim(0, 80)
+        self.ax.set_xlabel('Position (x)')
+        self.ax.set_ylabel('Probability density (1/x)')
 
     def update(self, data):
         self.animation_data['t'] += 1
         if self.animation_data['t'] > self.wave_packet.total_steps:
             self.animation_data['t'] = 0
-        self.img.set_data(complex_to_rgba(self.wave_packet.psi_plot[self.animation_data['t']], max_val=1.0))
+        self.img.set_data(complex_to_rgba(self.wave_packet.psi_plot[self.animation_data['t']], max_val=0.3)) #edit max_val to adjust contrast
         return self.V_img, self. img
 
     def animate(self):
@@ -152,8 +156,8 @@ class Animator:
                                       verticalalignment='top', transform=self.ax.transAxes)
         self.line, = self.ax.plot(self.wave_packet.x, self.wave_packet.evolve())
         self.ax.set_ylim(0, 0.2)
-        self.ax.set_xlabel('Position (a$_0$)')
-        self.ax.set_ylabel('Probability density (a$_0$)')
+        self.ax.set_xlabel('Position (x)')
+        self.ax.set_ylabel('Probability density (1/x)')
 
     def update(self, data):
         self.line.set_ydata(data)
@@ -171,11 +175,12 @@ class Animator:
         self.ani = animation.FuncAnimation(
             self.fig, self.update, self.time_step, interval=5, blit=False)
 
-
-wave_packet = Wave_Packet(n_points=500, dt=0.5, barrier_width=10, barrier_height=0.5)
-wave_packet3D = Wave_Packet3D(x_n_points=100, y_n_points=80, dt=0.5, BarrierThickness=5, barrier_height=1, k0=-1)
+#adjust dt to fit more/ less frames per second
+wave_packet = Wave_Packet(n_points=500, dt=1.5, barrier_width=10, barrier_height=0.5)
+wave_packet3D = Wave_Packet3D(x_n_points=100, y_n_points=80, dt=2, BarrierThickness=2, barrier_height=1, k0=-1)
 animator = Animator(wave_packet)
 animator.animate()
 animator3D = Animator3D(wave_packet3D)
 animator3D.animate()
+
 plt.show()

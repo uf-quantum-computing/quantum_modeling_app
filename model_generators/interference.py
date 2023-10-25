@@ -1,4 +1,4 @@
-import matplotlib; # matplotlib.use("TkAgg")
+import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.colors import hsv_to_rgb
 import scipy as sp
@@ -6,11 +6,51 @@ from scipy.sparse import linalg as ln
 from scipy import sparse as sparse
 import matplotlib.animation as animation
 import numpy as np
-import sys
 
+# User-defined parameters
+momentum = 1.0 
+spacing = 1.0
+split_separation = 5.0
+v_tunnel = 150 #DON'T MESS WITH THIS UNLESS YOU WANT TUNNELING
+
+# Values for initial guassian
+x0 = -5
+y0 = 0
+p0_x = momentum
+p0_y = 0.0
+σ = 2.0
+
+# Resolution for computation
+xres = 100
+yres = 80
+
+# XY field for 3D
+xmin = -30
+xmax = 50
+ymin = -20
+ymax = 20
+
+# set elapsed time in python to see more of the mechanics -- 30-45 seconds
+
+def potential_slit(x, y):
+    if 20 < x < 25 and abs(y) > split_separation and abs(y) < spacing + split_separation:
+        return 0
+    elif 20 < x < 25:
+        return v_tunnel
+    elif x > 48:
+        return v_tunnel
+    else:
+        return 0
+
+def potential_slit2D_at0(x):
+    if 20 < x < 25:
+        return v_tunnel
+    else:
+        return 0
+    
 class Wave_Packet:
     def __init__(self, n_points, dt, sigma0=5.0, k0=1.0, x0=-150.0, x_begin=-200.0,
-                 x_end=200.0, barrier_height=1.0, barrier_width=1.0):
+                 x_end=200.0, barrier_height=1.0, barrier_width=3.0):
         self.n_points = n_points
         self.sigma0 = sigma0
         self.k0 = k0
@@ -19,7 +59,6 @@ class Wave_Packet:
         self.prob = np.zeros(n_points)
         self.barrier_width = barrier_width
         self.barrier_height = barrier_height
-        self.total_steps = 400
 
         """ 1) Space discretization """
         self.x, self.dx = np.linspace(x_begin, x_end, n_points, retstep=True)
@@ -32,6 +71,7 @@ class Wave_Packet:
         """ 3) Setting up the potential barrier """
         self.potential = np.array(
             [barrier_height if 0.0 < x < barrier_width else 0.0 for x in self.x])
+        # modify for the slit?
 
         """ 4) Creating the Hamiltonian """
         h_diag = np.ones(n_points) / self.dx ** 2 + self.potential
@@ -67,7 +107,7 @@ class Wave_Packet3D:
         self.prob = np.zeros([x_n_points, y_n_points])
         self.BarrierThickness = BarrierThickness
         V_tunnel = barrier_height
-        self.total_steps = 400
+        self.total_steps = 1600
 
         """ 1) Space discretization """
         x, dx = np.linspace(x_begin, x_end, x_n_points, retstep=True)
@@ -84,6 +124,7 @@ class Wave_Packet3D:
 
         """ 3) Setting up the potential barrier """
         self.V = np.where((self.x>0) & (self.x<=self.BarrierThickness*dx) , V_tunnel, 0.)
+        # modify for the slit
 
         """ 4) Creating the Hamiltonian """
         px = np.fft.fftshift(np.fft.fftfreq(x_n_points, d=dx)) * 2 * np.pi
@@ -95,7 +136,7 @@ class Wave_Packet3D:
         Ur = np.exp(-0.5j * self.dt * np.array(self.V))
         Uk = np.exp(-0.5j * self.dt * self.p2)
 
-        """ 5) Computing the Crank-Nicolson time evolution matrix """
+        """ 5) Computing the Crank-Nicolson time evoluittion matrix """
         self.psi = np.zeros((self.total_steps + 1, *[y_n_points, x_n_points]), dtype = np.complex128)
         self.psi[0] = psi_0
         for i in range(self.total_steps):
@@ -113,14 +154,6 @@ class Animator3D:
 
         self.V_img = self.ax.imshow(self.wave_packet.V/np.max(self.wave_packet.V), vmax=1.0, vmin=0, cmap="gray", origin="lower")
         self.img = self.ax.imshow(complex_to_rgba(self.wave_packet.psi_plot[0], max_val=1.0), origin="lower", interpolation="bilinear")
-        # https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.colorbar.html
-
-        self.colorbar = self.fig.colorbar(self.img, ax=self.ax, orientation='vertical', fraction=.1, pad=0.05)
-        
-        self.ax.set_xlabel('X Position (nm)')
-        self.ax.set_ylabel('Y Position (nm)')
-        self.ax.text(0.5, 1.05, 'Probability Density',
-                     transform=self.ax.transAxes, ha='center')
 
         self.animation_data = {'t': 0, 'ax': self.ax ,'frame': 0}
 
@@ -128,15 +161,12 @@ class Animator3D:
         self.animation_data['t'] += 1
         if self.animation_data['t'] > self.wave_packet.total_steps:
             self.animation_data['t'] = 0
-        self.img.set_data(complex_to_rgba(self.wave_packet.psi_plot[self.animation_data['t']], max_val=0.3))
+        self.img.set_data(complex_to_rgba(self.wave_packet.psi_plot[self.animation_data['t']], max_val=1.0))
         return self.V_img, self. img
 
     def animate(self):
-        
         self.ani = animation.FuncAnimation(
-            self.fig, self.update, frames=self.wave_packet.total_steps, interval=5, blit=False, cache_frame_data=False)
-        # Save the animation as a GIF file 
-        self.ani.save('tunneling_3D.gif', writer='pillow')
+            self.fig, self.update, frames=self.wave_packet.total_steps, interval=5, blit=True)
 
 
 def complex_to_rgba(Z: np.ndarray, max_val: float = 1.0) -> np.ndarray:
@@ -181,27 +211,13 @@ class Animator:
 
     def animate(self):
         self.ani = animation.FuncAnimation(
-            self.fig, self.update, frames=self.wave_packet.total_steps, interval=5, blit=False, cache_frame_data=False)
-        # save the animation as a GIF file
-        self.ani.save('tunneling_2D.gif', writer='pillow')
-        
+            self.fig, self.update, self.time_step, interval=5, blit=False)
 
-def main():
-    # Create instances of Wave_Packet and Wave_Packet3D
-    wave_packet = Wave_Packet(n_points=500, dt=0.5, barrier_width=10, barrier_height=0.5)
-    wave_packet3D = Wave_Packet3D(x_n_points=100, y_n_points=80, dt=0.5, BarrierThickness=5, barrier_height=1, k0=-1)
 
-    # Create Animator instances and animate
-    animator = Animator(wave_packet)
-    animator.animate()
-    plt.close()
-
-    animator3D = Animator3D(wave_packet3D)
-    animator3D.animate()
-    plt.close()
-
-    print("Done")
-    sys.exit()
-
-if __name__ == "__main__":
-    main()
+wave_packet = Wave_Packet(n_points=500, dt=0.5, barrier_width=10, barrier_height=0.5)
+wave_packet3D = Wave_Packet3D(x_n_points=100, y_n_points=80, dt=0.5, BarrierThickness=5, barrier_height=1, k0=-1)
+animator = Animator(wave_packet)
+animator.animate()
+animator3D = Animator3D(wave_packet3D)
+animator3D.animate()
+plt.show()

@@ -10,7 +10,8 @@ import {
   Snackbar,
   InputLabel,
   FormControl,
-  Slider
+  Slider,
+  Typography
 } from "@mui/material";
 import CircularProgress from '@mui/joy/CircularProgress';
 import { Layout } from "antd";
@@ -59,31 +60,42 @@ const horizontal_center = {
 const Tunneling = () => {
   const [loading, setLoading] = useState(false);
   // ========= states =========
-  const [barrier, setBarrier] = useState<number>(0.5);
-  const [thickness, setThickness] = useState<number>(0.5);
-  const [wave, setWave] = useState<number>(0.5);
+  const [barrier, setBarrier] = useState<number>(1);
+  const [thickness, setThickness] = useState<number>(1);
+  const [wave, setWave] = useState<number>(1);
   const [tunneling_img2, set_Tunneling_img2d] = useState(
     "./model_images/tunneling/tunneling_2D_1x1x1.gif"
   );
   const [tunneling_img3, set_Tunneling_img3d] = useState(
     "./model_images/tunneling/tunneling_3D_1x1x1.gif"
   );
+  const [tunneling_img2d_base64, set_Tunneling_img2d_base64] = useState(null);
+  const [tunneling_img3d_base64, set_Tunneling_img3d_base64] = useState(null);
+
   const [success_msg, set_Success_Msg] = useState(
     "Tunneling model generated with barrier = " + barrier.toString() + ", thickness = " + thickness.toString() + ", and wave = " + wave.toString() + "!"
   );
   const [open, setOpenSnackbar] = useState(false);
-  const [url, setUrl] = useState("");
 
   async function getGifFromServer(request_url: string) {
     try {
-      const response = await axios.get(request_url);
-      const base64Gif2D = response.data['2D'];
-      const base64Gif3D = response.data['3D'];
+      const response = await fetch(request_url, {method: 'GET'});
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const responseData = await response.json();
+      console.log("responseData: ", responseData);
+  
+      const base64Gif2D = responseData['2D'];
+      const base64Gif3D = responseData['3D'];
+  
       return { base64Gif2D, base64Gif3D };
     } catch (error) {
       console.error("Error fetching gif from server:", error);
+      throw error; // Re-throw the error for handling in the calling function
     }
-  }
+  }  
 
   // ========= handle functions =========
   const handleClose = (
@@ -117,44 +129,24 @@ const Tunneling = () => {
     console.log("barrier:", barrier_str);
     console.log("thickness:", thickness_str);
     console.log("wave:", wave_str);
-    // Change url below
-
-    set_Success_Msg(
-      "Tunneling model generated with barrier = " + barrier_str +
-      ", thickness = " + thickness_str +
-      ", and wave = " + wave_str + "!"
-    );
-
-    
-    // if no input, set to default
-    //TODO: need to pass in the values into the api 
-    if (barrier_str === "") {
-      barrier_str = "1";
-    }
-    if (thickness_str === "") {
-      thickness_str = "1";
-    }
-    if (wave_str === "") {
-      wave_str = "1";
-    }
 
     // TODO: change the url to the correct url
-    let base_url = "http://127.0.0.1:39022/v1/hello?"
+    let base_url = "receive_data/tunneling/"
     let final_url =
-      base_url + "intensity=" + barrier_str +
-      "&thickness=" + thickness_str +
-      "&momentum=" + wave_str;
-
-    setUrl(final_url)
+      base_url + barrier_str +
+      "/" + thickness_str +
+      "/" + wave_str;
     
-    const gifData = await getGifFromServer(final_url);
+    const gifData = await getGifFromServer('http://localhost:3001/' + final_url);
     if (gifData) {
       const { base64Gif2D, base64Gif3D } = gifData;
       if (base64Gif2D) {
-        set_Tunneling_img2d(`${base64Gif2D}`);
+        set_Tunneling_img2d_base64(base64Gif2D);
+        set_Tunneling_img2d("../../quantum_app_backend/tunneling_2D.gif");
       }
       if (base64Gif3D) {
-        set_Tunneling_img3d(`${base64Gif3D}`);
+        set_Tunneling_img3d_base64(base64Gif3D);
+        set_Tunneling_img3d("../../quantum_app_backend/tunneling_3D.gif");
       }
       set_Success_Msg(
         "Tunneling model generated with barrier = " +
@@ -186,19 +178,17 @@ const Tunneling = () => {
           <Box
             component="form"
             sx={{
-              "& > :not(style)": { m: 1, width: "25ch" },
+              "& > :not(style)": { m: 0.5, width: "25ch" },
             }}
             noValidate
             autoComplete="off"
             style={horizontal_center}
           >
             <Stack spacing={3}>
-              {/* ====== Select Inputs ====== */}
-              {/* ====== Barrier Slider ====== */}
               <FormControl variant="filled">
                 <InputLabel 
                   id="barrier-select"
-                  style={{color: "white", marginTop: "10px",  marginBottom: "10px",textAlign: "center"}}
+                  style={{color: "white", marginTop: "10px", marginBottom: "10px", marginLeft: "-8 px", textAlign: "left"}}
                   >
                   Barrier
                   </InputLabel>
@@ -208,18 +198,21 @@ const Tunneling = () => {
                   value={barrier}
                   onChange={handleBarrier}
                   min={1}
-                  max={10}
+                  max={3}
                   defaultValue={1}
                   valueLabelDisplay="auto"
-                  step={0.1}
+                  step={1}
                 />
+                <Typography variant="body2" color="white" align="right" style={{ alignSelf: 'flex-end', marginRight: '0px', marginTop: '-2px' }}>
+          (eV)
+                </Typography>
               </FormControl>
 
               {/* ====== Thickness Slider ====== */}
               <FormControl variant="filled">
                 <InputLabel 
                   id="thickness-select"
-                  style={{color: "white", marginTop: "10px", marginBottom: "10px",textAlign: "center"}}
+                  style={{color: "white", marginTop: "10px", marginBottom: "10px", marginLeft: "-8 px", textAlign: "left"}}
                   >
                   Thickness
                   </InputLabel>
@@ -232,17 +225,20 @@ const Tunneling = () => {
                   max={10}
                   defaultValue={1}
                   valueLabelDisplay="auto"
-                  step={0.1}
+                  step={1}
                 />
+                <Typography variant="body2" color="white" align="right" style={{ alignSelf: 'flex-end', marginRight: '0px', marginTop: '-2px' }}>
+          (nanometer)
+                </Typography>
               </FormControl>
 
               {/* ====== Wave Select ====== */}
               <FormControl variant="filled">
                 <InputLabel 
                   id="wave-select"
-                  style={{color: "white", marginTop: "10px", marginBottom: "10px",textAlign: "center"}}
+                  style={{color: "white", marginTop: "10px", marginBottom: "10px", marginLeft: "-8 px", textAlign: "left"}}
                   >  
-                  Wave
+                  Wave number k
                   </InputLabel>
                 <Slider
                   sx={{ color: "#FFFFFF" }}
@@ -253,8 +249,11 @@ const Tunneling = () => {
                   max={10}
                   defaultValue={1}
                   valueLabelDisplay="auto"
-                  step={0.1}
+                  step={1}
                 />
+                <Typography variant="body2" color="white" align="right" style={{ alignSelf: 'flex-end', marginRight: '0px', marginTop: '-2px' }}>
+          (nm^{-1})
+                </Typography>
               </FormControl>
 
               {/* ====== Submit Button ====== */}
