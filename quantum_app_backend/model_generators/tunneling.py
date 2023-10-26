@@ -1,4 +1,5 @@
-import matplotlib; # matplotlib.use("TkAgg")
+import matplotlib
+matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
 from matplotlib.colors import hsv_to_rgb
 import scipy as sp
@@ -10,7 +11,9 @@ import sys
 
 class Wave_Packet:
     def __init__(self, n_points, dt, sigma0=5.0, k0=1.0, x0=-150.0, x_begin=-200.0,
-                 x_end=200.0, barrier_height=1.0, barrier_width=1.0):
+                 x_end=200.0, barrier_height=1.0, barrier_width=3.0):
+        self.x_begin = x_begin
+        self.x_end = x_end 
         self.n_points = n_points
         self.sigma0 = sigma0
         self.k0 = k0
@@ -19,7 +22,7 @@ class Wave_Packet:
         self.prob = np.zeros(n_points)
         self.barrier_width = barrier_width
         self.barrier_height = barrier_height
-        self.total_steps = 400
+        self.total_steps = 800
 
         """ 1) Space discretization """
         self.x, self.dx = np.linspace(x_begin, x_end, n_points, retstep=True)
@@ -57,6 +60,10 @@ class Wave_Packet:
 class Wave_Packet3D:
     def __init__(self, x_n_points, y_n_points, dt, sigma0=5.0, k0=-1.0, x0=-150.0, y0=0, x_begin=-200.0,
                  x_end=200.0, y_begin=-100.0, y_end=100.0, BarrierThickness=1.0, barrier_height=1.0):
+        self.x_begin = x_begin
+        self.x_end = x_end 
+        self.y_begin = y_begin
+        self.y_end = y_end
         self.x_n_points = x_n_points
         self.y_n_points = y_n_points
         self.sigma0 = sigma0
@@ -117,6 +124,10 @@ class Animator3D:
 
         self.colorbar = self.fig.colorbar(self.img, ax=self.ax, orientation='vertical', fraction=.1, pad=0.05)
         
+        self.ax.set_xlim(self.wave_packet.x_begin, self.wave_packet.x_end)
+        self.ax.set_ylim(self.wave_packet.y_begin, self.wave_packet.y_end)
+        self.ax.set_aspect('equal')
+
         self.ax.set_xlabel('X Position (nm)')
         self.ax.set_ylabel('Y Position (nm)')
         self.ax.text(0.5, 1.05, 'Probability Density',
@@ -132,7 +143,6 @@ class Animator3D:
         return self.V_img, self. img
 
     def animate(self):
-        
         self.ani = animation.FuncAnimation(
             self.fig, self.update, frames=self.wave_packet.total_steps, interval=5, blit=False, cache_frame_data=False)
         # Save the animation as a GIF file 
@@ -167,12 +177,13 @@ class Animator:
         self.ax.set_xlabel('Position (a$_0$)')
         self.ax.set_ylabel('Probability density (a$_0$)')
 
+
     def update(self, data):
         self.line.set_ydata(data)
         return self.line,
 
     def time_step(self):
-        while True:
+        for i in range(self.wave_packet.total_steps):
             self.time += self.wave_packet.dt
             self.time_text.set_text(
                 'Elapsed time: {:6.2f} fs'.format(self.time * 2.419e-2))
@@ -181,24 +192,25 @@ class Animator:
 
     def animate(self):
         self.ani = animation.FuncAnimation(
-            self.fig, self.update, frames=self.wave_packet.total_steps, interval=5, blit=False, cache_frame_data=False)
+            self.fig, self.update, repeat=True, frames=self.time_step, interval=100, blit=True, save_count=self.wave_packet.total_steps)
         # save the animation as a GIF file
         self.ani.save('tunneling_2D.gif', writer='pillow')
         
 
 def main():
     # Create instances of Wave_Packet and Wave_Packet3D
-    wave_packet = Wave_Packet(n_points=500, dt=0.5, barrier_width=10, barrier_height=0.5)
-    wave_packet3D = Wave_Packet3D(x_n_points=100, y_n_points=80, dt=0.5, BarrierThickness=5, barrier_height=1, k0=-1)
+    wave_packet = Wave_Packet(n_points=500, dt=0.5, barrier_width=10, barrier_height=1, k0=1)
+    # wave_packet3D = Wave_Packet3D(x_n_points=100, y_n_points=80, dt=0.5, BarrierThickness=5, barrier_height=1, k0=-1)
 
     # Create Animator instances and animate
     animator = Animator(wave_packet)
     animator.animate()
+    # plt.show()
     plt.close()
 
-    animator3D = Animator3D(wave_packet3D)
-    animator3D.animate()
-    plt.close()
+    # animator3D = Animator3D(wave_packet3D)
+    # animator3D.animate()
+    # plt.close()
 
     print("Done")
     sys.exit()
