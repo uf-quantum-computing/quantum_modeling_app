@@ -146,7 +146,7 @@ class Animator3D:
         self.ani = animation.FuncAnimation(
             self.fig, self.update, frames=self.wave_packet.total_steps, interval=5, blit=False, cache_frame_data=False)
         # Save the animation as a GIF file 
-        self.ani.save('tunneling_3D.gif', writer='pillow')
+        self.ani.save('../src/model_gifs/tunneling_3D.gif', writer='pillow')
 
 
 def complex_to_rgba(Z: np.ndarray, max_val: float = 1.0) -> np.ndarray:
@@ -194,7 +194,7 @@ class Animator:
         self.ani = animation.FuncAnimation(
             self.fig, self.update, repeat=True, frames=self.time_step, interval=100, blit=True, save_count=self.wave_packet.total_steps)
         # save the animation as a GIF file
-        self.ani.save('tunneling_2D.gif', writer='pillow')
+        self.ani.save('../src/model_gifs/tunneling_2D.gif', writer='pillow')
         
 
 def main():

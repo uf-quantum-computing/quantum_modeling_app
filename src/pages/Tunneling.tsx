@@ -18,20 +18,9 @@ import { Layout } from "antd";
 import "antd/dist/antd.min.css";
 import axios from "axios";
 
-// // === Flask API ===
-// const sendDataToAPI = async (barrierValue, thickness, waveValue) => {
-//   try {
-//     const response = await axios.post('/receive_data', {
-//       barrier_value: barrierValue,
-//       thickness: thickness,
-//       wave_value: waveValue,
-//     });
-
-//     console.log(response.data.message); // Assuming the API returns a success message
-//   } catch (error) {
-//     console.error('Error sending data:', error);
-//   }
-// };
+// TODO: save the default gif base64 string and display on page refresh
+// import text2d from "../base64txt/2d_default.json";
+// import text3d from "../base64txt/3d_default.json";
 
 // === Custom Components ===
 import {
@@ -40,6 +29,10 @@ import {
   CustomTitle,
   Dashboard,
 } from "../components";
+import { render } from "@testing-library/react";
+
+// const Base64Default2d = JSON.parse(text2d.text2d);
+//const Base64Default3d = JSON.parse(text3d.text3d);
 
 // === sub component imports ===
 const { Sider, Content } = Layout;
@@ -69,8 +62,8 @@ const Tunneling = () => {
   const [tunneling_img3, set_Tunneling_img3d] = useState(
     "./model_images/tunneling/tunneling_3D_1x1x1.gif"
   );
-  const [tunneling_img2d_base64, set_Tunneling_img2d_base64] = useState(null);
-  const [tunneling_img3d_base64, set_Tunneling_img3d_base64] = useState(null);
+  const [tunneling_img2d_base64, set_Tunneling_img2d_base64] = useState("");
+  const [tunneling_img3d_base64, set_Tunneling_img3d_base64] = useState("");
 
   const [success_msg, set_Success_Msg] = useState(
     "Tunneling model generated with barrier = " + barrier.toString() + ", thickness = " + thickness.toString() + ", and wave = " + wave.toString() + "!"
@@ -87,10 +80,9 @@ const Tunneling = () => {
       const responseData = await response.json();
       console.log("responseData: ", responseData);
   
-      const base64Gif2D = responseData['2D'];
-      const base64Gif3D = responseData['3D'];
-  
-      return { base64Gif2D, base64Gif3D };
+      set_Tunneling_img2d_base64(responseData.base64Gif2D);
+      set_Tunneling_img3d_base64(responseData.base64Gif3D);
+      return response.ok;
     } catch (error) {
       console.error("Error fetching gif from server:", error);
       throw error; // Re-throw the error for handling in the calling function
@@ -139,15 +131,6 @@ const Tunneling = () => {
     
     const gifData = await getGifFromServer('http://localhost:3001/' + final_url);
     if (gifData) {
-      const { base64Gif2D, base64Gif3D } = gifData;
-      if (base64Gif2D) {
-        set_Tunneling_img2d_base64(base64Gif2D);
-        set_Tunneling_img2d("../../quantum_app_backend/tunneling_2D.gif");
-      }
-      if (base64Gif3D) {
-        set_Tunneling_img3d_base64(base64Gif3D);
-        set_Tunneling_img3d("../../quantum_app_backend/tunneling_3D.gif");
-      }
       set_Success_Msg(
         "Tunneling model generated with barrier = " +
           barrier_str +
@@ -162,6 +145,8 @@ const Tunneling = () => {
     setOpenSnackbar(true); // open snackbar
   }
 
+  
+
   // ========= return =========
   return (
     <div>
@@ -172,6 +157,7 @@ const Tunneling = () => {
           // collapsed={collapsed}
           // onCollapse={(value) => setCollapsed(value)}
           style={{ padding: "1%" }}
+          width={230}
         >
           <CustomTitle />
 
@@ -298,19 +284,11 @@ const Tunneling = () => {
             <CustomPageHeader text="Tunneling" size="h3" />
             <Grid container spacing={2}>
               <Grid item xs={6}>
-                <img
-                  src={tunneling_img3}
-                  alt="3D tunneling function"
-                  style={img_style}
-                />
+              <img src={`data:image/gif;base64,${tunneling_img3d_base64}`} alt="3D GIF" />
               </Grid>
 
               <Grid item xs={6}>
-                <img
-                  src={tunneling_img2}
-                  alt="2D tunneling"
-                  style={img_style}
-                />
+              <img src={`data:image/gif;base64,${tunneling_img2d_base64}`} alt="2D GIF" />
               </Grid>
             </Grid>
 

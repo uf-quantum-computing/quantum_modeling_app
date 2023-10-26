@@ -47,9 +47,10 @@ const Home = () => {
                 borderStyle: "none",
                 color: "navy",
                 fontSize: "25px",
-                padding: "10px"
-
-             }} > Start Modeling</button>
+                padding: "10px",
+                cursor: "pointer"
+             }}
+             > Start Modeling</button>
 
               <div className="down-arrow"></div>
               
