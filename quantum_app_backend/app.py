@@ -6,7 +6,7 @@ from model_generators.tunneling import Wave_Packet, Wave_Packet3D, Animator, Ani
 import matplotlib.pyplot as plt
 import time
 import base64
-
+import os
 
 #set swagger info
 api: Api = Api(
@@ -22,6 +22,10 @@ api.init_app(app)
 
 # CORS added
 CORS(app)
+
+@app.route('/tunneling', methods=['GET'])
+def default():
+    return {}
 
 @app.route('/receive_data/tunneling/<int:barrier>/<int:thickness>/<int:momentum>', methods=['GET'])
 def receive_data(barrier, thickness, momentum):
@@ -40,9 +44,16 @@ def receive_data(barrier, thickness, momentum):
     end_time = time.time()    # Record the end time
     elapsed_time = end_time - start_time
     print(f"Elapsed time: {elapsed_time} seconds")
-    with open('tunneling_2D.gif', 'rb') as file:
+
+    absolute_path = os.path.dirname(__file__)
+    relative_path = '../src/model_gifs'
+    final_path = os.path.join(absolute_path, relative_path)
+
+    print("final path: ", final_path)
+
+    with open(final_path + '/tunneling_2d.gif', 'rb') as file:
         base64Gif2D = base64.b64encode(file.read()).decode('utf-8')
-    with open('tunneling_3D.gif', 'rb') as file:
+    with open(final_path + '/tunneling_3D.gif', 'rb') as file:
         base64Gif3D = base64.b64encode(file.read()).decode('utf-8')
 
     return {'base64Gif2D': base64Gif2D, 'base64Gif3D': base64Gif3D}
