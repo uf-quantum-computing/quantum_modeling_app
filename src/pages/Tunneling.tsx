@@ -17,10 +17,9 @@ import CircularProgress from '@mui/joy/CircularProgress';
 import { Layout } from "antd";
 import "antd/dist/antd.min.css";
 import axios from "axios";
+import base64Text3d from "../base64txt/default3d";
+import base64Text2d from "../base64txt/default2d";
 
-// TODO: save the default gif base64 string and display on page refresh
-// import text2d from "../base64txt/2d_default.json";
-// import text3d from "../base64txt/3d_default.json";
 
 // === Custom Components ===
 import {
@@ -30,9 +29,7 @@ import {
   Dashboard,
 } from "../components";
 import { render } from "@testing-library/react";
-
-// const Base64Default2d = JSON.parse(text2d.text2d);
-//const Base64Default3d = JSON.parse(text3d.text3d);
+import { text } from "stream/consumers";
 
 // === sub component imports ===
 const { Sider, Content } = Layout;
@@ -56,14 +53,8 @@ const Tunneling = () => {
   const [barrier, setBarrier] = useState<number>(1);
   const [thickness, setThickness] = useState<number>(1);
   const [wave, setWave] = useState<number>(1);
-  const [tunneling_img2, set_Tunneling_img2d] = useState(
-    "./model_images/tunneling/tunneling_2D_1x1x1.gif"
-  );
-  const [tunneling_img3, set_Tunneling_img3d] = useState(
-    "./model_images/tunneling/tunneling_3D_1x1x1.gif"
-  );
-  const [tunneling_img2d_base64, set_Tunneling_img2d_base64] = useState("");
-  const [tunneling_img3d_base64, set_Tunneling_img3d_base64] = useState("");
+  const [tunneling_img2d_base64, set_Tunneling_img2d_base64] = useState(base64Text2d);
+  const [tunneling_img3d_base64, set_Tunneling_img3d_base64] = useState(base64Text3d);
 
   const [success_msg, set_Success_Msg] = useState(
     "Tunneling model generated with barrier = " + barrier.toString() + ", thickness = " + thickness.toString() + ", and wave = " + wave.toString() + "!"
@@ -122,13 +113,12 @@ const Tunneling = () => {
     console.log("thickness:", thickness_str);
     console.log("wave:", wave_str);
 
-    // TODO: change the url to the correct url
     let base_url = "receive_data/tunneling/"
     let final_url =
       base_url + barrier_str +
       "/" + thickness_str +
       "/" + wave_str;
-    
+
     const gifData = await getGifFromServer('http://localhost:3001/' + final_url);
     if (gifData) {
       set_Success_Msg(
@@ -280,15 +270,15 @@ const Tunneling = () => {
 
         {/* ======================== Content ======================== */}
         <Layout style={{ margin: "5%" }}>
+        <CustomPageHeader text="Tunneling" size="h3" />
           <Content>
-            <CustomPageHeader text="Tunneling" size="h3" />
-            <Grid container spacing={2}>
-              <Grid item xs={6}>
-              <img src={`data:image/gif;base64,${tunneling_img3d_base64}`} alt="3D GIF" />
+            <Grid container spacing={3}>
+              <Grid item xs>
+              <img src={`data:image/video;base64,${tunneling_img3d_base64}`} alt="3D Image" />
               </Grid>
 
-              <Grid item xs={6}>
-              <img src={`data:image/gif;base64,${tunneling_img2d_base64}`} alt="2D GIF" />
+              <Grid item xs>
+              <img src={`data:image/video;base64,${tunneling_img2d_base64}`} alt="2D Image"/>
               </Grid>
             </Grid>
 
