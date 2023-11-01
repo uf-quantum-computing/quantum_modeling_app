@@ -41,7 +41,7 @@ const CustomTitle = () => {
           margin: 0,
         }}
       >
-        Click on the drop-down boxes to change the values for the model and press Generate Model when you're ready!
+        Select the values for the model and press Generate Model when you're ready!
       </h5>
     </div>
   );

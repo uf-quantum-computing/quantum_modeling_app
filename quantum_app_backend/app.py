@@ -24,9 +24,9 @@ api.init_app(app)
 # CORS added
 CORS(app)
 
-@app.route('/tunneling', methods=['GET'])
-def default():
-    return {}
+# @app.route('/tunneling', methods=['GET'])
+# def default():
+#     return {}
 
 @app.route('/receive_data/tunneling/<int:barrier>/<int:thickness>/<int:momentum>', methods=['GET'])
 def receive_data(barrier, thickness, momentum):

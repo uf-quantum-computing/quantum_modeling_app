@@ -204,7 +204,7 @@ const Tunneling = () => {
                   step={1}
                 />
                 <Typography variant="body2" color="white" align="right" style={{ alignSelf: 'flex-end', marginRight: '0px', marginTop: '-2px' }}>
-          (nanometer)
+                  (nm)
                 </Typography>
               </FormControl>
 
@@ -228,7 +228,8 @@ const Tunneling = () => {
                   step={1}
                 />
                 <Typography variant="body2" color="white" align="right" style={{ alignSelf: 'flex-end', marginRight: '0px', marginTop: '-2px' }}>
-          (nm^{-1})
+                  (nm)
+                  <sup>-1</sup>
                 </Typography>
               </FormControl>
 
