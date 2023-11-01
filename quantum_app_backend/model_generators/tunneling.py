@@ -1,5 +1,4 @@
 import matplotlib
-matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
 from matplotlib.colors import hsv_to_rgb
 import scipy as sp
@@ -8,6 +7,9 @@ from scipy import sparse as sparse
 import matplotlib.animation as animation
 import numpy as np
 import sys
+import os
+import base64
+from IPython.display import HTML
 
 class Wave_Packet:
     def __init__(self, n_points, dt, sigma0=5.0, k0=1.0, x0=-150.0, x_begin=-200.0,
@@ -22,7 +24,7 @@ class Wave_Packet:
         self.prob = np.zeros(n_points)
         self.barrier_width = barrier_width
         self.barrier_height = barrier_height
-        self.total_steps = 800
+        self.total_steps = 250
 
         """ 1) Space discretization """
         self.x, self.dx = np.linspace(x_begin, x_end, n_points, retstep=True)
@@ -74,7 +76,7 @@ class Wave_Packet3D:
         self.prob = np.zeros([x_n_points, y_n_points])
         self.BarrierThickness = BarrierThickness
         V_tunnel = barrier_height
-        self.total_steps = 400
+        self.total_steps = 250
 
         """ 1) Space discretization """
         x, dx = np.linspace(x_begin, x_end, x_n_points, retstep=True)
@@ -109,61 +111,7 @@ class Wave_Packet3D:
             tmp = np.copy(self.psi[i])
             self.psi[i+1] = Ur*np.fft.ifftn(np.fft.ifftshift(Uk*np.fft.fftshift(np.fft.fftn(Ur*tmp))))
 
-
-class Animator3D:
-    def __init__(self, wave_packet):
-        self.time = 0.0
-        self.wave_packet = wave_packet
-        self.wave_packet.psi_plot = self.wave_packet.psi/np.amax(np.abs(self.wave_packet.psi))
-
-        self.fig, self.ax = plt.subplots()
-
-        self.V_img = self.ax.imshow(self.wave_packet.V/np.max(self.wave_packet.V), vmax=1.0, vmin=0, cmap="gray", origin="lower")
-        self.img = self.ax.imshow(complex_to_rgba(self.wave_packet.psi_plot[0], max_val=1.0), origin="lower", interpolation="bilinear")
-        # https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.colorbar.html
-
-        self.colorbar = self.fig.colorbar(self.img, ax=self.ax, orientation='vertical', fraction=.1, pad=0.05)
-        
-        self.ax.set_xlim(self.wave_packet.x_begin, self.wave_packet.x_end)
-        self.ax.set_ylim(self.wave_packet.y_begin, self.wave_packet.y_end)
-        self.ax.set_aspect('equal')
-
-        self.ax.set_xlabel('X Position (nm)')
-        self.ax.set_ylabel('Y Position (nm)')
-        self.ax.text(0.5, 1.05, 'Probability Density',
-                     transform=self.ax.transAxes, ha='center')
-
-        self.animation_data = {'t': 0, 'ax': self.ax ,'frame': 0}
-
-    def update(self, data):
-        self.animation_data['t'] += 1
-        if self.animation_data['t'] > self.wave_packet.total_steps:
-            self.animation_data['t'] = 0
-        self.img.set_data(complex_to_rgba(self.wave_packet.psi_plot[self.animation_data['t']], max_val=0.3))
-        return self.V_img, self. img
-
-    def animate(self):
-        self.ani = animation.FuncAnimation(
-            self.fig, self.update, frames=self.wave_packet.total_steps, interval=5, blit=False, cache_frame_data=False)
-        # Save the animation as a GIF file 
-        self.ani.save('../src/model_gifs/tunneling_3D.gif', writer='pillow')
-
-
-def complex_to_rgba(Z: np.ndarray, max_val: float = 1.0) -> np.ndarray:
-    argl = np.angle(Z)
-    mag = np.abs(Z)
-
-    h = (argl + np.pi) / (2 * np.pi)
-    s = np.ones(h.shape)
-    v = np.ones(h.shape)  # alpha
-    rgb = hsv_to_rgb(np.moveaxis(np.array([h, s, v]), 0, -1))  # --> tuple
-
-    abs_z = mag / max_val
-    abs_z = np.where(abs_z > 1., 1., abs_z)
-    return np.concatenate((rgb, abs_z.reshape((*abs_z.shape, 1))), axis=(abs_z.ndim))
-
-
-class Animator:
+class Animator2D:
     def __init__(self, wave_packet):
         self.time = 0.0
         self.wave_packet = wave_packet
@@ -190,27 +138,83 @@ class Animator:
 
             yield self.wave_packet.evolve()
 
-    def animate(self):
+    def animate2D(self):
         self.ani = animation.FuncAnimation(
             self.fig, self.update, repeat=True, frames=self.time_step, interval=100, blit=True, save_count=self.wave_packet.total_steps)
-        # save the animation as a GIF file
-        self.ani.save('../src/model_gifs/tunneling_2D.gif', writer='pillow')
+        # save the animation as a GIF file and encode to base64
+        self.ani.save('../src/model_gifs/tunneling_2D.gif', writer='pillow', dpi=85, fps=30)
+        with open('../src/model_gifs/tunneling_2D.gif', 'rb') as file:
+            base64Gif2D = base64.b64encode(file.read()).decode('utf-8')
+            return base64Gif2D
+
+class Animator3D:
+    def __init__(self, wave_packet):
+        self.time = 0.0
+        self.wave_packet = wave_packet
+        self.wave_packet.psi_plot = self.wave_packet.psi/np.amax(np.abs(self.wave_packet.psi))
+
+        self.fig, self.ax = plt.subplots()
+
+        self.V_img = self.ax.imshow(self.wave_packet.V/np.max(self.wave_packet.V), vmax=1.0, vmin=0, cmap="gray", origin="lower")
+        self.img = self.ax.imshow(complex_to_rgba(self.wave_packet.psi_plot[0], max_val=1.0), origin="lower", interpolation="bilinear")
+        # https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.colorbar.html
+
+        self.colorbar = self.fig.colorbar(self.img, ax=self.ax, orientation='vertical', fraction=.1, pad=0.05)
         
+        # self.ax.set_xlim(self.wave_packet.x_begin, self.wave_packet.x_end)
+        # self.ax.set_ylim(self.wave_packet.y_begin, self.wave_packet.y_end)
+        # self.ax.set_aspect('equal')
+
+        self.ax.set_xlabel('X Position (nm)')
+        self.ax.set_ylabel('Y Position (nm)')
+        self.ax.text(0.5, 1.05, 'Probability Density',
+                     transform=self.ax.transAxes, ha='center')
+
+        self.animation_data = {'t': 0, 'ax': self.ax ,'frame': 0}
+
+    def update3D(self, data):
+        self.animation_data['t'] += 1
+        if self.animation_data['t'] > self.wave_packet.total_steps:
+            self.animation_data['t'] = 0
+        self.img.set_data(complex_to_rgba(self.wave_packet.psi_plot[self.animation_data['t']], max_val=0.3))
+        return self.V_img, self. img
+
+    def animate3D(self):
+        self.ani = animation.FuncAnimation(
+            self.fig, self.update3D, frames=self.wave_packet.total_steps, interval=5, blit=False, cache_frame_data=False)
+        # Save the animation as a GIF file 
+        self.ani.save('../src/model_gifs/tunneling_3D.gif', writer='pillow', dpi=85, bitrate=1)
+        with open('../src/model_gifs/tunneling_3D.gif', 'rb') as file:
+            base64Gif3D = base64.b64encode(file.read()).decode('utf-8')
+            return base64Gif3D
+
+
+def complex_to_rgba(Z: np.ndarray, max_val: float = 1.0) -> np.ndarray:
+    argl = np.angle(Z)
+    mag = np.abs(Z)
+
+    h = (argl + np.pi) / (2 * np.pi)
+    s = np.ones(h.shape)
+    v = np.ones(h.shape)  # alpha
+    rgb = hsv_to_rgb(np.moveaxis(np.array([h, s, v]), 0, -1))  # --> tuple
+
+    abs_z = mag / max_val
+    abs_z = np.where(abs_z > 1., 1., abs_z)
+    return np.concatenate((rgb, abs_z.reshape((*abs_z.shape, 1))), axis=(abs_z.ndim))        
 
 def main():
     # Create instances of Wave_Packet and Wave_Packet3D
     wave_packet = Wave_Packet(n_points=500, dt=0.5, barrier_width=10, barrier_height=1, k0=1)
-    # wave_packet3D = Wave_Packet3D(x_n_points=100, y_n_points=80, dt=0.5, BarrierThickness=5, barrier_height=1, k0=-1)
+    wave_packet3D = Wave_Packet3D(x_n_points=100, y_n_points=80, dt=0.5, BarrierThickness=5, barrier_height=1, k0=-1)
 
     # Create Animator instances and animate
-    animator = Animator(wave_packet)
-    animator.animate()
-    # plt.show()
-    plt.close()
+    animator = Animator2D(wave_packet)
+    animator.animate2D()
 
-    # animator3D = Animator3D(wave_packet3D)
-    # animator3D.animate()
-    # plt.close()
+    animator3D = Animator3D(wave_packet3D)
+    animator3D.animate3D()
+    plt.show()
+    plt.close()
 
     print("Done")
     sys.exit()
