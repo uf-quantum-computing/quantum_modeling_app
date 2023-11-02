@@ -55,7 +55,9 @@ const Tunneling = () => {
   const [wave, setWave] = useState<number>(1);
   const [tunneling_img2d_base64, set_Tunneling_img2d_base64] = useState(base64Text2d);
   const [tunneling_img3d_base64, set_Tunneling_img3d_base64] = useState(base64Text3d);
-
+  const [barrierSliderMoved, setBarrierSliderMoved] = useState(false);
+  const [thicknessSliderMoved, setThicknessSliderMoved] = useState(false);
+  const [waveSliderMoved, setWaveSliderMoved] = useState(false);
   const [success_msg, set_Success_Msg] = useState(
     "Tunneling model generated with barrier = " + barrier.toString() + ", thickness = " + thickness.toString() + ", and wave = " + wave.toString() + "!"
   );
@@ -93,18 +95,20 @@ const Tunneling = () => {
   };
   const handleBarrier = (event: Event, barrierValue: number | number[]) => {
     setBarrier(barrierValue as number);
+    setBarrierSliderMoved(true);
   };
   
   const handleThickness = (event: Event, thicknessValue: number | number[]) => {
     setThickness(thicknessValue as number);
+    setThicknessSliderMoved(true);
   };
   
   const handleWave = (event: Event, waveValue: number | number[]) => {
     setWave(waveValue as number);
+    setWaveSliderMoved(true);
   };
   
   async function handleSubmit(event: any) {
-    setLoading(true);
     event.preventDefault();
     let barrier_str = barrier.toString();
     let thickness_str = thickness.toString();
@@ -112,30 +116,34 @@ const Tunneling = () => {
     console.log("barrier:", barrier_str);
     console.log("thickness:", thickness_str);
     console.log("wave:", wave_str);
-
+    
     let base_url = "receive_data/tunneling/"
     let final_url =
-      base_url + barrier_str +
-      "/" + thickness_str +
-      "/" + wave_str;
-
-    const gifData = await getGifFromServer('http://localhost:3001/' + final_url);
-    if (gifData) {
-      set_Success_Msg(
-        "Tunneling model generated with barrier = " +
-          barrier_str +
-          ", thickness = " +
-          thickness_str +
-          ", and wave = " +
-          wave_str +
-          "!"
-      );
-      setLoading(false);
+    base_url + barrier_str +
+    "/" + thickness_str +
+    "/" + wave_str;
+    
+    if (barrierSliderMoved || waveSliderMoved || thicknessSliderMoved) {
+      setLoading(true);
+      const gifData = await getGifFromServer('http://localhost:3001/' + final_url);
+      if (gifData) {
+        set_Success_Msg(
+          "Tunneling model generated with barrier = " +
+            barrier_str +
+            ", thickness = " +
+            thickness_str +
+            ", and wave = " +
+            wave_str +
+            "!"
+        );
+        setLoading(false);
+        setBarrierSliderMoved(false);
+        setThicknessSliderMoved(false);
+        setWaveSliderMoved(false);
+      }
     }
     setOpenSnackbar(true); // open snackbar
   }
-
-  
 
   // ========= return =========
   return (
@@ -273,15 +281,14 @@ const Tunneling = () => {
         <Layout style={{ margin: "5%" }}>
         <CustomPageHeader text="Tunneling" size="h3" />
           <Content>
-            <Grid container spacing={3}>
-              <Grid item xs>
-              <img src={`data:image/video;base64,${tunneling_img3d_base64}`} alt="3D Image" />
-              </Grid>
-
-              <Grid item xs>
-              <img src={`data:image/video;base64,${tunneling_img2d_base64}`} alt="2D Image"/>
-              </Grid>
+          <Grid container spacing={3}>
+            <Grid item xs={12} sm={6}>
+              <img src={`data:image/video;base64,${tunneling_img3d_base64}`} alt="3D Image" style={{ width: "100%" }} />
             </Grid>
+            <Grid item xs={12} sm={6}>
+              <img src={`data:image/video;base64,${tunneling_img2d_base64}`} alt="2D Image" style={{ width: "100%" }} />
+            </Grid>
+          </Grid>
 
             <CustomDescriptionBox
               msg={

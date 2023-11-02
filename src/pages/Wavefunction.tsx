@@ -15,6 +15,7 @@ import {
 } from "@mui/material";
 import { Layout } from "antd";
 import "antd/dist/antd.min.css";
+import { sidebar_style } from "../global_styles";
 // === Components ===
 import {
   Dashboard,
@@ -124,19 +125,20 @@ const Wavefunction = () => {
           // collapsible
           // collapsed={collapsed}
           // onCollapse={(value) => setCollapsed(value)}
-          style={{ padding: "1%" }}
+          style={sidebar_style}
+          width={230}
         >
           <div>
             <CustomTitle />
 
             <Box
-              component="form"
-              sx={{
-                "& > :not(style)": { m: 1, width: "25ch" },
-              }}
-              noValidate
-              autoComplete="off"
-              style={horizontal_center}
+            component="form"
+            sx={{
+              "& > :not(style)": { m: 0.5, width: "25ch" },
+            }}
+            noValidate
+            autoComplete="off"
+            style={horizontal_center}
             >
               {/* ====== Sliders ====== */}
 
@@ -146,7 +148,7 @@ const Wavefunction = () => {
                 <FormControl variant="filled">
                   <InputLabel 
                     id="mass-select"
-                    style={{color: "white", marginTop: "10px", marginBottom: "10px",textAlign: "center"}}
+                    style={{color: "white", marginTop: "10px", marginBottom: "10px", marginLeft: "-8 px", textAlign: "left"}}
                     >  
                     Mass
                     </InputLabel>
@@ -165,7 +167,7 @@ const Wavefunction = () => {
                 <FormControl variant="filled">
                   <InputLabel 
                     id="velocity-select"
-                    style={{color: "white", marginTop: "10px", marginBottom: "10px",textAlign: "center"}}
+                    style={{color: "white", marginTop: "10px", marginBottom: "10px", marginLeft: "-8 px", textAlign: "left"}}
                     >  
                     Velocity
                     </InputLabel>
@@ -181,14 +183,19 @@ const Wavefunction = () => {
                 </FormControl>
 
                 {/* submit button */}
-                <Button
-                  variant="contained"
-                  color="success"
-                  onClick={handleSubmit}
-                  type="submit"
-                >
-                  Generate Model
-                </Button>
+                <div style ={{ marginTop: "10px", marginBottom: "10px", textAlign: "center"}}>
+              <Button
+                variant="contained"
+                onClick={handleSubmit}
+                type="submit"
+                color="success"
+                sx={{
+                  marginTop: "50px", // Adds space above the button
+                }}
+              >
+                Generate Model
+              </Button>
+            </div>
 
                 {/* ====== Dashboard ====== */}
                 <Dashboard />

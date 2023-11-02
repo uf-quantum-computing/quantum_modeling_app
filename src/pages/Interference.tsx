@@ -138,16 +138,17 @@ const Interference = () => {
         // collapsed={collapsed}
         // onCollapse={(value) => setCollapsed(value)}
         style={sidebar_style}
+        width={230}
       >
         <CustomTitle/>
         <Box
-          component="form"
-          sx={{
-            "& > :not(style)": { m: 1, width: "25ch" },
-          }}
-          noValidate
-          autoComplete="off"
-          style={horizontal_center}
+            component="form"
+            sx={{
+              "& > :not(style)": { m: 0.5, width: "25ch" },
+            }}
+            noValidate
+            autoComplete="off"
+            style={horizontal_center}
         >
 
           <Stack spacing={3}>
