@@ -9,11 +9,10 @@ import numpy as np
 import sys
 import os
 import base64
-from IPython.display import HTML
 
 class Wave_Packet:
     def __init__(self, n_points, dt, sigma0=5.0, k0=1.0, x0=-150.0, x_begin=-200.0,
-                 x_end=200.0, barrier_height=1.0, barrier_width=3.0):
+                 x_end=200.0, barrier_height=1.5, barrier_width=3.0):
         self.x_begin = x_begin
         self.x_end = x_end 
         self.n_points = n_points
@@ -61,7 +60,7 @@ class Wave_Packet:
 
 class Wave_Packet3D:
     def __init__(self, x_n_points, y_n_points, dt, sigma0=5.0, k0=-1.0, x0=-150.0, y0=0, x_begin=-200.0,
-                 x_end=200.0, y_begin=-100.0, y_end=100.0, BarrierThickness=1.0, barrier_height=1.0):
+                 x_end=200.0, y_begin=-100.0, y_end=100.0, barrier_width=1.0, barrier_height=1.5):
         self.x_begin = x_begin
         self.x_end = x_end 
         self.y_begin = y_begin
@@ -74,7 +73,7 @@ class Wave_Packet3D:
         self.y0 = y0
         self.dt = dt
         self.prob = np.zeros([x_n_points, y_n_points])
-        self.BarrierThickness = BarrierThickness
+        self.BarrierThickness = barrier_width
         V_tunnel = barrier_height
         self.total_steps = 250
 
@@ -92,7 +91,7 @@ class Wave_Packet3D:
         psi_0 = psi_x * psi_y
 
         """ 3) Setting up the potential barrier """
-        self.V = np.where((self.x>0) & (self.x<=self.BarrierThickness*dx) , V_tunnel, 0.)
+        self.V = np.where((self.x>0) & (self.x <= self.BarrierThickness), V_tunnel, 0.)
 
         """ 4) Creating the Hamiltonian """
         px = np.fft.fftshift(np.fft.fftfreq(x_n_points, d=dx)) * 2 * np.pi
@@ -142,8 +141,8 @@ class Animator2D:
         self.ani = animation.FuncAnimation(
             self.fig, self.update, repeat=True, frames=self.time_step, interval=100, blit=True, save_count=self.wave_packet.total_steps)
         # save the animation as a GIF file and encode to base64
-        self.ani.save('../src/model_gifs/tunneling_2D.gif', writer='pillow', dpi=85, fps=30)
-        with open('../src/model_gifs/tunneling_2D.gif', 'rb') as file:
+        self.ani.save('/Users/icelion/Project/UF/NSF-REU/quantum_modeling_app/src/model_gifs/tunneling_2D.gif', writer='pillow', dpi=85, fps=30)
+        with open('/Users/icelion/Project/UF/NSF-REU/quantum_modeling_app/src/model_gifs/tunneling_2D.gif', 'rb') as file:
             base64Gif2D = base64.b64encode(file.read()).decode('utf-8')
             return base64Gif2D
 
@@ -163,7 +162,13 @@ class Animator3D:
         
         # self.ax.set_xlim(self.wave_packet.x_begin, self.wave_packet.x_end)
         # self.ax.set_ylim(self.wave_packet.y_begin, self.wave_packet.y_end)
-        # self.ax.set_aspect('equal')
+
+        x_ticks = np.linspace(self.wave_packet.x_begin, self.wave_packet.x_end, num=9)  # Change num as needed
+        y_ticks = np.linspace(self.wave_packet.y_begin, self.wave_packet.y_end, num=5)  # Change num as needed
+        self.ax.set_xticks(np.linspace(0, self.wave_packet.x_n_points, len(x_ticks)))
+        self.ax.set_yticks(np.linspace(0, self.wave_packet.y_n_points, len(y_ticks)))
+        self.ax.set_xticklabels(x_ticks)
+        self.ax.set_yticklabels(y_ticks)
 
         self.ax.set_xlabel('X Position (nm)')
         self.ax.set_ylabel('Y Position (nm)')
@@ -183,8 +188,8 @@ class Animator3D:
         self.ani = animation.FuncAnimation(
             self.fig, self.update3D, frames=self.wave_packet.total_steps, interval=5, blit=False, cache_frame_data=False)
         # Save the animation as a GIF file 
-        self.ani.save('../src/model_gifs/tunneling_3D.gif', writer='pillow', dpi=85, bitrate=1)
-        with open('../src/model_gifs/tunneling_3D.gif', 'rb') as file:
+        self.ani.save('/Users/icelion/Project/UF/NSF-REU/quantum_modeling_app/src/model_gifs/tunneling_3D.gif', writer='pillow', dpi=85, bitrate=1)
+        with open('/Users/icelion/Project/UF/NSF-REU/quantum_modeling_app/src/model_gifs/tunneling_3D.gif', 'rb') as file:
             base64Gif3D = base64.b64encode(file.read()).decode('utf-8')
             return base64Gif3D
 
@@ -205,7 +210,7 @@ def complex_to_rgba(Z: np.ndarray, max_val: float = 1.0) -> np.ndarray:
 def main():
     # Create instances of Wave_Packet and Wave_Packet3D
     wave_packet = Wave_Packet(n_points=500, dt=0.5, barrier_width=10, barrier_height=1, k0=1)
-    wave_packet3D = Wave_Packet3D(x_n_points=100, y_n_points=80, dt=0.5, BarrierThickness=5, barrier_height=1, k0=-1)
+    wave_packet3D = Wave_Packet3D(x_n_points=500, y_n_points=400, dt=0.5, barrier_width=10, barrier_height=1, k0=-1)
 
     # Create Animator instances and animate
     animator = Animator2D(wave_packet)
