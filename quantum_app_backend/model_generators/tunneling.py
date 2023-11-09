@@ -7,8 +7,11 @@ from scipy import sparse as sparse
 import matplotlib.animation as animation
 import numpy as np
 import sys
-import os
+import io
 import base64
+import time
+from IPython.display import HTML
+import PIL
 
 class Wave_Packet:
     def __init__(self, n_points, dt, sigma0=5.0, k0=1.0, x0=-150.0, x_begin=-200.0,
@@ -23,7 +26,7 @@ class Wave_Packet:
         self.prob = np.zeros(n_points)
         self.barrier_width = barrier_width
         self.barrier_height = barrier_height
-        self.total_steps = 250
+        self.total_steps = 300
 
         """ 1) Space discretization """
         self.x, self.dx = np.linspace(x_begin, x_end, n_points, retstep=True)
@@ -75,7 +78,7 @@ class Wave_Packet3D:
         self.prob = np.zeros([x_n_points, y_n_points])
         self.BarrierThickness = barrier_width
         V_tunnel = barrier_height
-        self.total_steps = 250
+        self.total_steps = 300
 
         """ 1) Space discretization """
         x, dx = np.linspace(x_begin, x_end, x_n_points, retstep=True)
@@ -141,8 +144,12 @@ class Animator2D:
         self.ani = animation.FuncAnimation(
             self.fig, self.update, repeat=True, frames=self.time_step, interval=100, blit=True, save_count=self.wave_packet.total_steps)
         # save the animation as a GIF file and encode to base64
-        self.ani.save('/Users/icelion/Project/UF/NSF-REU/quantum_modeling_app/src/model_gifs/tunneling_2D.gif', writer='pillow', dpi=85, fps=30)
-        with open('/Users/icelion/Project/UF/NSF-REU/quantum_modeling_app/src/model_gifs/tunneling_2D.gif', 'rb') as file:
+        start_time = time.time()
+        self.ani.save('../src/model_gifs/tunneling_2D.gif', writer='pillow', dpi=85, fps=30)
+        end_time = time.time()
+        total_time = end_time - start_time
+        print("2D animation saving time: ", total_time, " seconds")
+        with open('../src/model_gifs/tunneling_2D.gif', 'rb') as file:
             base64Gif2D = base64.b64encode(file.read()).decode('utf-8')
             return base64Gif2D
 
@@ -188,8 +195,12 @@ class Animator3D:
         self.ani = animation.FuncAnimation(
             self.fig, self.update3D, frames=self.wave_packet.total_steps, interval=5, blit=False, cache_frame_data=False)
         # Save the animation as a GIF file 
-        self.ani.save('/Users/icelion/Project/UF/NSF-REU/quantum_modeling_app/src/model_gifs/tunneling_3D.gif', writer='pillow', dpi=85, bitrate=1)
-        with open('/Users/icelion/Project/UF/NSF-REU/quantum_modeling_app/src/model_gifs/tunneling_3D.gif', 'rb') as file:
+        start_time = time.time()
+        self.ani.save('../src/model_gifs/tunneling_3D.gif', writer='pillow', dpi=85, bitrate=1)
+        end_time = time.time()
+        total_time = end_time - start_time
+        print("3D animation saving time: ", total_time, " seconds")
+        with open('../src/model_gifs/tunneling_3D.gif', 'rb') as file:
             base64Gif3D = base64.b64encode(file.read()).decode('utf-8')
             return base64Gif3D
 
