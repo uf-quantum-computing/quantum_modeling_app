@@ -28,7 +28,7 @@ import {
 const { Sider, Content } = Layout;
 
 // === styles ===
-const select_style = { backgroundColor: "#FFFFFF" };
+// const select_style = { backgroundColor: "#FFFFFF" };
 const img_style = {
   borderRadius: "10px",
   boxShadow: "0 0 5px -1px rgba(0,0,0,0.2)",
@@ -66,14 +66,14 @@ const Wavefunction = () => {
     }
     setOpenSnackbar(false);
   };
-  const handleMass = (event: SelectChangeEvent) => {
-    setMass(event.target.value as string);
-    console.log(event.target.value);
-  };
-  const handleVelocity = (event: SelectChangeEvent) => {
-    setVelocity(event.target.value as string);
-    console.log(event.target.value);
-  };
+  // const handleMass = (event: SelectChangeEvent) => {
+  //   setMass(event.target.value as string);
+  //   console.log(event.target.value);
+  // };
+  // const handleVelocity = (event: SelectChangeEvent) => {
+  //   setVelocity(event.target.value as string);
+  //   console.log(event.target.value);
+  // };
   function handleSubmit(event: any) {
     event.preventDefault();
     let mass_str = mass.toString();

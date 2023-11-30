@@ -1,7 +1,6 @@
 import { Routes, Route, Link } from "react-router-dom";
 import { initializeApp } from 'firebase/app';
 import { getAnalytics } from "firebase/analytics";
-import dotenv from "dotenv";
 
 // TODO: Add SDKs for Firebase products (Cloud Functions)
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -26,7 +25,7 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+// const analytics = getAnalytics(app);
 // ========================================================
 // ========= App ==========================================
 // ========================================================
