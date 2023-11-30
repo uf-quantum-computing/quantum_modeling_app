@@ -60,7 +60,7 @@ export default function Dashboard() {
           {" "}
           Home{" "}
         </MenuItem>
-        <MenuItem component={Link} to="/tunneling">
+        <MenuItem component={Link} to="/Tunneling">
           {" "}
           Tunneling{" "}
         </MenuItem>
