@@ -19,7 +19,6 @@ import "antd/dist/antd.min.css";
 import axios from "axios";
 import base64Text3d from "../base64txt/default3d";
 import base64Text2d from "../base64txt/default2d";
-import tunneling_text from "../txt/tunneling_txt";
 
 
 // === Custom Components ===
@@ -29,9 +28,6 @@ import {
   CustomTitle,
   Dashboard,
 } from "../components";
-import { render } from "@testing-library/react";
-import { text } from "stream/consumers";
-import tunneling_txt from "../txt/tunneling_txt";
 
 // === sub component imports ===
 const { Sider, Content } = Layout;
