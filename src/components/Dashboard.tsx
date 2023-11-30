@@ -64,14 +64,14 @@ export default function Dashboard() {
           {" "}
           Tunneling{" "}
         </MenuItem>
-        <MenuItem component={Link} to="/wavefunction">
+        {/* <MenuItem component={Link} to="/wavefunction">
           {" "}
           Wavefunction{" "}
-        </MenuItem>
-        <MenuItem component={Link} to="/interference">
+        </MenuItem> */}
+        {/* <MenuItem component={Link} to="/interference">
           {" "}
           Interference{" "}
-        </MenuItem>
+        </MenuItem> */}
       </Menu>
     </div>
   );

@@ -94,7 +94,7 @@ class Wave_Packet3D:
         psi_0 = psi_x * psi_y
 
         """ 3) Setting up the potential barrier """
-        self.V = np.where((self.x>0) & (self.x <= self.BarrierThickness), V_tunnel, 0.)
+        self.V = np.where((self.x>0) & (self.x <= self.BarrierThickness*dx), V_tunnel, 0.)
 
         """ 4) Creating the Hamiltonian """
         px = np.fft.fftshift(np.fft.fftfreq(x_n_points, d=dx)) * 2 * np.pi
@@ -119,6 +119,7 @@ class Animator2D:
         self.wave_packet = wave_packet
         self.fig, self.ax = plt.subplots()
         plt.plot(self.wave_packet.x, self.wave_packet.potential * 0.1, color='r')
+        # plt.title("2D Tunneling Model")
 
         self.time_text = self.ax.text(0.05, 0.95, '', horizontalalignment='left',
                                       verticalalignment='top', transform=self.ax.transAxes)
@@ -145,11 +146,11 @@ class Animator2D:
             self.fig, self.update, repeat=True, frames=self.time_step, interval=100, blit=True, save_count=self.wave_packet.total_steps)
         # save the animation as a GIF file and encode to base64
         start_time = time.time()
-        self.ani.save('../src/model_gifs/tunneling_2D.gif', writer='pillow', dpi=85, fps=30)
+        self.ani.save('/Users/vyvooz/Documents/Coding Projects/quantum_modeling_app/src/model_gifs/tunneling_2D.gif', writer='pillow')
         end_time = time.time()
         total_time = end_time - start_time
         print("2D animation saving time: ", total_time, " seconds")
-        with open('../src/model_gifs/tunneling_2D.gif', 'rb') as file:
+        with open('/Users/vyvooz/Documents/Coding Projects/quantum_modeling_app/src/model_gifs/tunneling_2D.gif', 'rb') as file:
             base64Gif2D = base64.b64encode(file.read()).decode('utf-8')
             return base64Gif2D
 
@@ -166,10 +167,6 @@ class Animator3D:
         # https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.colorbar.html
 
         self.colorbar = self.fig.colorbar(self.img, ax=self.ax, orientation='vertical', fraction=.1, pad=0.05)
-        
-        # self.ax.set_xlim(self.wave_packet.x_begin, self.wave_packet.x_end)
-        # self.ax.set_ylim(self.wave_packet.y_begin, self.wave_packet.y_end)
-
         x_ticks = np.linspace(self.wave_packet.x_begin, self.wave_packet.x_end, num=9)  # Change num as needed
         y_ticks = np.linspace(self.wave_packet.y_begin, self.wave_packet.y_end, num=5)  # Change num as needed
         self.ax.set_xticks(np.linspace(0, self.wave_packet.x_n_points, len(x_ticks)))
@@ -183,6 +180,7 @@ class Animator3D:
                      transform=self.ax.transAxes, ha='center')
 
         self.animation_data = {'t': 0, 'ax': self.ax ,'frame': 0}
+        # plt.title("3D Tunneling Model")
 
     def update3D(self, data):
         self.animation_data['t'] += 1
@@ -196,7 +194,7 @@ class Animator3D:
             self.fig, self.update3D, frames=self.wave_packet.total_steps, interval=5, blit=False, cache_frame_data=False)
         # Save the animation as a GIF file 
         start_time = time.time()
-        self.ani.save('../src/model_gifs/tunneling_3D.gif', writer='pillow', dpi=85, bitrate=1)
+        self.ani.save('../src/model_gifs/tunneling_3D.gif', writer='pillow')
         end_time = time.time()
         total_time = end_time - start_time
         print("3D animation saving time: ", total_time, " seconds")
@@ -220,13 +218,13 @@ def complex_to_rgba(Z: np.ndarray, max_val: float = 1.0) -> np.ndarray:
 
 def main():
     # Create instances of Wave_Packet and Wave_Packet3D
-    wave_packet = Wave_Packet(n_points=500, dt=0.5, barrier_width=10, barrier_height=1, k0=1)
-    wave_packet3D = Wave_Packet3D(x_n_points=500, y_n_points=400, dt=0.5, barrier_width=10, barrier_height=1, k0=-1)
+    wave_packet = Wave_Packet(n_points=500, dt=0.5, barrier_width=2, barrier_height=3, k0=1)
+    wave_packet3D = Wave_Packet3D(x_n_points=500, y_n_points=400, dt=0.5, barrier_width=2, barrier_height=3, k0=1)
 
     # Create Animator instances and animate
     animator = Animator2D(wave_packet)
     animator.animate2D()
-
+    plt.show()
     animator3D = Animator3D(wave_packet3D)
     animator3D.animate3D()
     plt.show()

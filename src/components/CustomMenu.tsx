@@ -22,9 +22,9 @@ const CustomMenu = () => {
         {/* <Link to="/spin" style={{ textDecoration: "none" }}>
           <Button variant="outlined">Spin</Button>
         </Link> */}
-        <Link to="/wavefunction" style={{ textDecoration: "none" }}>
+        {/* <Link to="/wavefunction" style={{ textDecoration: "none" }}>
           <Button variant="outlined">Wave Function</Button>
-        </Link>
+        </Link> */}
         {/* <Link to="/potential-barriers" style={{ textDecoration: "none" }}>
           <Button variant="outlined">Potential Barriers/Wells</Button>
         </Link> */}
