@@ -25,7 +25,7 @@ import {
 
 // === styles ===
 import { sidebar_style } from "../global_styles";
-const select_style = { backgroundColor: "#FFFFFF" };
+// const select_style = { backgroundColor: "#FFFFFF" };
 const img_style = {
   borderRadius: "10px",
   boxShadow: "0 0 5px -1px rgba(0,0,0,0.2)",
@@ -68,18 +68,18 @@ const Interference = () => {
     }
     setOpenSnackbar(false);
   };
-  const handleMomentum = (event: SelectChangeEvent) => {
-    setMomentum(event.target.value as string);
-    console.log(event.target.value);
-  };
-  const handleSpacing = (event: SelectChangeEvent) => {
-    setSpacing(event.target.value as string);
-    console.log(event.target.value);
-  };
-  const handleSlitSeparation = (event: SelectChangeEvent) => {
-    setSlitSeparation(event.target.value as string);
-    console.log(event.target.value);
-  };
+  // const handleMomentum = (event: SelectChangeEvent) => {
+  //   setMomentum(event.target.value as string);
+  //   console.log(event.target.value);
+  // };
+  // const handleSpacing = (event: SelectChangeEvent) => {
+  //   setSpacing(event.target.value as string);
+  //   console.log(event.target.value);
+  // };
+  // const handleSlitSeparation = (event: SelectChangeEvent) => {
+  //   setSlitSeparation(event.target.value as string);
+  //   console.log(event.target.value);
+  // };
   function handleSubmit(event: any) {
     event.preventDefault();
     let momentum_str = momentum.toString();

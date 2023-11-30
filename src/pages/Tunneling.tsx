@@ -5,7 +5,7 @@ import {
   Box,
   Button,
   Stack,
-  SelectChangeEvent,
+  // SelectChangeEvent,
   Alert,
   Snackbar,
   InputLabel,
@@ -16,7 +16,7 @@ import {
 import CircularProgress from '@mui/joy/CircularProgress';
 import { Layout } from "antd";
 import "antd/dist/antd.min.css";
-import axios from "axios";
+// import axios from "axios";
 import base64Text3d from "../base64txt/default3d";
 import base64Text2d from "../base64txt/default2d";
 
@@ -33,12 +33,12 @@ import {
 const { Sider, Content } = Layout;
 
 // ======== local styles ========
-const select_style = { backgroundColor: "#FFFFFF" };
-const img_style = {
-  borderRadius: "10px",
-  boxShadow: "0 0 5px -1px rgba(0,0,0,0.2)",
-  width: "100%",
-};
+// const select_style = { backgroundColor: "#FFFFFF" };
+// const img_style = {
+//   borderRadius: "10px",
+//   boxShadow: "0 0 5px -1px rgba(0,0,0,0.2)",
+//   width: "100%",
+// };
 const horizontal_center = {
   display: "flex",
   // alignItems: "center",  # vertical center
@@ -299,11 +299,11 @@ const Tunneling = () => {
             <CustomPageHeader text="Tunneling" size="h3" />
             <Grid container spacing={2}>
               <Grid item xs={6}>
-              <img src={`data:image/video;base64,${tunneling_img3d_base64}`} alt="3D Image" style={{ width: "100%" }} />
+              <img src={`data:image/video;base64,${tunneling_img3d_base64}`} alt="3D tunneling model showcasing a glowing ball hitting a barrier" style={{ width: "100%" }} />
               <Typography variant="body1" align="center" style={{marginTop: '5px'}}>3D Tunneling Model</Typography>
               </Grid>
               <Grid item xs={6}>
-              <img src={`data:image/video;base64,${tunneling_img2d_base64}`} alt="2D Image" style={{ width: "100%" }} />
+              <img src={`data:image/video;base64,${tunneling_img2d_base64}`} alt="2D tunneling model showcasing a wave hitting a barrier" style={{ width: "100%" }} />
               <Typography variant="body1" align="center" style={{marginTop: '5px'}}>2D Tunneling Model</Typography>
               </Grid>
             </Grid>
