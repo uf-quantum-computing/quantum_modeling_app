@@ -115,7 +115,7 @@ const Tunneling = () => {
     console.log("thickness:", thickness_str);
     console.log("wave:", wave_str);
     
-    let base_url = "receive_data/tunneling/"
+    let base_url = "https://us-central1-quantum-model-generator.cloudfunctions.net/tunneling"
     let final_url =
     base_url + barrier_str +
     "/" + thickness_str +
@@ -123,7 +123,7 @@ const Tunneling = () => {
     
     if (barrierSliderMoved || waveSliderMoved || thicknessSliderMoved) {
       setLoading(true);
-      const gifData = await getGifFromServer('http://localhost:3001/' + final_url);
+      const gifData = await getGifFromServer(final_url);
       if (gifData) {
         set_Success_Msg(
           "Tunneling model generated with barrier = " +
