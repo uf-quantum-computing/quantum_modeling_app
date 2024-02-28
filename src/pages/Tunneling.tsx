@@ -138,32 +138,43 @@ const Tunneling = () => {
     console.log("barrier:", barrier_str);
     console.log("thickness:", thickness_str);
     console.log("wave:", wave_str);
+    let base_url = "https://us-central1-quantum-model-generator.cloudfunctions.net/tunneling"
 
-    // let base_url = "https://us-central1-quantum-model-generator.cloudfunctions.net/tunneling"
-    let base_url = "http://127.0.0.1:5001/quantum-model-generator/us-central1/tunneling"
+    // if no input, set to default
+    if (barrier_str === "") {
+      barrier_str = "1";
+    }
+    if (thickness_str === "") {
+      thickness_str = "1";
+    }
+    if (wave_str === "") {
+      wave_str = "1";
+    }
+
     let final_url =
-    base_url + "?barrier=" + barrier_str +
-    "&width=" + thickness_str +
-    "&momentum=" + wave_str;
-
-    if (barrierSliderMoved || waveSliderMoved || thicknessSliderMoved) {
-      setLoading(true);
-      const gifData = await getGifFromServer(final_url);
-      if (gifData) {
-        set_Success_Msg(
-          "Tunneling model generated with barrier = " +
-            barrier_str +
-            ", thickness = " +
-            thickness_str +
-            ", and wave = " +
-            wave_str +
-            "!"
-        );
-        setLoading(false);
-        setBarrierSliderMoved(false);
-        setThicknessSliderMoved(false);
-        setWaveSliderMoved(false);
+      base_url + "/" + barrier_str +
+      "/" + thickness_str +
+      "/" + wave_str;
+    
+    const gifData = await getGifFromServer(final_url);
+    if (gifData) {
+      const { base64Gif2D, base64Gif3D } = gifData;
+      if (base64Gif2D) {
+        set_Tunneling_img2d(`${base64Gif2D}`);
       }
+      if (base64Gif3D) {
+        set_Tunneling_img3d(`${base64Gif3D}`);
+      }
+      set_Success_Msg(
+        "Tunneling model generated with barrier = " +
+          barrier_str +
+          ", thickness = " +
+          thickness_str +
+          ", and wave = " +
+          wave_str +
+          "!"
+      );
+      setLoading(false);
     }
     setOpenSnackbar(true); // open snackbar
   }
