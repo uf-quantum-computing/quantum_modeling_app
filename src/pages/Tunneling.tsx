@@ -102,7 +102,7 @@ const Tunneling = () => {
     console.log("barrier:", barrier_str);
     console.log("thickness:", thickness_str);
     console.log("wave:", wave_str);
-    let base_url = "http://44.227.0.52:59059/v1/hello?"
+    let base_url = "https://us-central1-quantum-model-generator.cloudfunctions.net/tunneling"
 
     // if no input, set to default
     if (barrier_str === "") {
@@ -116,9 +116,9 @@ const Tunneling = () => {
     }
 
     let final_url =
-      base_url + "intensity=" + barrier_str +
-      "&thickness=" + thickness_str +
-      "&momentum=" + wave_str;
+      base_url + "/" + barrier_str +
+      "/" + thickness_str +
+      "/" + wave_str;
     
     const gifData = await getGifFromServer(final_url);
     if (gifData) {
