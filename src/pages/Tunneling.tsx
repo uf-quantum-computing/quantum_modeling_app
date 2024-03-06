@@ -117,7 +117,7 @@ const Tunneling = () => {
     
     let base_url = "https://us-central1-quantum-model-generator.cloudfunctions.net/tunneling"
     let final_url =
-    base_url + barrier_str +
+    base_url + "/" + barrier_str +
     "/" + thickness_str +
     "/" + wave_str;
     
