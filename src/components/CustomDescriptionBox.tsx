@@ -1,8 +1,8 @@
 import React from "react";
-import { Card, CardContent, Typography } from "@mui/material";
+import { Card, CardContent, Typography, Box } from "@mui/material";
 
 // ========== styles ==========
-const card_style = {
+const cardStyle = {
   backgroundColor: "#FFFFFF",
   marginTop: "2%",
   marginBottom: "2%",
@@ -11,17 +11,29 @@ const card_style = {
 };
 
 // ========== CustomDescriptionBox ==========
-const CustomDescriptionBox = (props: any) => {
+const CustomDescriptionBox = ({ msg, imageUrl }: { msg: string; imageUrl?: string }) => {
   return (
-    <div>
-      <Card style={card_style}>
-        <CardContent>
-        <Typography whiteSpace="pre-line">
-          <p style={{ textAlign: "center", margin: 0 }}>{props.msg}</p>
+    <Card style={cardStyle}>
+      <CardContent>
+        <Box display="flex" flexDirection="row" alignItems="center">
+          {imageUrl && (
+            <Box
+              component="img"
+              src={imageUrl}
+              alt="Description related image"
+              sx={{
+                maxWidth: '50%', // Adjust based on your needs
+                maxHeight: 300, // Adjust based on your needs
+                marginRight: 2, // Adds some space between the image and the text
+              }}
+            />
+          )}
+          <Typography component="div" whiteSpace="pre-line" sx={{ textAlign: "center", flex: 1 }}>
+            {msg}
           </Typography>
-        </CardContent>
-      </Card>
-    </div>
+        </Box>
+      </CardContent>
+    </Card>
   );
 };
 

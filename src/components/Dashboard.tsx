@@ -64,6 +64,14 @@ export default function Dashboard() {
           {" "}
           Tunneling{" "}
         </MenuItem>
+        <MenuItem component={Link} to="/interference">
+          {" "}
+          Interference{" "}
+        </MenuItem>
+        <MenuItem component={Link} to="/spintraceevo">
+          {" "}
+          Spin Trace Evolution{" "}
+        </MenuItem>
         {/* <MenuItem component={Link} to="/wavefunction">
           {" "}
           Wavefunction{" "}
