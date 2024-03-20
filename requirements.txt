@@ -21,3 +21,4 @@ zipp>=3.15.0
 ipython>=8.17.2
 odeintw
 portalocker
+matplotlib
