@@ -1,13 +1,15 @@
 from flask import Flask, jsonify, request
 from flask_restx import Api
 from flask_cors import CORS
-from watchdog.events import FileSystemEvent
-from model_generators.tunneling import Wave_Packet, Wave_Packet3D, Animator2D, Animator3D
+from model_generators.tunneling import Wave_Packet3D as t_wp, Animator3D as t_ani
+from model_generators.interference import Wave_Packet3D as i_wp, Animator3D as i_ani
+from model_generators.Qgate1 import Qgate1
 import matplotlib.pyplot as plt
 import time
 import base64
 import os
-from IPython import display
+from pathlib import Path
+import portalocker
 
 #set swagger info
 api: Api = Api(
@@ -28,28 +30,74 @@ CORS(app)
 # def default():
 #     return {}
 
-@app.route('/receive_data/tunneling/<int:barrier>/<int:width>/<int:momentum>', methods=['GET'])
-def receive_data(barrier, width, momentum):
+@app.route('/receive_data/tunneling/<barrier>/<width>/<momentum>', methods=['GET'])
+def Qtunneling(barrier, width, momentum):
+    barrier = float(barrier)
+    width = float(width)
+    momentum = float(momentum)
     # can pass variables through the route url /tunneling/intensity/thickness/momentum
     print("You evoked the API successfully")
-    plt.switch_backend('Agg') 
-    
-    start_2d_time = time.time()  # Record the start time
-    wave_packet = Wave_Packet(n_points=500, dt=0.5, barrier_width=width, barrier_height=barrier, k0=momentum)
-    animator = Animator2D(wave_packet)
-    base64Gif2D = animator.animate2D()
-    end_2d_time = time.time()    # Record the end time
-    elapsed_2d_time = end_2d_time - start_2d_time
-    print(f"Elapsed 2D generator time: {elapsed_2d_time} seconds")
-    start_3d_time = time.time()  # Record the start time
-    wave_packet3D = Wave_Packet3D(x_n_points=500, y_n_points=400, dt=0.5, barrier_width=width, barrier_height=barrier, k0=momentum)
-    animator3D = Animator3D(wave_packet3D)
-    base64Gif3D = animator3D.animate3D()
-    end_3d_time = time.time()    # Record the end time
-    elapsed_3d_time = end_3d_time - start_3d_time
-    print(f"Elapsed 3D generator time: {elapsed_3d_time} seconds")
+    if Path(f'cache/tunneling/probs_{momentum}_{barrier}_{width}_3D.html').exists():
+        print(f'cache/tunneling/probs_{momentum}_{barrier}_{width}_3D.html')
+        with open(f'cache/tunneling/probs_{momentum}_{barrier}_{width}_3D.html',
+                  "r") as f:
+            portalocker.lock(f, portalocker.LOCK_SH)
+            GifRes = f.read()
+    else:
+        plt.switch_backend('Agg')
 
-    return {'base64Gif2D': base64Gif2D, 'base64Gif3D': base64Gif3D}
+        start_3d_time = time.time()  # Record the start time
+        wave_packet3D = t_wp(barrier_width=width, barrier_height=barrier, k0=momentum)
+        animator = t_ani(wave_packet3D)
+        GifRes = animator.animate3D()
+        # print(GifRes)
+        end_3d_time = time.time()    # Record the end time
+        elapsed_3d_time = end_3d_time - start_3d_time
+        print(f"Elapsed 3D generator time: {elapsed_3d_time} seconds")
+
+    return {'GifRes': GifRes}
+
+
+@app.route('/receive_data/interference/<spacing>/<slit_separation>/<int:momentum>', methods=['GET'])
+def Qinterference(spacing, slit_separation, momentum):
+    spacing = float(spacing)
+    slit_separation = float(slit_separation)
+    print("You evoked the API successfully")
+    if Path(f'cache/interference/probs_{momentum}_{spacing}_{slit_separation}_3D.html').exists():
+        print(f'cache/interference/probs_{momentum}_{spacing}_{slit_separation}_3D.html')
+        with open(f'cache/interference/probs_{momentum}_{spacing}_{slit_separation}_3D.html',
+                  "r") as f:
+            portalocker.lock(f, portalocker.LOCK_SH)
+            GifRes = f.read()
+    else:
+        plt.switch_backend('Agg')
+
+        start_3d_time = time.time()
+        wave_packet3D = i_wp(slit_space=spacing, slit_sep=slit_separation, k0=momentum)
+        animator3D = i_ani(wave_packet3D)
+        GifRes = animator3D.animate3D()
+        end_3d_time = time.time()  # Record the end time
+        elapsed_3d_time = end_3d_time - start_3d_time
+        print(f"Elapsed 3D generator time: {elapsed_3d_time} seconds")
+
+    return {'GifRes': GifRes}
+
+
+@app.route('/receive_data/evotrace/<int:gate>/<int:init_state>/<int:mag>/<t2>', methods=['GET'])
+def Qtrace(gate, init_state, mag, t2):
+    t2 = float(t2)
+    print("You evoked the API successfully")
+    plt.switch_backend('Agg')
+
+    start_time = time.time()  # Record the start time
+    qg = Qgate1()
+    qg.run(gate=gate, init_state=init_state, mag_f_B=mag, t2=t2)
+    GifRes = qg.plot_evo()
+    end_time = time.time()  # Record the end time
+    elapsed_time = end_time - start_time
+    print(f"Elapsed 3D generator time: {elapsed_time} seconds")
+
+    return {'GifRes': GifRes}
     
 
 @app.route('/hello', methods=['GET', 'POST'])

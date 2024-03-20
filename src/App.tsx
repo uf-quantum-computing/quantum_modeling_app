@@ -9,6 +9,8 @@ import {
   MainLayout,
   Home2,
   Tunneling,
+  Interference,
+  SpinTraceEvolution,
   // removed other pages for now
 } from "./pages";
 
@@ -39,6 +41,8 @@ export default function App() {
           <Route index element={<Home2 />} />
           <Route path="*" element={<NoMatch />} />
           <Route path="/tunneling" element={<Tunneling />} />
+          <Route path="/interference" element={<Interference />} />
+          <Route path="/spintraceevo" element={<SpinTraceEvolution />} />
           {/*<Route path="/wavefunction" element={<Wavefunction />} />}
           <Route path="/interference" element={<Interference />} />
           {/* <Route path="/spin" element={<Spin />} /> */}

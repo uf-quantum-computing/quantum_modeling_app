@@ -1,237 +1,173 @@
-import matplotlib
-import matplotlib.pyplot as plt
-from matplotlib.colors import hsv_to_rgb
-import scipy as sp
-from scipy.sparse import linalg as ln
-from scipy import sparse as sparse
-import matplotlib.animation as animation
 import numpy as np
-import sys
-import io
-import base64
-import time
-from IPython.display import HTML
-import PIL
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
+from matplotlib.patches import Rectangle
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes
+from scipy.sparse import linalg as ln
+from scipy.sparse import csc_matrix
+from pathlib import Path
+import portalocker
 
-class Wave_Packet:
-    def __init__(self, n_points, dt, sigma0=5.0, k0=1.0, x0=-150.0, x_begin=-200.0,
-                 x_end=200.0, barrier_height=1.5, barrier_width=3.0):
-        self.x_begin = x_begin
-        self.x_end = x_end 
-        self.n_points = n_points
-        self.sigma0 = sigma0
-        self.k0 = k0
-        self.x0 = x0
-        self.dt = dt
-        self.prob = np.zeros(n_points)
-        self.barrier_width = barrier_width
-        self.barrier_height = barrier_height
-        self.total_steps = 300
 
-        """ 1) Space discretization """
-        self.x, self.dx = np.linspace(x_begin, x_end, n_points, retstep=True)
-
-        """ 2) Initialization of the wave function to Gaussian wave packet """
-        self.psi = np.exp(-(self.x - x0) ** 2 / (4.0 * sigma0 ** 2)).astype(np.complex128)
-        self.psi *= np.exp(1.0j * k0 * self.x)
-        self.psi *= (2.0 * np.pi * sigma0 ** 2) ** (-0.25)
-
-        """ 3) Setting up the potential barrier """
-        self.potential = np.array(
-            [barrier_height if 0.0 < x < barrier_width else 0.0 for x in self.x])
-
-        """ 4) Creating the Hamiltonian """
-        h_diag = np.ones(n_points) / self.dx ** 2 + self.potential
-        h_non_diag = np.ones(n_points - 1) * (-0.5 / self.dx ** 2)
-        hamiltonian = sparse.diags([h_diag, h_non_diag, h_non_diag], [0, 1, -1])
-
-        """ 5) Computing the Crank-Nicolson time evolution matrix """
-        implicit = (sparse.eye(self.n_points) - dt / 2.0j * hamiltonian).tocsc()
-        explicit = (sparse.eye(self.n_points) + dt / 2.0j * hamiltonian).tocsc()
-        self.evolution_matrix = ln.inv(implicit).dot(explicit).tocsr()
-
-    def evolve(self):
-        self.psi = self.evolution_matrix.dot(self.psi)
-        self.prob = abs(self.psi) ** 2
-
-        norm = sum(self.prob)
-        self.prob /= norm
-        self.psi /= norm ** 0.5
-
-        return self.prob
+def calculate_center_of_mass(x, psi):
+    density = np.abs(psi)**2
+    total_density = np.sum(density)
+    x_cm = np.sum(x * density) / total_density
+    return x_cm
 
 
 class Wave_Packet3D:
-    def __init__(self, x_n_points, y_n_points, dt, sigma0=5.0, k0=-1.0, x0=-150.0, y0=0, x_begin=-200.0,
-                 x_end=200.0, y_begin=-100.0, y_end=100.0, barrier_width=1.0, barrier_height=1.5):
-        self.x_begin = x_begin
-        self.x_end = x_end 
-        self.y_begin = y_begin
-        self.y_end = y_end
-        self.x_n_points = x_n_points
-        self.y_n_points = y_n_points
-        self.sigma0 = sigma0
+    def __init__(self, sigma0=0.5, k0=1, x0=0.2, barrier_height=15, barrier_width=1.0):
+        self.L = 8
+        self.t_Loc = 4.5
+        self.dx = 0.1
+        self.Nx = self.Ny = int(self.L / self.dx) + 1
         self.k0 = k0
-        self.x0 = x0
-        self.y0 = y0
-        self.dt = dt
-        self.prob = np.zeros([x_n_points, y_n_points])
-        self.BarrierThickness = barrier_width
-        V_tunnel = barrier_height
-        self.total_steps = 300
+        self.sigma0 = sigma0
+        self.x0 = self.L * x0
+        self.y0 = self.L / 2
+        self.w = barrier_width
+        self.v_max = barrier_height
+        self.b_left = int((self.t_Loc - self.w / 2) / self.dx)
+        self.b_right = int((self.t_Loc + self.w / 2) / self.dx)
+        self.Ni = (self.Nx - 2) * (self.Ny - 2)
+        self.potential = self.potential_init(barrier_height)
 
-        """ 1) Space discretization """
-        x, dx = np.linspace(x_begin, x_end, x_n_points, retstep=True)
-        y, dy = np.linspace(y_begin, y_end, y_n_points, retstep=True)
-        self.x, self.y = np.meshgrid(x, y)
+        # if Path(f'cache/tunneling/probs_{k0}_{barrier_height}_{barrier_width}_3D.npy').exists():
+        #     self.probs = np.load(f'cache/tunneling/probs_{k0}_{barrier_height}_{barrier_width}_3D.npy')
+        #     self.Nt = self.probs.shape[0]
+        # else:
+        self.evo_matrix = self.evo_matrix_cons()
+        self.x = np.linspace(0, self.L, self.Ny - 2)  # Array of spatial points.
+        self.y = np.linspace(0, self.L, self.Ny - 2)  # Array of spatial points.
+        self.x, self.y = np.meshgrid(self.x, self.y)
 
-        """ 2) Initialization of the wave function to Gaussian wave packet """
-        psi_x = np.exp(-(self.x - x0) ** 2 / (4.0 * sigma0 ** 2)).astype(np.complex128)
-        psi_y = np.exp(-(self.y - y0) ** 2 / (4.0 * sigma0 ** 2)).astype(np.complex128)
-        psi_x *= np.exp(1.0j * k0 * self.x)
-        psi_x *= (2.0 * np.pi * sigma0 ** 2) ** (-0.25)
-        psi_y *= (2.0 * np.pi * sigma0 ** 2) ** (-0.25)
-        psi_0 = psi_x * psi_y
+        self.psi0 = self.psi0_init(self.sigma0, self.k0)
+        self.probs = []
+        self.probs.append(np.sqrt(np.real(self.psi0) ** 2 + np.imag(self.psi0) ** 2))
 
-        """ 3) Setting up the potential barrier """
-        self.V = np.where((self.x>0) & (self.x <= self.BarrierThickness*dx), V_tunnel, 0.)
-
-        """ 4) Creating the Hamiltonian """
-        px = np.fft.fftshift(np.fft.fftfreq(x_n_points, d=dx)) * 2 * np.pi
-        py = np.fft.fftshift(np.fft.fftfreq(y_n_points, d=dy)) * 2 * np.pi
-        px, py = np.meshgrid(px, py)
-
-        self.p2 = (px ** 2 + py ** 2)
-
-        Ur = np.exp(-0.5j * self.dt * np.array(self.V))
-        Uk = np.exp(-0.5j * self.dt * self.p2)
-
-        """ 5) Computing the Crank-Nicolson time evolution matrix """
-        self.psi = np.zeros((self.total_steps + 1, *[y_n_points, x_n_points]), dtype = np.complex128)
-        self.psi[0] = psi_0
-        for i in range(self.total_steps):
-            tmp = np.copy(self.psi[i])
-            self.psi[i+1] = Ur*np.fft.ifftn(np.fft.ifftshift(Uk*np.fft.fftshift(np.fft.fftn(Ur*tmp))))
-
-class Animator2D:
-    def __init__(self, wave_packet):
-        self.time = 0.0
-        self.wave_packet = wave_packet
-        self.fig, self.ax = plt.subplots()
-        plt.plot(self.wave_packet.x, self.wave_packet.potential * 0.1, color='r')
-        # plt.title("2D Tunneling Model")
-
-        self.time_text = self.ax.text(0.05, 0.95, '', horizontalalignment='left',
-                                      verticalalignment='top', transform=self.ax.transAxes)
-        self.line, = self.ax.plot(self.wave_packet.x, self.wave_packet.evolve())
-        self.ax.set_ylim(0, 0.2)
-        self.ax.set_xlabel('Position (a$_0$)')
-        self.ax.set_ylabel('Probability density (a$_0$)')
+        for i in range(1, self.Nt):
+            psi_vect = self.psi0.reshape((self.Ni))
+            psi_vect = self.evo_matrix.dot(psi_vect)
+            self.psi0 = psi_vect.reshape((self.Nx - 2, self.Ny - 2))
+            self.probs.append(np.sqrt(np.real(self.psi0) ** 2 + np.imag(self.psi0) ** 2))
+        self.probs = np.array(self.probs)
+        # try:
+        #     np.save(f'cache/tunneling/probs_{k0}_{barrier_height}_{barrier_width}_3D.npy', self.probs)
+        # except:
+        #     Path('cache/tunneling/').mkdir(parents=True, exist_ok=True)
+        #     np.save(f'cache/tunneling/probs_{k0}_{barrier_height}_{barrier_width}_3D.npy', self.probs)
 
 
-    def update(self, data):
-        self.line.set_ydata(data)
-        return self.line,
+    def potential_init(self, v0):
+        v = np.zeros((self.Ny, self.Ny), complex)
+        v[:, self.b_left:self.b_right] = v0
+        return v
 
-    def time_step(self):
-        for i in range(self.wave_packet.total_steps):
-            self.time += self.wave_packet.dt
-            self.time_text.set_text(
-                'Elapsed time: {:6.2f} fs'.format(self.time * 2.419e-2))
+    def psi0_init(self, sigma=0.5, k=1):
+        psi0 = np.exp(-1 / 2 * ((self.x - self.x0) ** 2 + (self.y - self.y0) ** 2) / sigma ** 2) * np.exp(1j * k * (self.x - self.x0))
 
-            yield self.wave_packet.evolve()
+        x_cm_initial = calculate_center_of_mass(self.x, psi0)
+        psi_test = (self.evo_matrix.dot(np.copy(psi0).reshape((self.Ni)))).reshape((self.Nx - 2, self.Ny - 2))
+        x_cm_later = calculate_center_of_mass(self.x, psi_test)
+        dx_per_step = x_cm_later - x_cm_initial
+        self.Nt = min(800, int(1.5 * self.L / abs(dx_per_step)))
+        if dx_per_step < 0:  # Assuming "forward" is in the positive x direction
+            psi0 = np.exp(-1 / 2 * ((self.x - self.x0) ** 2 + (self.y - self.y0) ** 2) / sigma ** 2) * np.exp(1j * (-k) * (self.x - self.x0))
+        psi0[0, :] = psi0[-1, :] = psi0[:, 0] = psi0[:, -1] = 0
 
-    def animate2D(self):
-        self.ani = animation.FuncAnimation(
-            self.fig, self.update, repeat=True, frames=self.time_step, interval=100, blit=True, save_count=self.wave_packet.total_steps)
-        # save the animation as a GIF file and encode to base64
-        start_time = time.time()
-        self.ani.save('/Users/vyvooz/Documents/Coding Projects/quantum_modeling_app/src/model_gifs/tunneling_2D.gif', writer='pillow')
-        end_time = time.time()
-        total_time = end_time - start_time
-        print("2D animation saving time: ", total_time, " seconds")
-        with open('/Users/vyvooz/Documents/Coding Projects/quantum_modeling_app/src/model_gifs/tunneling_2D.gif', 'rb') as file:
-            base64Gif2D = base64.b64encode(file.read()).decode('utf-8')
-            return base64Gif2D
+        return psi0
+
+    def evo_matrix_cons(self):
+        Dt = self.dx ** 2 / 4
+        rx, ry = -Dt / (2j * self.dx ** 2), -Dt / (2j * self.dx ** 2)
+        A = np.zeros((self.Ni, self.Ni), complex)
+        M = np.zeros((self.Ni, self.Ni), complex)
+        for k in range(self.Ni):
+            # k = (i-1)*(Ny-2) + (j-1)
+            i = 1 + k // (self.Ny - 2)
+            j = 1 + k % (self.Ny - 2)
+
+            # Main central diagonal.
+            A[k, k] = 1 + 2 * rx + 2 * ry + 1j * Dt / 2 * self.potential[i, j]
+            M[k, k] = 1 - 2 * rx - 2 * ry - 1j * Dt / 2 * self.potential[i, j]
+
+            if i != 1:  # Lower lone diagonal.
+                A[k, (i - 2) * (self.Ny - 2) + j - 1] = -ry
+                M[k, (i - 2) * (self.Ny - 2) + j - 1] = ry
+
+            if i != self.Nx - 2:  # Upper lone diagonal.
+                A[k, i * (self.Ny - 2) + j - 1] = -ry
+                M[k, i * (self.Ny - 2) + j - 1] = ry
+
+            if j != 1:  # Lower main diagonal.
+                A[k, k - 1] = -rx
+                M[k, k - 1] = rx
+
+            if j != self.Ny - 2:  # Upper main diagonal.
+                A[k, k + 1] = -rx
+                M[k, k + 1] = rx
+        Asp = csc_matrix(A)
+        Msp = csc_matrix(M)
+        evolution_matrix = ln.inv(Asp).dot(Msp).tocsr()
+        return evolution_matrix
 
 class Animator3D:
     def __init__(self, wave_packet):
-        self.time = 0.0
         self.wave_packet = wave_packet
-        self.wave_packet.psi_plot = self.wave_packet.psi/np.amax(np.abs(self.wave_packet.psi))
+        self.x_ticks = np.linspace(0, self.wave_packet.L, self.wave_packet.Nx - 2)
+        self.fig = plt.figure(figsize=(12, 6))
+        self.ax_top = self.fig.add_subplot(121, xlim=(0, self.wave_packet.L), ylim=(0, self.wave_packet.L))
 
-        self.fig, self.ax = plt.subplots()
+        self.img_top = self.ax_top.imshow(self.wave_packet.probs[0], extent=[0, self.wave_packet.L, 0, self.wave_packet.L],
+                                          cmap=plt.get_cmap("hot"), vmin=0, vmax=np.max(self.wave_packet.probs), zorder=1)
+        self.colorbar = self.fig.colorbar(self.img_top, ax=self.ax_top, orientation='vertical', fraction=.1, pad=0.05)
+        self.ax_top.set_xlabel('X Position (nm)')
+        self.ax_top.set_ylabel('Y Position (nm)')
+        self.ax_top.text(0.5, 1.05, 'Probability Density', transform=self.ax_top.transAxes, ha='center')
+        slitcolor = "w"
+        slitalpha = 0.8  # Transparency of the rectangles.
+        wall = Rectangle((self.wave_packet.b_left * self.wave_packet.dx, 0),
+                                self.wave_packet.w, self.wave_packet.L,
+                                color=slitcolor, zorder=50, alpha=slitalpha)
 
-        self.V_img = self.ax.imshow(self.wave_packet.V/np.max(self.wave_packet.V), vmax=1.0, vmin=0, cmap="gray", origin="lower")
-        self.img = self.ax.imshow(complex_to_rgba(self.wave_packet.psi_plot[0], max_val=1.0), origin="lower", interpolation="bilinear")
-        # https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.colorbar.html
+        self.ax_top.add_patch(wall)
 
-        self.colorbar = self.fig.colorbar(self.img, ax=self.ax, orientation='vertical', fraction=.1, pad=0.05)
-        x_ticks = np.linspace(self.wave_packet.x_begin, self.wave_packet.x_end, num=9)  # Change num as needed
-        y_ticks = np.linspace(self.wave_packet.y_begin, self.wave_packet.y_end, num=5)  # Change num as needed
-        self.ax.set_xticks(np.linspace(0, self.wave_packet.x_n_points, len(x_ticks)))
-        self.ax.set_yticks(np.linspace(0, self.wave_packet.y_n_points, len(y_ticks)))
-        self.ax.set_xticklabels(x_ticks)
-        self.ax.set_yticklabels(y_ticks)
+        self.ax_2ndC = self.fig.add_subplot(122)
+        self.ax_2ndC.axis('off')
+        self.ax_front = inset_axes(self.ax_2ndC, width="90%", height="78%", loc='center right',
+                                   bbox_to_anchor=(0, 0., 1, 1), bbox_transform=self.ax_2ndC.transAxes)
+        self.ax_front.plot(self.x_ticks, np.real(self.wave_packet.potential)[self.wave_packet.Ny // 2, 1:-1], color='r',
+                           label='Potential')
+        self.line, = self.ax_front.plot(self.x_ticks, self.wave_packet.probs[0, self.wave_packet.Ny // 2, :],
+                                        color='blue')
+        self.ax_front.set_ylim(0, 1.5)
+        self.ax_front.set_xlim(0, self.wave_packet.L)
+        self.ax_front.set_xlabel('X Position (nm)')
+        self.ax_front.set_ylabel('Probability Density')
+        self.ax_front.text(0.5, 1.05, 'Front View', transform=self.ax_front.transAxes, ha='center')
 
-        self.ax.set_xlabel('X Position (nm)')
-        self.ax.set_ylabel('Y Position (nm)')
-        self.ax.text(0.5, 1.05, 'Probability Density',
-                     transform=self.ax.transAxes, ha='center')
+    def update(self, i):
+        self.img_top.set_data(self.wave_packet.probs[i])  # Fill img_top with the modulus data of the wave function.
+        self.img_top.set_zorder(1)
 
-        self.animation_data = {'t': 0, 'ax': self.ax ,'frame': 0}
-        # plt.title("3D Tunneling Model")
+        self.line.set_ydata(self.wave_packet.probs[i, self.wave_packet.Ny // 2, :])
 
-    def update3D(self, data):
-        self.animation_data['t'] += 1
-        if self.animation_data['t'] > self.wave_packet.total_steps:
-            self.animation_data['t'] = 0
-        self.img.set_data(complex_to_rgba(self.wave_packet.psi_plot[self.animation_data['t']], max_val=0.3))
-        return self.V_img, self. img
+        return self.img_top, self.line,
 
     def animate3D(self):
-        self.ani = animation.FuncAnimation(
-            self.fig, self.update3D, frames=self.wave_packet.total_steps, interval=5, blit=False, cache_frame_data=False)
-        # Save the animation as a GIF file 
-        start_time = time.time()
-        self.ani.save('../src/model_gifs/tunneling_3D.gif', writer='pillow')
-        end_time = time.time()
-        total_time = end_time - start_time
-        print("3D animation saving time: ", total_time, " seconds")
-        with open('../src/model_gifs/tunneling_3D.gif', 'rb') as file:
-            base64Gif3D = base64.b64encode(file.read()).decode('utf-8')
-            return base64Gif3D
+        anim = FuncAnimation(self.fig, self.update, interval=1, frames=np.arange(0, self.wave_packet.Nt, 2), repeat=False,
+                             blit=0)
+        anim_js = anim.to_jshtml(fps=60)
+        if not Path(f'cache/tunneling/probs_{self.wave_packet.k0}_{self.wave_packet.v_max}_{self.wave_packet.w}_3D.html').exists():
+            with open(f'cache/tunneling/probs_{self.wave_packet.k0}_{self.wave_packet.v_max}_{self.wave_packet.w}_3D.html', "w") as f:
+                portalocker.lock(f, portalocker.LOCK_EX)
+                f.write(anim_js)
+        return anim_js
 
-
-def complex_to_rgba(Z: np.ndarray, max_val: float = 1.0) -> np.ndarray:
-    argl = np.angle(Z)
-    mag = np.abs(Z)
-
-    h = (argl + np.pi) / (2 * np.pi)
-    s = np.ones(h.shape)
-    v = np.ones(h.shape)  # alpha
-    rgb = hsv_to_rgb(np.moveaxis(np.array([h, s, v]), 0, -1))  # --> tuple
-
-    abs_z = mag / max_val
-    abs_z = np.where(abs_z > 1., 1., abs_z)
-    return np.concatenate((rgb, abs_z.reshape((*abs_z.shape, 1))), axis=(abs_z.ndim))        
-
-def main():
-    # Create instances of Wave_Packet and Wave_Packet3D
-    wave_packet = Wave_Packet(n_points=500, dt=0.5, barrier_width=2, barrier_height=3, k0=1)
-    wave_packet3D = Wave_Packet3D(x_n_points=500, y_n_points=400, dt=0.5, barrier_width=2, barrier_height=3, k0=1)
-
-    # Create Animator instances and animate
-    animator = Animator2D(wave_packet)
-    animator.animate2D()
-    plt.show()
-    animator3D = Animator3D(wave_packet3D)
-    animator3D.animate3D()
-    plt.show()
-    plt.close()
-
-    print("Done")
-    sys.exit()
 
 if __name__ == "__main__":
-    main()
+    wave_packet = Wave_Packet3D(barrier_width=1, barrier_height=10, k0=2)
+
+    animator = Animator3D(wave_packet)
+    test = animator.animate3D()
