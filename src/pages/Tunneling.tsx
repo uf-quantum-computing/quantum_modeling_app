@@ -73,7 +73,7 @@ const Tunneling = () => {
     const loadDefaultHtml = async () => {
       try {
         console.log("triggered")
-        fetch('/tunneling/probs_1.0_2.0_1.0_3D.html')
+        fetch('/tunneling/probs_1.0_1.0_1.0_3D.html')
         .then((response) => response.text())
         .then((text) => {
           setAnimationJsHtml(text);
