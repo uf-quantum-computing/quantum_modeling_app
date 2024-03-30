@@ -159,7 +159,7 @@ const SpinTraceEvolution = () => {
     console.log("t2:", t2_str);
 
     // let base_url = "https://us-central1-quantum-model-generator.cloudfunctions.net/tunneling"
-    let base_url = "http://127.0.0.1:3001/receive_data/evotrace"
+    let base_url = "https://us-central1-quantum-model-generator.cloudfunctions.net/trace"
     let final_url =
     base_url + "?gate=" + gate_str + "&init_state=" + init_state_str + "&mag=10&t2=0.1";
 
