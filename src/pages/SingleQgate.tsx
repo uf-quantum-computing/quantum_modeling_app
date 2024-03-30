@@ -161,9 +161,7 @@ const SpinTraceEvolution = () => {
     // let base_url = "https://us-central1-quantum-model-generator.cloudfunctions.net/tunneling"
     let base_url = "http://127.0.0.1:3001/receive_data/evotrace"
     let final_url =
-    base_url + "/" + gate_str +
-    "/" + init_state_str +
-    "/10/0.1";
+    base_url + "?gate=" + gate_str + "&init_state=" + init_state_str + "&mag=10&t2=0.1";
 
     if (gateDropChanged || initStateDropChanged || magSliderMoved || t2SliderMoved) {
       setLoading(true);
