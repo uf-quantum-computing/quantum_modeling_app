@@ -216,7 +216,7 @@ const SpinTraceEvolution = () => {
             {/* Gate Select*/}
             <FormControl variant="filled">
               <InputLabel variant="standard" htmlFor="uncontrolled-native" style={{color: "white", fontSize: "1.3rem", textAlign: "center"}}>
-                Initial State
+                Gate type
               </InputLabel>
               <Select
                 sx={{ color: "#FFFFFF" }}
