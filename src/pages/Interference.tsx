@@ -10,7 +10,7 @@ import {
   Snackbar,
   InputLabel,
   FormControl,
-  Slider,
+  Slider, Typography,
 } from "@mui/material";
 import CircularProgress from '@mui/joy/CircularProgress';
 import { Layout } from "antd";
@@ -195,13 +195,63 @@ const Interference = () => {
           <Stack spacing={3}>
             
             {/* ====== Select Inputs ====== */}
-            {/* Momentum Slider*/}
+            {/* Spacing slider */}
             <FormControl variant="filled">
               <InputLabel 
-                id="momentum-select"
-                style={{color: "white", marginTop: "10px",  marginBottom: "10px",textAlign: "center"}}
+                id="spacing-select"
+                style={{color: "white", marginTop: "10px", marginBottom: "10px", marginLeft: "-8 px", textAlign: "left"}}
                 >  
-                Momentum
+                Spacing
+                </InputLabel>
+              <Slider
+                sx={{ color: "#FFFFFF" }}
+                aria-label="spacing-select"
+                value={spacing}
+                onChange={handleSpacing}
+                min={0.5}
+                max={2}
+                defaultValue={0.6}
+                valueLabelDisplay="auto"
+                step={0.1}
+              />
+              <Typography variant="body2" color="white" align="right" style={{ alignSelf: 'flex-end', marginRight: '0px', marginTop: '-2px' }}>
+                (nm)
+                <sup>-1</sup>
+              </Typography>
+            </FormControl>
+
+            {/* Slit Seperation slider */}
+            <FormControl variant="filled">
+              <InputLabel 
+                id="slit-select"
+                style={{color: "white", marginTop: "10px", marginBottom: "10px", marginLeft: "-8 px", textAlign: "left"}}
+                >  
+                Slit Separation
+                </InputLabel>
+              <Slider
+                sx={{ color: "#FFFFFF" }}
+                aria-label="slit-separation-select"
+                value={slit_separation}
+                onChange={handleSlitSep}
+                min={0.6}
+                max={3}
+                defaultValue={0.6}
+                valueLabelDisplay="auto"
+                step={0.2}
+              />
+              <Typography variant="body2" color="white" align="right" style={{ alignSelf: 'flex-end', marginRight: '0px', marginTop: '-2px' }}>
+                (nm)
+                <sup>-1</sup>
+              </Typography>
+            </FormControl>
+
+            {/* ====== Wave Select ====== */}
+            <FormControl variant="filled">
+              <InputLabel
+                id="momentum-select"
+                style={{color: "white", marginTop: "10px", marginBottom: "10px", marginLeft: "-8 px", textAlign: "left"}}
+                >
+                Wave number k
                 </InputLabel>
               <Slider
                 sx={{ color: "#FFFFFF" }}
@@ -214,48 +264,10 @@ const Interference = () => {
                 valueLabelDisplay="auto"
                 step={1}
               />
-            </FormControl>
-
-            {/* Spacing slider */}
-            <FormControl variant="filled">
-              <InputLabel 
-                id="spacing-select"
-                style={{color: "white", marginTop: "10px", marginBottom: "10px",textAlign: "center"}}
-                >  
-                Spacing
-                </InputLabel>
-              <Slider
-                sx={{ color: "#FFFFFF" }}
-                aria-label="spacing-select"
-                value={spacing}
-                onChange={handleSpacing}
-                min={0.1}
-                max={5}
-                defaultValue={0.6}
-                valueLabelDisplay="auto"
-                step={0.1}
-              />
-            </FormControl>
-
-            {/* Slit Seperation slider */}
-            <FormControl variant="filled">
-              <InputLabel 
-                id="slit-select"
-                style={{color: "white", marginTop: "10px", marginBottom: "10px", textAlign: "center"}}
-                >  
-                Slit Separation
-                </InputLabel>
-              <Slider
-                sx={{ color: "#FFFFFF" }}
-                aria-label="slit-separation-select"
-                value={slit_separation}
-                onChange={handleSlitSep}
-                min={0.2}
-                max={5}
-                defaultValue={0.6}
-                valueLabelDisplay="auto"
-                step={0.1}
-              />
+              <Typography variant="body2" color="white" align="right" style={{ alignSelf: 'flex-end', marginRight: '0px', marginTop: '-2px' }}>
+                (nm)
+                <sup>-1</sup>
+              </Typography>
             </FormControl>
 
             {/* ====== Submit Button ====== */}

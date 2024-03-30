@@ -205,7 +205,7 @@ const Tunneling = () => {
                   value={barrier}
                   onChange={handleBarrier}
                   min={1}
-                  max={3}
+                  max={20}
                   defaultValue={1}
                   valueLabelDisplay="auto"
                   step={1}
@@ -229,10 +229,10 @@ const Tunneling = () => {
                   value = {thickness}
                   onChange={handleThickness}
                   min={1}
-                  max={5}
+                  max={4}
                   defaultValue={1.0}
                   valueLabelDisplay="auto"
-                  step={1}
+                  step={0.5}
                 />
                 <Typography variant="body2" color="white" align="right" style={{ alignSelf: 'flex-end', marginRight: '0px', marginTop: '-2px' }}>
                   (nm)

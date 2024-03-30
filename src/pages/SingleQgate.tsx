@@ -163,8 +163,7 @@ const SpinTraceEvolution = () => {
     let final_url =
     base_url + "/" + gate_str +
     "/" + init_state_str +
-    "/" + mag_str +
-    "/" + t2_str;
+    "/10/0.1";
 
     if (gateDropChanged || initStateDropChanged || magSliderMoved || t2SliderMoved) {
       setLoading(true);
@@ -262,47 +261,6 @@ const SpinTraceEvolution = () => {
               </Select>
             </FormControl>
 
-            {/* Mag slider */}
-            <FormControl variant="filled">
-              <InputLabel
-                id="mag-select"
-                style={{color: "white", marginTop: "10px", marginBottom: "10px",textAlign: "center"}}
-                >
-                Magnetic field
-                </InputLabel>
-              <Slider
-                sx={{ color: "#FFFFFF" }}
-                aria-label="mag-select"
-                value={magF_B}
-                onChange={handleMagChange}
-                min={0}
-                max={50}
-                defaultValue={10}
-                valueLabelDisplay="auto"
-                step={1}
-              />
-            </FormControl>
-
-            {/* T2 slider */}
-            <FormControl variant="filled">
-              <InputLabel
-                id="t2-select"
-                style={{color: "white", marginTop: "10px", marginBottom: "10px", textAlign: "center"}}
-                >
-                Dephasing time
-                </InputLabel>
-              <Slider
-                sx={{ color: "#FFFFFF" }}
-                aria-label="t2-select"
-                value={t2}
-                onChange={handleT2Change}
-                min={0.0}
-                max={100}
-                defaultValue={0.1}
-                valueLabelDisplay="auto"
-                step={0.1}
-              />
-            </FormControl>
 
             {/* ====== Submit Button ====== */}
             {loading ? (
