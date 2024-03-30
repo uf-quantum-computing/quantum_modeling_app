@@ -214,7 +214,6 @@ const Interference = () => {
               />
               <Typography variant="body2" color="white" align="right" style={{ alignSelf: 'flex-end', marginRight: '0px', marginTop: '-2px' }}>
                 (nm)
-                <sup>-1</sup>
               </Typography>
             </FormControl>
 
@@ -239,7 +238,6 @@ const Interference = () => {
               />
               <Typography variant="body2" color="white" align="right" style={{ alignSelf: 'flex-end', marginRight: '0px', marginTop: '-2px' }}>
                 (nm)
-                <sup>-1</sup>
               </Typography>
             </FormControl>
 
