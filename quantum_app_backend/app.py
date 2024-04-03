@@ -11,6 +11,9 @@ import os
 from pathlib import Path
 import portalocker
 
+from firebase_functions import firestore_fn, https_fn
+
+
 #set swagger info
 api: Api = Api(
     title='quantum_modeling',
