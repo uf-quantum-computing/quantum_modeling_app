@@ -1,17 +1,15 @@
 {
   "functions": [
     {
-      "source": "functions",
-      "codebase": "default",
+      "source": "tunneling",
+      "timeoutSeconds": 600,
+      "memory": "1GB",
+      "codebase": "tunneling",
       "ignore": [
-        "node_modules",
+        "venv",
         ".git",
         "firebase-debug.log",
         "firebase-debug.*.log"
-      ],
-      "predeploy": [
-        "npm --prefix \"$RESOURCE_DIR\" run lint",
-        "npm --prefix \"$RESOURCE_DIR\" run build"
       ]
     }
   ],
@@ -22,9 +20,11 @@
       "**/.*",
       "**/node_modules/**"
     ],
-    "rewrites": [{
-      "source": "**",
-      "destination": "/index.html"
-    }]
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
   }
 }
