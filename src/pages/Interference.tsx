@@ -144,11 +144,11 @@ const Interference = () => {
     console.log("wave:", wave_str);
 
     // let base_url = "https://us-central1-quantum-model-generator.cloudfunctions.net/tunneling"
-    let base_url = "http://icelion.myds.me:37077/receive_data/interference"
+    let base_url = "http://127.0.0.1:5001/quantum-model-generator/us-central1/tunneling"
     let final_url =
-    base_url + "/" + spacing_str +
-    "/" + slit_separation +
-    "/" + wave_str;
+    base_url + "?spacing=" + spacing_str +
+    "&sep=" + slit_separation +
+    "&momentum=" + wave_str;
 
     if (spacingSliderMoved || waveSliderMoved || slitSepSliderMoved) {
       setLoading(true);

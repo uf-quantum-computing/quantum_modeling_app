@@ -140,11 +140,11 @@ const Tunneling = () => {
     console.log("wave:", wave_str);
 
     // let base_url = "https://us-central1-quantum-model-generator.cloudfunctions.net/tunneling"
-    let base_url = "http://icelion.myds.me:37077/receive_data/tunneling"
+    let base_url = "http://127.0.0.1:5001/quantum-model-generator/us-central1/tunneling"
     let final_url =
-    base_url + "/" + barrier_str +
-    "/" + thickness_str +
-    "/" + wave_str;
+    base_url + "?barrier=" + barrier_str +
+    "&width=" + thickness_str +
+    "&momentum=" + wave_str;
 
     if (barrierSliderMoved || waveSliderMoved || thicknessSliderMoved) {
       setLoading(true);
