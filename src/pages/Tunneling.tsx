@@ -139,6 +139,17 @@ const Tunneling = () => {
     console.log("thickness:", thickness_str);
     console.log("wave:", wave_str);
 
+    // if no input, set to default
+    if (barrier_str === "") {
+      barrier_str = "1";
+    }
+    if (thickness_str === "") {
+      thickness_str = "1";
+    }
+    if (wave_str === "") {
+      wave_str = "1";
+    }
+
     // let base_url = "https://us-central1-quantum-model-generator.cloudfunctions.net/tunneling"
     let base_url = "http://127.0.0.1:5001/quantum-model-generator/us-central1/tunneling"
     let final_url =

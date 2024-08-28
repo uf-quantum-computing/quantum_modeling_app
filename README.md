@@ -7,8 +7,8 @@ Tunneling and Interference | Computational Nano Lab, UFL
 ## Getting Started
 
 1. Clone the repository
-2. run `npm install` inside the directory to install the dependencies
-3. run `npm start` to start the development server
+2. Run `npm install` inside the /src/ directory to install the dependencies
+3. Run `npm start` to start the development server
 
 ## File Structure
 
