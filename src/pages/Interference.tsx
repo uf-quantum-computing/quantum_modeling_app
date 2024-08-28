@@ -1,18 +1,18 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 // === UI Components ===
 import {
   Grid,
   Box,
   Button,
   Stack,
-  Select,
-  MenuItem,
   SelectChangeEvent,
   Alert,
   Snackbar,
   InputLabel,
   FormControl,
+  Slider,
 } from "@mui/material";
+import CircularProgress from '@mui/joy/CircularProgress';
 import { Layout } from "antd";
 import "antd/dist/antd.min.css";
 
@@ -26,7 +26,7 @@ import {
 
 // === styles ===
 import { sidebar_style } from "../global_styles";
-const select_style = { backgroundColor: "#FFFFFF" };
+// const select_style = { backgroundColor: "#FFFFFF" };
 const img_style = {
   borderRadius: "10px",
   boxShadow: "0 0 5px -1px rgba(0,0,0,0.2)",
@@ -44,21 +44,70 @@ const { Sider, Content } = Layout;
 // ========================================================
 const Interference = () => {
   // ========= states =========
-  const [momentum, setMomentum] = useState("");
-  const [spacing, setSpacing] = useState("");
-  const [slit_separation, setSlitSeparation] = useState("");
-  const [interference_2D_img, setInterference2DImg] = useState(
-    "./model_images/interference/interference_2D_1x1x1.gif"
-  );
-  const [interference_3D_img, setInterference3DImg] = useState(
-    "./model_images/interference/interference_3D_1x1x1.gif"
-  );
-  const [success_msg, setSuccessMsg] = useState(
-    "Interference model generated with momentum = 1, spacing = 1, and slit separation = 1!"
+  const [loading, setLoading] = useState(false);
+  const [momentum, setMomentum] = useState<number>(1);
+  const [spacing, setSpacing] = useState<number>(0.6);
+  const [slit_separation, setSlitSeparation] = useState<number>(0.6);
+  const [animationJsHtml, setAnimationJsHtml] = useState('');
+  const animationContainerRef = useRef<HTMLDivElement>(null);
+  const [spacingSliderMoved, setSpacingSliderMoved] = useState(false);
+  const [slitSepSliderMoved, setSlitSepSliderMoved] = useState(false);
+  const [waveSliderMoved, setWaveSliderMoved] = useState(false);
+  const [success_msg, set_Success_Msg] = useState(
+    "Interference model generated with spacing = " + spacing.toString() + ", slitSep = " + slit_separation.toString() + ", and wave = " + momentum.toString() + "!"
   );
   const [open, setOpenSnackbar] = useState(false);
 
   // ========= handle functions =========
+  async function getGifFromServer(request_url: string) {
+    try {
+      const response = await fetch(request_url, {method: 'GET'});
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const responseData = await response.json();
+      // console.log("responseData: ", responseData);
+      setAnimationJsHtml(responseData.GifRes); // Adjust based on your API response structure
+      return response.ok;
+    } catch (error) {
+      console.error("Error fetching animation from server:", error);
+      throw error;
+    }
+  }
+  useEffect(() => {
+    const loadDefaultHtml = async () => {
+      try {
+        console.log("triggered")
+        fetch('/interference/probs_1_0.6_0.6_3D.html')
+        .then((response) => response.text())
+        .then((text) => {
+          setAnimationJsHtml(text);
+        console.log(text)
+        });
+      } catch (error) {
+        console.error('Failed to load default HTML content:', error);
+      }
+    };
+
+    loadDefaultHtml();
+  }, []);
+  useEffect(() => {
+    if (animationJsHtml && animationContainerRef.current) {
+      const container = animationContainerRef.current;
+      container.innerHTML = animationJsHtml; // Now TypeScript knows container is a div element
+
+      // Ensure TypeScript treats each script as an HTMLScriptElement
+      const scripts = Array.from(container.querySelectorAll('script'));
+      scripts.forEach((scriptElement) => {
+        const script = scriptElement as HTMLScriptElement; // Type assertion
+        const newScript = document.createElement('script');
+        newScript.text = script.text;
+        container.appendChild(newScript);
+        script.parentNode?.removeChild(script);
+      });
+    }
+  }, [animationJsHtml]);
+
   const handleClose = (
     event: React.SyntheticEvent | Event,
     reason?: string
@@ -69,65 +118,57 @@ const Interference = () => {
     }
     setOpenSnackbar(false);
   };
-  const handleMomentum = (event: SelectChangeEvent) => {
-    setMomentum(event.target.value as string);
-    console.log(event.target.value);
+
+  const handleSpacing = (event: Event, spacingValue: number | number[]) => {
+    setSpacing(spacingValue as number);
+    setSpacingSliderMoved(true);
   };
-  const handleSpacing = (event: SelectChangeEvent) => {
-    setSpacing(event.target.value as string);
-    console.log(event.target.value);
+
+  const handleSlitSep = (event: Event, slitSepValue: number | number[]) => {
+    setSlitSeparation(slitSepValue as number);
+    setSlitSepSliderMoved(true);
   };
-  const handleSlitSeparation = (event: SelectChangeEvent) => {
-    setSlitSeparation(event.target.value as string);
-    console.log(event.target.value);
+
+  const handleWave = (event: Event, waveValue: number | number[]) => {
+    setMomentum(waveValue as number);
+    setWaveSliderMoved(true);
   };
-  function handleSubmit(event: any) {
+
+  async function handleSubmit(event: any) {
     event.preventDefault();
-    let momentum_str = momentum.toString();
     let spacing_str = spacing.toString();
     let slit_separation_str = slit_separation.toString();
-    console.log("momentum:", momentum_str);
+    let wave_str = momentum.toString();
     console.log("spacing:", spacing_str);
     console.log("slit_separation:", slit_separation_str);
+    console.log("wave:", wave_str);
 
-    // if no values are selected, set to default values
-    if (momentum_str === "") {
-      momentum_str = "1";
-    }
-    if (spacing_str === "") {
-      spacing_str = "1";
-    }
-    if (slit_separation_str === "") {
-      slit_separation_str = "1";
-    }
+    // let base_url = "https://us-central1-quantum-model-generator.cloudfunctions.net/tunneling"
+    let base_url = "http://127.0.0.1:5001/quantum-model-generator/us-central1/tunneling"
+    let final_url =
+    base_url + "?spacing=" + spacing_str +
+    "&sep=" + slit_separation +
+    "&momentum=" + wave_str;
 
-    let img_path_2D =
-      "./model_images/interference/interference_2D_" +
-      momentum_str +
-      "x" +
-      spacing_str +
-      "x" +
-      slit_separation_str +
-      ".gif";
-    let img_path_3D =
-      "./model_images/interference/interference_3D_" +
-      momentum_str +
-      "x" +
-      spacing_str +
-      "x" +
-      slit_separation_str +
-      ".gif";
-    setInterference2DImg(img_path_2D);
-    setInterference3DImg(img_path_3D);
-    setSuccessMsg(
-      "Interference model generated with momentum = " +
-        momentum_str +
-        ", spacing = " +
-        spacing_str +
-        ", and slit separation = " +
-        slit_separation_str +
-        "!"
-    );
+    if (spacingSliderMoved || waveSliderMoved || slitSepSliderMoved) {
+      setLoading(true);
+      const gifData = await getGifFromServer(final_url);
+      if (gifData) {
+        set_Success_Msg(
+          "Interference model generated with barrier = " +
+            spacing_str +
+            ", thickness = " +
+            slit_separation_str +
+            ", and wave = " +
+            wave_str +
+            "!"
+        );
+        setLoading(false);
+        setSpacingSliderMoved(false);
+        setSlitSepSliderMoved(false);
+        setWaveSliderMoved(false);
+      }
+    }
     setOpenSnackbar(true); // open snackbar
   }
 
@@ -138,79 +179,98 @@ const Interference = () => {
         // collapsed={collapsed}
         // onCollapse={(value) => setCollapsed(value)}
         style={sidebar_style}
+        width={230}
       >
-        <CustomTitle />
+        <CustomTitle/>
         <Box
-          component="form"
-          sx={{
-            "& > :not(style)": { m: 1, width: "25ch" },
-          }}
-          noValidate
-          autoComplete="off"
-          style={horizontal_center}
+            component="form"
+            sx={{
+              "& > :not(style)": { m: 0.5, width: "25ch" },
+            }}
+            noValidate
+            autoComplete="off"
+            style={horizontal_center}
         >
+
           <Stack spacing={3}>
+            
             {/* ====== Select Inputs ====== */}
+            {/* Momentum Slider*/}
             <FormControl variant="filled">
-              <InputLabel id="momentum-select">Momentum</InputLabel>
-              <Select
-                labelId="barrier-select"
-                id="barrier-select"
+              <InputLabel 
+                id="momentum-select"
+                style={{color: "white", marginTop: "10px",  marginBottom: "10px",textAlign: "center"}}
+                >  
+                Momentum
+                </InputLabel>
+              <Slider
+                sx={{ color: "#FFFFFF" }}
+                aria-label="momentum-select"
                 value={momentum}
-                label="Test"
-                onChange={handleMomentum}
-                defaultValue={"1"}
-                style={select_style}
-              >
-                <MenuItem value={1}>1</MenuItem>
-                <MenuItem value={5}>5</MenuItem>
-                <MenuItem value={10}>10</MenuItem>
-              </Select>
+                onChange={handleWave}
+                min={1}
+                max={10}
+                defaultValue={1}
+                valueLabelDisplay="auto"
+                step={1}
+              />
             </FormControl>
+
+            {/* Spacing slider */}
             <FormControl variant="filled">
-              <InputLabel id="spacing-select">Spacing</InputLabel>
-              <Select
-                labelId="spacing-select-label"
+              <InputLabel 
                 id="spacing-select"
+                style={{color: "white", marginTop: "10px", marginBottom: "10px",textAlign: "center"}}
+                >  
+                Spacing
+                </InputLabel>
+              <Slider
+                sx={{ color: "#FFFFFF" }}
+                aria-label="spacing-select"
                 value={spacing}
-                label="Spacing"
                 onChange={handleSpacing}
-                defaultValue={"10"}
-                style={select_style}
-              >
-                <MenuItem value={1}>1</MenuItem>
-                <MenuItem value={5}>5</MenuItem>
-                <MenuItem value={10}>10</MenuItem>
-              </Select>
+                min={0.1}
+                max={5}
+                defaultValue={0.6}
+                valueLabelDisplay="auto"
+                step={0.1}
+              />
             </FormControl>
+
+            {/* Slit Seperation slider */}
             <FormControl variant="filled">
-              <InputLabel id="slit-separation-input-label">
+              <InputLabel 
+                id="slit-select"
+                style={{color: "white", marginTop: "10px", marginBottom: "10px", textAlign: "center"}}
+                >  
                 Slit Separation
-              </InputLabel>
-              <Select
-                labelId="slit_separation-select-label"
-                id="slit_separation-select"
+                </InputLabel>
+              <Slider
+                sx={{ color: "#FFFFFF" }}
+                aria-label="slit-separation-select"
                 value={slit_separation}
-                label="slit_separation"
-                onChange={handleSlitSeparation}
-                defaultValue={"1"}
-                style={select_style}
-              >
-                <MenuItem value={1}>1</MenuItem>
-                <MenuItem value={3}>3</MenuItem>
-                <MenuItem value={5}>5</MenuItem>
-              </Select>
+                onChange={handleSlitSep}
+                min={0.2}
+                max={5}
+                defaultValue={0.6}
+                valueLabelDisplay="auto"
+                step={0.1}
+              />
             </FormControl>
 
             {/* ====== Submit Button ====== */}
-            <Button
-              variant="contained"
-              onClick={handleSubmit}
-              type="submit"
-              color="success"
-            >
-              Generate Model
-            </Button>
+            {loading ? (
+              <CircularProgress />
+            ) : (
+              <Button
+                variant="contained"
+                onClick={handleSubmit}
+                type="submit"
+                color="success"
+              >
+                Generate Model
+              </Button>
+            )}
 
             {/* ====== Dashboard ====== */}
             <Dashboard />
@@ -233,28 +293,14 @@ const Interference = () => {
           </Stack>
         </Box>
       </Sider>
-      <Content className="site-layout" style={{ margin: "5%" }}>
-        <CustomPageHeader text="Interference" size="h3" />
-        <Grid container spacing={2}>
-          <Grid item xs={6}>
-            <img
-              src={interference_3D_img}
-              alt="3D tunneling function"
-              style={img_style}
-            />
-          </Grid>
-
-          <Grid item xs={6}>
-            <img
-              src={interference_2D_img}
-              alt="2D tunneling"
-              style={img_style}
-            />
-          </Grid>
-        </Grid>
-
+      <Content className="site-layout" style={{margin: "5%"}}>
+        <CustomPageHeader text="Interference" size="h3"/>
+        {/*<div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%'}}*/}
+        {/*     ref={animationContainerRef}></div>*/}
+        <div style={{display: 'flex', justifyContent: 'center'}} ref={animationContainerRef}></div>
+        {/*<div ref={animationContainerRef}/>*/}
         <CustomDescriptionBox
-          msg={`Quantum interference states that elementary particles can not only be in more than one place at any given time (through superposition), but that an individual particle, such as a photon (light particles) can cross its own trajectory and interfere with the direction of its path.
+            msg={`Quantum interference states that elementary particles can not only be in more than one place at any given time (through superposition), but that an individual particle, such as a photon (light particles) can cross its own trajectory and interfere with the direction of its path.
           
           Particles in quantum mechanics behave very differently from those that we observe day-to-day in the realm of classical physics. Each particle behaves both as a solid object with a calculable energy and momentum and a wave with a calculable frequency and wavelength. This is only possible at incredibly low scale due to a phenomenon known as the “Wave-Particle Duality” as described by the DeBroglie Wavelength which dictates that all entities have a known frequency relative to the Planck’s Constant (6.63 * 10^-23) and its momentum.
           

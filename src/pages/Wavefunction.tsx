@@ -6,16 +6,16 @@ import {
   Box,
   Button,
   Stack,
-  Select,
-  MenuItem,
   SelectChangeEvent,
   Alert,
   Snackbar,
   InputLabel,
   FormControl,
+  Slider
 } from "@mui/material";
 import { Layout } from "antd";
 import "antd/dist/antd.min.css";
+import { sidebar_style } from "../global_styles";
 // === Components ===
 import {
   Dashboard,
@@ -28,7 +28,7 @@ import {
 const { Sider, Content } = Layout;
 
 // === styles ===
-const select_style = { backgroundColor: "#FFFFFF" };
+// const select_style = { backgroundColor: "#FFFFFF" };
 const img_style = {
   borderRadius: "10px",
   boxShadow: "0 0 5px -1px rgba(0,0,0,0.2)",
@@ -66,14 +66,14 @@ const Wavefunction = () => {
     }
     setOpenSnackbar(false);
   };
-  const handleMass = (event: SelectChangeEvent) => {
-    setMass(event.target.value as string);
-    console.log(event.target.value);
-  };
-  const handleVelocity = (event: SelectChangeEvent) => {
-    setVelocity(event.target.value as string);
-    console.log(event.target.value);
-  };
+  // const handleMass = (event: SelectChangeEvent) => {
+  //   setMass(event.target.value as string);
+  //   console.log(event.target.value);
+  // };
+  // const handleVelocity = (event: SelectChangeEvent) => {
+  //   setVelocity(event.target.value as string);
+  //   console.log(event.target.value);
+  // };
   function handleSubmit(event: any) {
     event.preventDefault();
     let mass_str = mass.toString();
@@ -125,64 +125,77 @@ const Wavefunction = () => {
           // collapsible
           // collapsed={collapsed}
           // onCollapse={(value) => setCollapsed(value)}
-          style={{ padding: "1%" }}
+          style={sidebar_style}
+          width={230}
         >
           <div>
             <CustomTitle />
 
             <Box
-              component="form"
-              sx={{
-                "& > :not(style)": { m: 1, width: "25ch" },
-              }}
-              noValidate
-              autoComplete="off"
-              style={horizontal_center}
+            component="form"
+            sx={{
+              "& > :not(style)": { m: 0.5, width: "25ch" },
+            }}
+            noValidate
+            autoComplete="off"
+            style={horizontal_center}
             >
+              {/* ====== Sliders ====== */}
+
+              {/* ====== Mass Slider ====== */}
               <Stack spacing={3}>
                 {/* selects */}
-                <FormControl fullWidth variant="filled">
-                  <InputLabel id="mass-label">Mass</InputLabel>
-                  <Select
-                    labelId="mass-label"
-                    id="mass-label-select"
-                    value={mass}
-                    label="Mass"
-                    onChange={handleMass}
-                    defaultValue={"1"}
-                    style={select_style}
-                  >
-                    <MenuItem value={0.5}>0.5</MenuItem>
-                    <MenuItem value={1}>1</MenuItem>
-                    <MenuItem value={2}>2</MenuItem>
-                  </Select>
+                <FormControl variant="filled">
+                  <InputLabel 
+                    id="mass-select"
+                    style={{color: "white", marginTop: "10px", marginBottom: "10px", marginLeft: "-8 px", textAlign: "left"}}
+                    >  
+                    Mass
+                    </InputLabel>
+                  <Slider
+                    sx={{ color: "#FFFFFF" }}
+                    aria-label="mass-select"
+                    min={1}
+                    max={10}
+                    defaultValue={1}
+                    valueLabelDisplay="auto"
+                    step={1}
+                  />
                 </FormControl>
-                <FormControl fullWidth variant="filled">
-                  <InputLabel id="velocity-label">Velocity</InputLabel>
-                  <Select
-                    labelId="velocity-label"
+
+                {/* ====== Velocity Slider ====== */}
+                <FormControl variant="filled">
+                  <InputLabel 
                     id="velocity-select"
-                    value={velocity}
-                    label="Test"
-                    onChange={handleVelocity}
-                    defaultValue={"1"}
-                    style={select_style}
-                  >
-                    <MenuItem value={0.5}>0.5</MenuItem>
-                    <MenuItem value={1}>1</MenuItem>
-                    <MenuItem value={2}>2</MenuItem>
-                  </Select>
+                    style={{color: "white", marginTop: "10px", marginBottom: "10px", marginLeft: "-8 px", textAlign: "left"}}
+                    >  
+                    Velocity
+                    </InputLabel>
+                  <Slider
+                    sx={{ color: "#FFFFFF" }}
+                    aria-label="velocity-select"
+                    min={1}
+                    max={10}
+                    defaultValue={1}
+                    valueLabelDisplay="auto"
+                    step={1}
+                  />
                 </FormControl>
 
                 {/* submit button */}
-                <Button
-                  variant="contained"
-                  color="success"
-                  onClick={handleSubmit}
-                  type="submit"
-                >
-                  Generate Model
-                </Button>
+                <div style ={{ marginTop: "10px", marginBottom: "10px", textAlign: "center"}}>
+              <Button
+                variant="contained"
+                onClick={handleSubmit}
+                type="submit"
+                color="success"
+                sx={{
+                  marginTop: "50px", // Adds space above the button
+                }}
+              >
+                Generate Model
+              </Button>
+            </div>
 
                 {/* ====== Dashboard ====== */}
                 <Dashboard />
