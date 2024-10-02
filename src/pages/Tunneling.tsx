@@ -151,30 +151,31 @@ const Tunneling = () => {
       wave_str = "1";
     }
 
+    // TODO: Change this to the output when you run the python backend this piece -> http://127.0.0.1:3001
+    let base_url = "http://127.0.0.1:3001/receive_data/tunneling"
     let final_url =
-      base_url + "/" + barrier_str +
-      "/" + thickness_str +
-      "/" + wave_str;
-    
-    const gifData = await getGifFromServer(final_url);
-    if (gifData) {
-      const { base64Gif2D, base64Gif3D } = gifData;
-      if (base64Gif2D) {
-        set_Tunneling_img2d(`${base64Gif2D}`);
+    base_url + "/" + barrier_str +
+    "/" + thickness_str +
+    "/" + wave_str;
+
+    if (barrierSliderMoved || waveSliderMoved || thicknessSliderMoved) {
+      setLoading(true);
+      const gifData = await getGifFromServer(final_url);
+      if (gifData) {
+        set_Success_Msg(
+          "Tunneling model generated with barrier = " +
+            barrier_str +
+            ", thickness = " +
+            thickness_str +
+            ", and wave = " +
+            wave_str +
+            "!"
+        );
+        setLoading(false);
+        setBarrierSliderMoved(false);
+        setThicknessSliderMoved(false);
+        setWaveSliderMoved(false);
       }
-      if (base64Gif3D) {
-        set_Tunneling_img3d(`${base64Gif3D}`);
-      }
-      set_Success_Msg(
-        "Tunneling model generated with barrier = " +
-          barrier_str +
-          ", thickness = " +
-          thickness_str +
-          ", and wave = " +
-          wave_str +
-          "!"
-      );
-      setLoading(false);
     }
     setOpenSnackbar(true); // open snackbar
   }

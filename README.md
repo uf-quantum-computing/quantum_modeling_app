@@ -42,26 +42,21 @@ Tunneling and Interference | Computational Nano Lab, UFL
     ```
 3. Install dependencies 
     ```
-    cd backend_functions
+    cd quantum_backend_functions
     pip install -r requirements.txt 
     ```
+4. Run backend 
+    ```
+    python app.py
+    ```
 
-### Installation - Part 3 
+### Running Locally 
 
-1. Install Firebase CLI 
-    ```
-    npm install -g firebase-tools
-    ```
-2. Login to Google account 
-    ```
-    firebase login
-    ```
-3. Create firebase virtual enviornment 
-    ```
-    cd backend_functions
-    python3 -m venv venv
-    . "<insert_path_here>/quantum_modeling_app/backend_functions/venv/bin/activate" && python3 -m pip install -r requirements.txt'
-    ```
+1. Take the port that the backend is running on and replace it in these destinations.
+
+For example I run the backend and I get this output "Running on http://127.0.0.1:3001"
+
+I must navigate to the variable base_url in each file "Interference.tsx", "SingleQgate.tsx", and "Tunneling.tsx". Then replace the current value with the output of where your backend is running. 
 
 
 ## File Structure
@@ -85,12 +80,6 @@ You will also see any lint errors in the console.
 **Learn More**
 * You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 * To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Google Firebase
-
-The project models are hosted using on demand functions with Google's Cloud Functions for Firebase, allowing the project's model generation code to be run on use, sending responses back to the frontend for users to view. 
-
-Learn more about Cloud Functions for Firebase [here](https://firebase.google.com/docs/functions).
 
 ### Sonar Cloud
 

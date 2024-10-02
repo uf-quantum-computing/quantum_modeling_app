@@ -158,13 +158,13 @@ const SpinTraceEvolution = () => {
     console.log("magF_B:", mag_str);
     console.log("t2:", t2_str);
 
-    // let base_url = "https://us-central1-quantum-model-generator.cloudfunctions.net/tunneling"
-    let base_url = "http://127.0.0.1:5001/quantum-model-generator/us-central1/trace"
+    // TODO: Change this to the output when you run the python backend this piece -> http://127.0.0.1:3001
+    let base_url = "http://127.0.0.1:3001/receive_data/evotrace"
     let final_url =
-    base_url + "?gate=" + gate_str +
-    "&init_state=" + init_state_str +
-    "&mag=" + mag_str +
-    "&t2=" + t2_str;
+    base_url + "/" + gate_str +
+    "/" + init_state_str +
+    "/" + mag_str +
+    "/" + t2_str;
 
     if (gateDropChanged || initStateDropChanged || magSliderMoved || t2SliderMoved) {
       setLoading(true);
