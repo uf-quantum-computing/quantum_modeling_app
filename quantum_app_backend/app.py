@@ -11,9 +11,6 @@ import os
 from pathlib import Path
 import portalocker
 
-from firebase_functions import firestore_fn, https_fn
-
-
 #set swagger info
 api: Api = Api(
     title='quantum_modeling',
@@ -26,19 +23,14 @@ app = Flask(__name__)
 
 api.init_app(app)
 
-# CORS added
-CORS(app)
-
-# @app.route('/tunneling', methods=['GET'])
-# def default():
-#     return {}
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 @app.route('/receive_data/tunneling/<barrier>/<width>/<momentum>', methods=['GET'])
 def Qtunneling(barrier, width, momentum):
     barrier = float(barrier)
     width = float(width)
     momentum = float(momentum)
-    # can pass variables through the route url /tunneling/intensity/thickness/momentum
+
     print("You evoked the API successfully")
     if Path(f'cache/tunneling/probs_{momentum}_{barrier}_{width}_3D.html').exists():
         print(f'cache/tunneling/probs_{momentum}_{barrier}_{width}_3D.html')
@@ -47,13 +39,14 @@ def Qtunneling(barrier, width, momentum):
             portalocker.lock(f, portalocker.LOCK_SH)
             GifRes = f.read()
     else:
+        plt.close('all')
         plt.switch_backend('Agg')
 
         start_3d_time = time.time()  # Record the start time
         wave_packet3D = t_wp(barrier_width=width, barrier_height=barrier, k0=momentum)
         animator = t_ani(wave_packet3D)
         GifRes = animator.animate3D()
-        # print(GifRes)
+
         end_3d_time = time.time()    # Record the end time
         elapsed_3d_time = end_3d_time - start_3d_time
         print(f"Elapsed 3D generator time: {elapsed_3d_time} seconds")
@@ -65,7 +58,9 @@ def Qtunneling(barrier, width, momentum):
 def Qinterference(spacing, slit_separation, momentum):
     spacing = float(spacing)
     slit_separation = float(slit_separation)
+
     print("You evoked the API successfully")
+    
     if Path(f'cache/interference/probs_{momentum}_{spacing}_{slit_separation}_3D.html').exists():
         print(f'cache/interference/probs_{momentum}_{spacing}_{slit_separation}_3D.html')
         with open(f'cache/interference/probs_{momentum}_{spacing}_{slit_separation}_3D.html',
@@ -73,12 +68,14 @@ def Qinterference(spacing, slit_separation, momentum):
             portalocker.lock(f, portalocker.LOCK_SH)
             GifRes = f.read()
     else:
+        plt.close('all')
         plt.switch_backend('Agg')
 
         start_3d_time = time.time()
         wave_packet3D = i_wp(slit_space=spacing, slit_sep=slit_separation, k0=momentum)
         animator3D = i_ani(wave_packet3D)
         GifRes = animator3D.animate3D()
+    
         end_3d_time = time.time()  # Record the end time
         elapsed_3d_time = end_3d_time - start_3d_time
         print(f"Elapsed 3D generator time: {elapsed_3d_time} seconds")
@@ -90,12 +87,14 @@ def Qinterference(spacing, slit_separation, momentum):
 def Qtrace(gate, init_state, mag, t2):
     t2 = float(t2)
     print("You evoked the API successfully")
+    plt.close('all')
     plt.switch_backend('Agg')
 
     start_time = time.time()  # Record the start time
     qg = Qgate1()
     qg.run(gate=gate, init_state=init_state, mag_f_B=mag, t2=t2)
     GifRes = qg.plot_evo()
+    
     end_time = time.time()  # Record the end time
     elapsed_time = end_time - start_time
     print(f"Elapsed 3D generator time: {elapsed_time} seconds")
