@@ -150,12 +150,12 @@ const Tunneling = () => {
       wave_str = "1";
     }
 
-    // let base_url = "https://us-central1-quantum-model-generator.cloudfunctions.net/tunneling"
-    let base_url = "http://127.0.0.1:5001/quantum-model-generator/us-central1/tunneling"
+    // TODO: Change this to the output when you run the python backend this piece -> http://127.0.0.1:3001
+    let base_url = "http://127.0.0.1:3001/receive_data/tunneling"
     let final_url =
-    base_url + "?barrier=" + barrier_str +
-    "&width=" + thickness_str +
-    "&momentum=" + wave_str;
+    base_url + "/" + barrier_str +
+    "/" + thickness_str +
+    "/" + wave_str;
 
     if (barrierSliderMoved || waveSliderMoved || thicknessSliderMoved) {
       setLoading(true);
