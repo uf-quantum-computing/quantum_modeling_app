@@ -1,8 +1,10 @@
 # Quantum Modeling App
 
-Tunneling and Interference | Computational Nano Lab, UFL
+Computational Nano Lab, UFL
 
-> A Dynamic website design & architecture plan can be found in the _dynamic_website_arch.md_ file
+## Architecture Overview
+![image](https://github.com/user-attachments/assets/36da6434-28a5-4bd1-9704-8288bce7b5be)
+
 
 ## Getting Started
 
@@ -42,7 +44,7 @@ Tunneling and Interference | Computational Nano Lab, UFL
     ```
 3. Install dependencies 
     ```
-    cd quantum_backend_functions
+    cd quantum_app_backend
     pip install -r requirements.txt 
     ```
 4. Run backend 
@@ -56,7 +58,9 @@ Tunneling and Interference | Computational Nano Lab, UFL
 
 For example I run the backend and I get this output "Running on http://127.0.0.1:3001"
 
-I must navigate to the variable base_url in each file "Interference.tsx", "SingleQgate.tsx", and "Tunneling.tsx". Then replace the current value with the output of where your backend is running. 
+I must navigate to the variable base_url in each file "Interference.tsx", "SingleQgate.tsx", and "Tunneling.tsx". Then replace the current value with the output of where your backend is running.
+
+2. To run both the backend and the frontend, utilize 2 terminals in parallel.
 
 
 ## File Structure
