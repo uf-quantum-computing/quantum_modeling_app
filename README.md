@@ -62,6 +62,10 @@ I must navigate to the variable base_url in each file "Interference.tsx", "Singl
 
 2. To run both the backend and the frontend, utilize 2 terminals in parallel.
 
+3. If cloning the project for the first time, run this command to remove the localhost url file from being tracked by Git:
+```
+git rm -r --cached src/setup/
+```
 
 ## File Structure
 - `/src/` - Contains the source code for the React website.
