@@ -60,7 +60,10 @@ For example, I run the backend and I get "Running on http://127.0.0.1:3001". Tak
 
 2. Utilize 2 terminals in parallel to run the back and the frontend.
 
-3. If you're cloning the project for the first time and changes to `/src/setup` are being tracked, run `git update-index --assume-unchanged src/setup/`.
+3. If you're cloning the project for the first time and changes to `/src/setup` are being tracked, run:
+```
+git update-index --assume-unchanged src/setup/
+```
 
 ## File Structure
 - `/src/` - Contains the source code for the React website.
