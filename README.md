@@ -54,18 +54,13 @@ Computational Nano Lab, UFL
 
 ### Running Locally 
 
-1. Take the port that the backend is running on and replace it in these destinations.
+1. Take the port that the backend is running on and replace it in `/src/setup/host.ts`.
 
-For example I run the backend and I get this output "Running on http://127.0.0.1:3001"
+For example, I run the backend and I get "Running on http://127.0.0.1:3001". Take this `http://127.0.0.1:3001` address and assign to the host variable (leave out the last `/`). Note: This file is not tracked by Git.
 
-I must navigate to the variable base_url in each file "Interference.tsx", "SingleQgate.tsx", and "Tunneling.tsx". Then replace the current value with the output of where your backend is running.
+2. Utilize 2 terminals in parallel to run the back and the frontend.
 
-2. To run both the backend and the frontend, utilize 2 terminals in parallel.
-
-3. If cloning the project for the first time, run this command to remove the localhost url file from being tracked by Git:
-```
-git rm -r --cached src/setup/
-```
+3. If you're cloning the project for the first time and changes to `/src/setup` are being tracked, run `git update-index --assume-unchanged src/setup/`.
 
 ## File Structure
 - `/src/` - Contains the source code for the React website.
