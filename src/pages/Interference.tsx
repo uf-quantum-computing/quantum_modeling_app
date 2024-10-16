@@ -15,6 +15,7 @@ import {
 import CircularProgress from '@mui/joy/CircularProgress';
 import { Layout } from "antd";
 import "antd/dist/antd.min.css";
+import host from "../setup/host";
 
 // === Custom Components ===
 import {
@@ -143,12 +144,11 @@ const Interference = () => {
     console.log("slit_separation:", slit_separation_str);
     console.log("wave:", wave_str);
 
-    // let base_url = "https://us-central1-quantum-model-generator.cloudfunctions.net/tunneling"
-    let base_url = "http://127.0.0.1:5001/quantum-model-generator/us-central1/tunneling"
+    let base_url = host + "/receive_data/interference";
     let final_url =
-    base_url + "?spacing=" + spacing_str +
-    "&sep=" + slit_separation +
-    "&momentum=" + wave_str;
+    base_url + "/" + spacing_str +
+    "/" + slit_separation +
+    "/" + wave_str;
 
     if (spacingSliderMoved || waveSliderMoved || slitSepSliderMoved) {
       setLoading(true);

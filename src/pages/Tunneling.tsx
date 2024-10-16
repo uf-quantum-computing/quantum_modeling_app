@@ -16,6 +16,7 @@ import {
 import CircularProgress from '@mui/joy/CircularProgress';
 import { Layout } from "antd";
 import "antd/dist/antd.min.css";
+import host from "../setup/host";
 
 
 // === Custom Components ===
@@ -150,12 +151,11 @@ const Tunneling = () => {
       wave_str = "1";
     }
 
-    // let base_url = "https://us-central1-quantum-model-generator.cloudfunctions.net/tunneling"
-    let base_url = "http://127.0.0.1:5001/quantum-model-generator/us-central1/tunneling"
+    let base_url = host + "/receive_data/tunneling"
     let final_url =
-    base_url + "?barrier=" + barrier_str +
-    "&width=" + thickness_str +
-    "&momentum=" + wave_str;
+    base_url + "/" + barrier_str +
+    "/" + thickness_str +
+    "/" + wave_str;
 
     if (barrierSliderMoved || waveSliderMoved || thicknessSliderMoved) {
       setLoading(true);
