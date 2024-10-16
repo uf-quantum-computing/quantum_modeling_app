@@ -1,8 +1,10 @@
 # Quantum Modeling App
 
-Tunneling and Interference | Computational Nano Lab, UFL
+Computational Nano Lab, UFL
 
-> A Dynamic website design & architecture plan can be found in the _dynamic_website_arch.md_ file
+## Architecture Overview
+![image](https://github.com/user-attachments/assets/36da6434-28a5-4bd1-9704-8288bce7b5be)
+
 
 ## Getting Started
 
