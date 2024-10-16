@@ -16,6 +16,7 @@ import {
 import CircularProgress from '@mui/joy/CircularProgress';
 import { Layout } from "antd";
 import "antd/dist/antd.min.css";
+import host from "../setup/host";
 
 
 // === Custom Components ===
@@ -152,7 +153,7 @@ const Tunneling = () => {
     }
 
     // TODO: Change this to the output when you run the python backend this piece -> http://127.0.0.1:3001
-    let base_url = "http://127.0.0.1:3001/receive_data/tunneling"
+    let base_url = host + "/receive_data/tunneling"
     let final_url =
     base_url + "/" + barrier_str +
     "/" + thickness_str +

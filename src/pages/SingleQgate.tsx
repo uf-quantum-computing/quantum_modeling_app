@@ -17,6 +17,7 @@ import {
 import CircularProgress from '@mui/joy/CircularProgress';
 import { Layout } from "antd";
 import "antd/dist/antd.min.css";
+import host from "../setup/host";
 
 // === Custom Components ===
 import {
@@ -159,7 +160,7 @@ const SpinTraceEvolution = () => {
     console.log("t2:", t2_str);
 
     // TODO: Change this to the output when you run the python backend this piece -> http://127.0.0.1:3001
-    let base_url = "http://127.0.0.1:3001/receive_data/evotrace"
+    let base_url = host + "/receive_data/evotrace"
     let final_url =
     base_url + "/" + gate_str +
     "/" + init_state_str +
