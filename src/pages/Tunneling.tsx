@@ -18,7 +18,6 @@ import { Layout } from "antd";
 import "antd/dist/antd.min.css";
 import host from "../setup/host";
 
-
 // === Custom Components ===
 import {
   CustomDescriptionBox,
@@ -189,7 +188,7 @@ const Tunneling = () => {
           // collapsible
           // collapsed={collapsed}
           // onCollapse={(value) => setCollapsed(value)}
-          style={{ padding: "1%" }}
+          style={{ padding: "1%", position: "fixed", height: "100%", }}
           width={230}
         >
           <CustomTitle />
@@ -312,17 +311,33 @@ const Tunneling = () => {
           </Snackbar>
         </Sider>
 
-        <Layout style={{ margin: "5%" }}>
+        <Layout style={{ paddingLeft: 230, margin: '5%' }}>
           <Content>
             <CustomPageHeader text="Tunneling" size="h3"/>
-            <div style={{display: 'flex', justifyContent: 'center'}} ref={animationContainerRef}></div>
             {/*<iframe src="../../quantum_app_backend/cache/tunneling/probs_1.0_2.0_1.0_3D.html" style={{display: 'flex', justifyContent: 'center'}}/>*/}
-            <CustomDescriptionBox
-                msg={
-                  "Quantum tunneling, also known as tunneling is a quantum mechanical phenomenon whereby a wavefunction can propagate through a potential barrier. The transmission through the barrier can be finite and depends exponentially on the barrier height and barrier width.The non-unitary probability density (previously described in wave functions) of elementary particles causes some expected behaviors observed in classical physics to not fully translate into quantum physics. Elementary particles behave with a degree of unpredictability, with their position being partially decoupled from their “expected” position relative to their probability density and thereby their wave function. As a result, such particles can “tunnel” through potential energy barriers. Imagine throwing a tennis ball at a wall. In classical physics, the tennis ball will bounce off the wall every time. In quantum physics, sometimes your tennis ball will slip part way through the wall before bouncing back and, if the wall is thin and weak enough, it will travel through the wall at a reduced momentum. The ball will also frequently reflect off the wall as expected with the probability of tunneling through the wall being increased if the barrier is physically thinner and if it is weaker, in quantum physics a weaker barrier would have a lower magnitude of potential energy. A particle, or ball, traveling with higher kinetic energy also tends to tunnel more often. Try changing the width and intensity of the barrier as well as the energy of the particle. Does the particle always tunnel? What shape does the probability density function take once it meets the wall? How does it relate to the shape of the probability function as it is propagating?"
-                }
+            <CustomDescriptionBox 
+              title="What is tunneling?"
+              imageUrl="https://www.wikihow.com/images/thumb/3/32/Play-Wall-Ball-Step-9-Version-2.jpg/v4-460px-Play-Wall-Ball-Step-9-Version-2.jpg.webp"
+              msg="Imagine you're hitting a ball at a wall. Normally, the ball would just bounce back, right? But in quantum physics, sometimes the ball can go through the wall, even if the wall is solid! This is a concept called tunneling."
+            />
+            <CustomDescriptionBox 
+              title="Why do particles act so strange?"
+              msg="Particles, like tiny pieces of matter, don't always act the way we expect them to. In regular physics, like with balls or cars, we can predict where things will go. But in quantum physics, these tiny particles are super unpredictable! Their position is a bit fuzzy, and sometimes they show up where you'd never expect them to. This is why they can tunnel through barriers."
+            />
+            <CustomDescriptionBox 
+              title="What affects whether the ball goes through the wall?"
+              msg="There are a few things that make tunneling easier for particles:
+- If the wall (or barrier) is thinner.
+- If the wall is weaker (lower energy).
+- If the particle is moving faster (has more energy).
+When these things happen, the particle (or tennis ball) is more likely to go through the wall!"
+            />
+            <CustomDescriptionBox 
+              title="Try it out!"
+              msg="Change the thickness and strength of the barrier, and adjust the energy of the particle. Does the particle always tunnel through? What does the pattern of the particle's behavior look like when it reaches the barrier? How does it change as the particle moves? See what happens!"
             />
           </Content>
+          <div style={{display: 'flex', justifyContent: 'center'}} ref={animationContainerRef}></div>
         </Layout>
       </Layout>
     </div>
