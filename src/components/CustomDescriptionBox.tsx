@@ -11,26 +11,33 @@ const cardStyle = {
 };
 
 // ========== CustomDescriptionBox ==========
-const CustomDescriptionBox = ({ msg, imageUrl }: { msg: string; imageUrl?: string }) => {
+const CustomDescriptionBox = ({ title, msg, imageUrl }: { title?: string; msg: string; imageUrl?: string }) => {
   return (
     <Card style={cardStyle}>
       <CardContent>
         <Box display="flex" flexDirection="row" alignItems="center">
+          <Box display="flex" flexDirection="column">
+            {title && (
+              <Typography variant="h4" component="div" sx={{ fontWeight: "bold", marginBottom: 2 }}>
+                {title}
+              </Typography>
+            )}
+            <Typography component="div" whiteSpace="pre-line" sx={{ textAlign: "left", flex: 1, fontSize: 18 }}>
+              {msg}
+            </Typography>
+          </Box>
           {imageUrl && (
             <Box
               component="img"
               src={imageUrl}
               alt="Description related image"
               sx={{
-                maxWidth: '50%', // Adjust based on your needs
-                maxHeight: 300, // Adjust based on your needs
-                marginRight: 2, // Adds some space between the image and the text
+                maxWidth: '30%', // Adjust based on your needs
+                maxHeight: '100%', // Adjust based on your needs
+                marginLeft: 15, // Adds some space between the image and the text
               }}
             />
           )}
-          <Typography component="div" whiteSpace="pre-line" sx={{ textAlign: "center", flex: 1 }}>
-            {msg}
-          </Typography>
         </Box>
       </CardContent>
     </Card>

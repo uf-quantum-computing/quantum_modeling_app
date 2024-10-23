@@ -178,7 +178,7 @@ const Interference = () => {
         // collapsible
         // collapsed={collapsed}
         // onCollapse={(value) => setCollapsed(value)}
-        style={sidebar_style}
+        style={{ padding: "1%", position: "fixed", height: "100%", }}
         width={230}
       >
         <CustomTitle/>
@@ -293,24 +293,42 @@ const Interference = () => {
           </Stack>
         </Box>
       </Sider>
-      <Content className="site-layout" style={{margin: "5%"}}>
+      <Content className="site-layout" style={{margin: "5%", paddingLeft: 230}}>
         <CustomPageHeader text="Interference" size="h3"/>
         {/*<div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%'}}*/}
         {/*     ref={animationContainerRef}></div>*/}
+        <CustomDescriptionBox
+            title="What is interference?"
+            imageUrl="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjzBWFVf3m3-Wh1k4q9mNAxbDcDTS_4qEiZ7SK_dG2iQO9dUP6r4IAq8eXiK0utCTeafofhwb8gvWpt8J8oTziDUq3EnoTYbpvLASi8gnrW3E5k59PnSDh48JGNiY5sjj_l9BjOGiOqgY-d/?imgmax=800"
+            msg={`In quantum physics, tiny particles can be in more than one place at once! This idea is called "superposition." Not only that, but sometimes these particles, like light particles (called photons), can actually interfere with themselves, just like two waves crossing each other in water!`}
+        />
+        <CustomDescriptionBox
+            title="Are quantum particles waves?"
+            msg={`Particles in quantum physics don't act like everyday objects. These tiny particles, like electrons or photons, act like both **particles** (solid objects) and **waves** (like water waves). This special behavior is called **wave-particle duality**. Scientists use something called the **DeBroglie wavelength** to figure out how wavy a particle is. The smaller the particle's energy, the more like a wave it behaves!`}
+        />
+        <CustomDescriptionBox
+            title="How is wavelength calculated?"
+            msg={`Scientists use a formula to find out how wavy a particle is. It looks like this:  
+F = p/h  
+But what does that mean? It means that if a particle is moving really fast (high momentum), its wavelength becomes super tiny! But for small particles, like electrons or photons, the waves are bigger and easier to see.`}
+        />
+        <CustomDescriptionBox
+            title="The Double Slot Experiment"
+            imageUrl="https://quantumawareness.net/wp-content/uploads/2019/01/doubleslottest-1400x793-71-2.jpg"
+            msg={`Here’s a cool experiment that shows how photons (light particles) act like both particles and waves. You’d think you’d see two lines on the other side, right? But what you actually see is a pattern of light and dark lines, like waves crossing in water!
+
+This is because the photons aren’t just acting like particles. They’re also behaving like waves that **interfere** with each other, creating this special pattern.`}
+        />
+        <CustomDescriptionBox
+            title="Try it out!"
+            msg={`Change the distance between the slits, or change how much energy the wave has.  
+- What happens to the pattern on the wall?
+- Does the wave’s energy change the spacing of the light and dark lines?
+
+Try it out and see how waves and particles are both part of the same strange quantum world!`}
+        />
         <div style={{display: 'flex', justifyContent: 'center'}} ref={animationContainerRef}></div>
         {/*<div ref={animationContainerRef}/>*/}
-        <CustomDescriptionBox
-            msg={`Quantum interference states that elementary particles can not only be in more than one place at any given time (through superposition), but that an individual particle, such as a photon (light particles) can cross its own trajectory and interfere with the direction of its path.
-          
-          Particles in quantum mechanics behave very differently from those that we observe day-to-day in the realm of classical physics. Each particle behaves both as a solid object with a calculable energy and momentum and a wave with a calculable frequency and wavelength. This is only possible at incredibly low scale due to a phenomenon known as the “Wave-Particle Duality” as described by the DeBroglie Wavelength which dictates that all entities have a known frequency relative to the Planck’s Constant (6.63 * 10^-23) and its momentum.
-          
-          F = p/h
-          
-          Note that the frequency increases very quickly with momentum and thus the wavelength quickly becomes incalculably small unless the momentum is also suitably small, like for example, an electron or a photon as shown in this example.
-          
-          Shown is a classic demonstration of the Wave-Particle Duality by showing photons interfering with each other. Normally, when a light is shown at an object, the resulting shadow would simply be the negative of that object. However, in this example, where a beam of light is shown at a pair of slits, two slits do not form as a negative on the resulting side, but rather a periodic spectrum of dashes of diminishing intensity. If the photons were only particles, they should have been able to pass through theslits and carried on as there should have been no interfering obstacle but they not only appear to splash outwards from the slits, thus hinting at their wave-like nature, but the resulting waves interfere with each other thus suggesting contact interactions among the particles of each resultant waves. Shown is a top-down view of the experiment and a representation of reflection from the barrier to demonstrate that no interference is resultant from tunneling but only from the two resultant waves intersecting at regular angular intervals. Try altering the spacing and width of the slits and kinetic energy of the wave. How does the wavelengthof the incoming wave appear to change the size and frequency of the dashes on the wall? Does increasing or decreasing the kinetic energy of the wave affect the interference pattern? Why or why not?
-          `}
-        />
       </Content>
     </Layout>
   );
