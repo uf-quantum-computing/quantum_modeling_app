@@ -1,7 +1,8 @@
-import React from "react";
-import { Card, CardContent, Typography, Box } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Card, CardContent, Typography, Box, List, ListItem } from "@mui/material";
+import ReactMarkdown from "react-markdown";
+import data from '../data/content.json';
 
-// ========== styles ==========
 const cardStyle = {
   backgroundColor: "#FFFFFF",
   marginTop: "2%",
@@ -11,37 +12,57 @@ const cardStyle = {
   borderRadius: "10px",
 };
 
-// ========== CustomDescriptionBox ==========
-const CustomDescriptionBox = ({ title, msg, imageUrl }: { title?: string; msg: string; imageUrl?: string }) => {
+interface SectionData {
+  title: string;
+  msg: string;
+  imageUrl?: string;
+  imagePath?: string;
+}
+
+interface PageData {
+    [key: string]: SectionData[];
+}
+
+const CustomDescriptionBox = ({ pageTitle }: { pageTitle: string }) => {
+    const sections: SectionData[] = (data as PageData)[pageTitle.toLowerCase()] || [];
+
   return (
-    <Card style={cardStyle}>
-      <CardContent>
-        <Box display="flex" flexDirection="row" alignItems="center">
-          <Box display="flex" flexDirection="column">
-            {title && (
-              <Typography variant="h4" component="div" sx={{ fontWeight: "bold", marginBottom: 2 }}>
-                {title}
-              </Typography>
-            )}
-            <Typography component="div" whiteSpace="pre-line" sx={{ textAlign: "left", flex: 1, fontSize: 18 }}>
-              {msg}
-            </Typography>
-          </Box>
-          {imageUrl && (
-            <Box
-              component="img"
-              src={imageUrl}
-              alt="Description related image"
-              sx={{
-                maxWidth: '30%', // Adjust based on your needs
-                maxHeight: '100%', // Adjust based on your needs
-                marginLeft: 15, // Adds some space between the image and the text
-              }}
-            />
-          )}
-        </Box>
-      </CardContent>
-    </Card>
+    <div>
+      {sections.map((section, index) => (
+        <Card key={index} style={cardStyle}>
+          <CardContent>
+            <Box display="flex" flexDirection="row" alignItems="center">
+              <Box display="flex" flexDirection="column">
+                <Typography 
+                    variant="h4" 
+                    component="div" 
+                    sx={{ fontWeight: "bold", marginBottom: 2 }}>
+                  {section.title}
+                </Typography>
+                <Typography 
+                    component="div" 
+                    whiteSpace="pre-line" 
+                    sx={{ textAlign: "left", flex: 1, fontSize: 18}}>
+                  <ReactMarkdown>{section.msg}</ReactMarkdown>
+                </Typography>
+              </Box>
+              {(section.imageUrl || section.imagePath) && (
+                <Box
+                  component="img"
+                  src={section.imageUrl || (section.imagePath ? `${process.env.PUBLIC_URL}${section.imagePath}` : '')}
+                  alt="Description related image"
+                  sx={{
+                    maxWidth: '30%',
+                    maxHeight: '100%',
+                    marginLeft: 15,
+                  }}
+                />
+              )}
+            </Box>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
   );
 };
 

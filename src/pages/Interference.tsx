@@ -170,36 +170,7 @@ const Interference = () => {
     <Layout style={{ minHeight: "100vh" }}>
       <Content className="site-layout" style={{margin: "5%"}}>
         <CustomPageHeader text="Interference" size="h3"/>
-        <CustomDescriptionBox
-            title="What is interference?"
-            imageUrl="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjzBWFVf3m3-Wh1k4q9mNAxbDcDTS_4qEiZ7SK_dG2iQO9dUP6r4IAq8eXiK0utCTeafofhwb8gvWpt8J8oTziDUq3EnoTYbpvLASi8gnrW3E5k59PnSDh48JGNiY5sjj_l9BjOGiOqgY-d/?imgmax=800"
-            msg={`In quantum physics, tiny particles can be in more than one place at once! This idea is called "superposition." Not only that, but sometimes these particles, like light particles (called photons), can actually interfere with themselves, just like two waves crossing each other in water!`}
-        />
-        <CustomDescriptionBox
-            title="Are quantum particles waves?"
-            msg={`Particles in quantum physics don't act like everyday objects. These tiny particles, like electrons or photons, act like both **particles** (solid objects) and **waves** (like water waves). This special behavior is called **wave-particle duality**. Scientists use something called the **DeBroglie wavelength** to figure out how wavy a particle is. The smaller the particle's energy, the more like a wave it behaves!`}
-        />
-        <CustomDescriptionBox
-            title="How is wavelength calculated?"
-            msg={`Scientists use a formula to find out how wavy a particle is. It looks like this:  
-F = p/h  
-But what does that mean? It means that if a particle is moving really fast (high momentum), its wavelength becomes super tiny! But for small particles, like electrons or photons, the waves are bigger and easier to see.`}
-        />
-        <CustomDescriptionBox
-            title="The Double Slot Experiment"
-            imageUrl="https://quantumawareness.net/wp-content/uploads/2019/01/doubleslottest-1400x793-71-2.jpg"
-            msg={`Here’s a cool experiment that shows how photons (light particles) act like both particles and waves. You’d think you’d see two lines on the other side, right? But what you actually see is a pattern of light and dark lines, like waves crossing in water!
-
-This is because the photons aren’t just acting like particles. They’re also behaving like waves that **interfere** with each other, creating this special pattern.`}
-        />
-        <CustomDescriptionBox
-            title="Try it out!"
-            msg={`Change the distance between the slits, or change how much energy the wave has.  
-- What happens to the pattern on the wall?
-- Does the wave’s energy change the spacing of the light and dark lines?
-
-Try it out and see how waves and particles are both part of the same strange quantum world!`}
-        />
+        <CustomDescriptionBox pageTitle="Interference"/>
       <Card
       style={{
         borderRadius: "10px",
