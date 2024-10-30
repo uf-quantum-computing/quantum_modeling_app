@@ -29,7 +29,7 @@ import {
   CustomDescriptionBox,
 } from "../components";
 
-import infoFig from '../images/Single_V4.png';
+// import infoFig from '../images/Single_V4.png';
 
 // === styles ===
 import { sidebar_style } from "../global_styles";
@@ -198,25 +198,7 @@ const SpinTraceEvolution = () => {
 
       <Content className="site-layout" style={{margin: "5%"}}>
         <CustomPageHeader text="Spin Qubit Trace" size="h3"/>
-        {/*<div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%'}}*/}
-        {/*     ref={animationContainerRef}></div>*/}
-        <CustomDescriptionBox
-            title='What is qubit and a "spin"?'
-            msg={`In quantum computers, we use something called qubits to store information. Unlike regular computer bits (which are either 0 or 1), qubits can be a mix of both at the same time! One way we can control a qubit is by using the **spin** of a tiny particle, like an electron. Imagine the electron spinning like a top—this spin helps us control how the qubit behaves.`}
-        />
-        <CustomDescriptionBox
-            title='How does spin change?'
-            msg={`To control the spin of a particle, we apply a **magnetic field**. This makes the particle spin around in a circle! We measure how much it spins and use that to decide how well our quantum computer is working. The goal is to rotate the spin by just the right amount, which we call a **quantum gate**.`}
-        />
-        <CustomDescriptionBox
-            title='The Bloch Sphere'
-            imageUrl={infoFig}
-            msg={`We can picture the spin of an electron using a model called the **Bloch sphere**. It’s like a globe, and the spin is a point on the surface of the globe that moves around as the magnetic field changes. By looking at the Bloch sphere, we can see exactly how the spin is moving!`}
-        />
-        <CustomDescriptionBox
-            title='Try it out!'
-            msg={`Now it’s your turn to explore! In this experiment, you can adjust the magnetic field and see how it affects the spin of a qubit. Watch how the qubit’s spin changes on the Bloch sphere. Can you find the right amount of spin for the quantum gate?`}
-        />
+        <CustomDescriptionBox pageTitle="spin"/>
         <Card
       style={{
         borderRadius: "10px",
