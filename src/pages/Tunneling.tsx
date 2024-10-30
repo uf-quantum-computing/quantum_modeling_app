@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 // === UI Components ===
 import {
-  Grid,
   Box,
   Button,
   Stack,
@@ -11,7 +10,9 @@ import {
   InputLabel,
   FormControl,
   Slider,
-  Typography
+  Typography,
+  CardContent,
+  Card
 } from "@mui/material";
 import CircularProgress from '@mui/joy/CircularProgress';
 import { Layout } from "antd";
@@ -182,17 +183,43 @@ const Tunneling = () => {
   return (
     <div>
       <Layout style={{ minHeight: "100vh" }}>
-        {/* ======================== Sider ======================== */}
-        <Sider
-          // collapsible
-          // collapsed={collapsed}
-          // onCollapse={(value) => setCollapsed(value)}
-          style={{ padding: "1%", position: "fixed", height: "100%", }}
-          width={230}
-        >
-          <CustomTitle />
-
-          <Box
+        <Layout style={{ margin: '5%' }}>
+          <Content>
+            <CustomPageHeader text="Tunneling" size="h3"/>
+            {/*<iframe src="../../quantum_app_backend/cache/tunneling/probs_1.0_2.0_1.0_3D.html" style={{display: 'flex', justifyContent: 'center'}}/>*/}
+            <CustomDescriptionBox 
+              title="What is tunneling?"
+              imageUrl="https://www.wikihow.com/images/thumb/3/32/Play-Wall-Ball-Step-9-Version-2.jpg/v4-460px-Play-Wall-Ball-Step-9-Version-2.jpg.webp"
+              msg="Imagine you're hitting a ball at a wall. Normally, the ball would just bounce back, right? But in quantum physics, sometimes the ball can go through the wall, even if the wall is solid! This is a concept called tunneling."
+            />
+            <CustomDescriptionBox 
+              title="Why do particles act so strange?"
+              msg="Particles, like tiny pieces of matter, don't always act the way we expect them to. In regular physics, like with balls or cars, we can predict where things will go. But in quantum physics, these tiny particles are super unpredictable! Their position is a bit fuzzy, and sometimes they show up where you'd never expect them to. This is why they can tunnel through barriers."
+            />
+            <CustomDescriptionBox 
+              title="What affects whether the ball goes through the wall?"
+              msg="There are a few things that make tunneling easier for particles:
+- If the wall (or barrier) is thinner.
+- If the wall is weaker (lower energy).
+- If the particle is moving faster (has more energy).
+When these things happen, the particle (or tennis ball) is more likely to go through the wall!"
+            />
+            <CustomDescriptionBox 
+              title="Try it out!"
+              msg="Change the thickness and strength of the barrier, and adjust the energy of the particle. Does the particle always tunnel through? What does the pattern of the particle's behavior look like when it reaches the barrier? How does it change as the particle moves? See what happens!"
+            />
+          </Content>
+          <Card
+      style={{
+        borderRadius: "10px",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        paddingLeft: "5%",
+      }}
+    >
+      <CardContent style={{ flex: 1, maxWidth: "80%" }}>
+      <Box
             component="form"
             sx={{
               "& > :not(style)": { m: 0.5, width: "25ch" },
@@ -201,11 +228,12 @@ const Tunneling = () => {
             autoComplete="off"
             style={horizontal_center}
           >
-            <Stack spacing={3}>
-              <FormControl variant="filled">
+          <Stack spacing={5}>
+          <CustomTitle/>
+          <FormControl variant="filled">
                 <InputLabel
                   id="barrier-select"
-                  style={{color: "white", marginTop: "10px", marginBottom: "10px", marginLeft: "-8 px", textAlign: "left"}}
+                  style={{color: "black", marginTop: "10px", marginBottom: "10px", marginLeft: "8 px", textAlign: "left"}}
                   >
                   Barrier
                   </InputLabel>
@@ -220,7 +248,7 @@ const Tunneling = () => {
                   valueLabelDisplay="auto"
                   step={1}
                 />
-                <Typography variant="body2" color="white" align="right" style={{ alignSelf: 'flex-end', marginRight: '0px', marginTop: '-2px' }}>
+                <Typography variant="body2" color="white" align="right" style={{ alignSelf: 'flex-end', marginRight: '0px', marginTop: '2px' }}>
           (eV)
                 </Typography>
               </FormControl>
@@ -287,56 +315,21 @@ const Tunneling = () => {
                   Generate Model
                 </Button>
               )}
-            </Stack>
-          </Box>
+          </Stack>
+        </Box>
+      </CardContent>
 
-          {/* ====== Dashboard ====== */}
-          <Dashboard />
-
-          {/* ====== Snackbar ====== */}
-          <Snackbar
-            open={open}
-            autoHideDuration={6000}
-            onClose={handleClose}
-            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-          >
-            <Alert
-              onClose={handleClose}
-              severity="success"
-              sx={{ width: "100%" }}
-            >
-              {success_msg}
-            </Alert>
-          </Snackbar>
-        </Sider>
-
-        <Layout style={{ paddingLeft: 230, margin: '5%' }}>
-          <Content>
-            <CustomPageHeader text="Tunneling" size="h3"/>
-            {/*<iframe src="../../quantum_app_backend/cache/tunneling/probs_1.0_2.0_1.0_3D.html" style={{display: 'flex', justifyContent: 'center'}}/>*/}
-            <CustomDescriptionBox 
-              title="What is tunneling?"
-              imageUrl="https://www.wikihow.com/images/thumb/3/32/Play-Wall-Ball-Step-9-Version-2.jpg/v4-460px-Play-Wall-Ball-Step-9-Version-2.jpg.webp"
-              msg="Imagine you're hitting a ball at a wall. Normally, the ball would just bounce back, right? But in quantum physics, sometimes the ball can go through the wall, even if the wall is solid! This is a concept called tunneling."
-            />
-            <CustomDescriptionBox 
-              title="Why do particles act so strange?"
-              msg="Particles, like tiny pieces of matter, don't always act the way we expect them to. In regular physics, like with balls or cars, we can predict where things will go. But in quantum physics, these tiny particles are super unpredictable! Their position is a bit fuzzy, and sometimes they show up where you'd never expect them to. This is why they can tunnel through barriers."
-            />
-            <CustomDescriptionBox 
-              title="What affects whether the ball goes through the wall?"
-              msg="There are a few things that make tunneling easier for particles:
-- If the wall (or barrier) is thinner.
-- If the wall is weaker (lower energy).
-- If the particle is moving faster (has more energy).
-When these things happen, the particle (or tennis ball) is more likely to go through the wall!"
-            />
-            <CustomDescriptionBox 
-              title="Try it out!"
-              msg="Change the thickness and strength of the barrier, and adjust the energy of the particle. Does the particle always tunnel through? What does the pattern of the particle's behavior look like when it reaches the barrier? How does it change as the particle moves? See what happens!"
-            />
-          </Content>
-          <div style={{display: 'flex', justifyContent: 'center'}} ref={animationContainerRef}></div>
+      <CardContent
+        style={{
+          flex: 3,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <div style={{display: 'flex', justifyContent: 'center'}} ref={animationContainerRef}></div>
+      </CardContent>
+    </Card>
         </Layout>
       </Layout>
     </div>

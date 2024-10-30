@@ -11,6 +11,8 @@ import {
   InputLabel,
   FormControl,
   Slider,
+  Card,
+  CardContent
 } from "@mui/material";
 import CircularProgress from '@mui/joy/CircularProgress';
 import { Layout } from "antd";
@@ -25,14 +27,6 @@ import {
   CustomDescriptionBox,
 } from "../components";
 
-// === styles ===
-import { sidebar_style } from "../global_styles";
-// const select_style = { backgroundColor: "#FFFFFF" };
-const img_style = {
-  borderRadius: "10px",
-  boxShadow: "0 0 5px -1px rgba(0,0,0,0.2)",
-  width: "100%",
-};
 const horizontal_center = {
   display: "flex",
   // alignItems: "center",  # vertical center
@@ -174,129 +168,8 @@ const Interference = () => {
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
-      <Sider
-        // collapsible
-        // collapsed={collapsed}
-        // onCollapse={(value) => setCollapsed(value)}
-        style={{ padding: "1%", position: "fixed", height: "100%", }}
-        width={230}
-      >
-        <CustomTitle/>
-        <Box
-            component="form"
-            sx={{
-              "& > :not(style)": { m: 0.5, width: "25ch" },
-            }}
-            noValidate
-            autoComplete="off"
-            style={horizontal_center}
-        >
-
-          <Stack spacing={3}>
-            
-            {/* ====== Select Inputs ====== */}
-            {/* Momentum Slider*/}
-            <FormControl variant="filled">
-              <InputLabel 
-                id="momentum-select"
-                style={{color: "white", marginTop: "10px",  marginBottom: "10px",textAlign: "center"}}
-                >  
-                Momentum
-                </InputLabel>
-              <Slider
-                sx={{ color: "#FFFFFF" }}
-                aria-label="momentum-select"
-                value={momentum}
-                onChange={handleWave}
-                min={1}
-                max={10}
-                defaultValue={1}
-                valueLabelDisplay="auto"
-                step={1}
-              />
-            </FormControl>
-
-            {/* Spacing slider */}
-            <FormControl variant="filled">
-              <InputLabel 
-                id="spacing-select"
-                style={{color: "white", marginTop: "10px", marginBottom: "10px",textAlign: "center"}}
-                >  
-                Spacing
-                </InputLabel>
-              <Slider
-                sx={{ color: "#FFFFFF" }}
-                aria-label="spacing-select"
-                value={spacing}
-                onChange={handleSpacing}
-                min={0.1}
-                max={5}
-                defaultValue={0.6}
-                valueLabelDisplay="auto"
-                step={0.1}
-              />
-            </FormControl>
-
-            {/* Slit Seperation slider */}
-            <FormControl variant="filled">
-              <InputLabel 
-                id="slit-select"
-                style={{color: "white", marginTop: "10px", marginBottom: "10px", textAlign: "center"}}
-                >  
-                Slit Separation
-                </InputLabel>
-              <Slider
-                sx={{ color: "#FFFFFF" }}
-                aria-label="slit-separation-select"
-                value={slit_separation}
-                onChange={handleSlitSep}
-                min={0.2}
-                max={5}
-                defaultValue={0.6}
-                valueLabelDisplay="auto"
-                step={0.1}
-              />
-            </FormControl>
-
-            {/* ====== Submit Button ====== */}
-            {loading ? (
-              <CircularProgress />
-            ) : (
-              <Button
-                variant="contained"
-                onClick={handleSubmit}
-                type="submit"
-                color="success"
-              >
-                Generate Model
-              </Button>
-            )}
-
-            {/* ====== Dashboard ====== */}
-            <Dashboard />
-
-            {/* ====== Snackbar ====== */}
-            <Snackbar
-              open={open}
-              autoHideDuration={6000}
-              onClose={handleClose}
-              anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-            >
-              <Alert
-                onClose={handleClose}
-                severity="success"
-                sx={{ width: "100%" }}
-              >
-                {success_msg}
-              </Alert>
-            </Snackbar>
-          </Stack>
-        </Box>
-      </Sider>
-      <Content className="site-layout" style={{margin: "5%", paddingLeft: 230}}>
+      <Content className="site-layout" style={{margin: "5%"}}>
         <CustomPageHeader text="Interference" size="h3"/>
-        {/*<div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%'}}*/}
-        {/*     ref={animationContainerRef}></div>*/}
         <CustomDescriptionBox
             title="What is interference?"
             imageUrl="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjzBWFVf3m3-Wh1k4q9mNAxbDcDTS_4qEiZ7SK_dG2iQO9dUP6r4IAq8eXiK0utCTeafofhwb8gvWpt8J8oTziDUq3EnoTYbpvLASi8gnrW3E5k59PnSDh48JGNiY5sjj_l9BjOGiOqgY-d/?imgmax=800"
@@ -327,8 +200,94 @@ This is because the photons aren’t just acting like particles. They’re also 
 
 Try it out and see how waves and particles are both part of the same strange quantum world!`}
         />
-        <div style={{display: 'flex', justifyContent: 'center'}} ref={animationContainerRef}></div>
-        {/*<div ref={animationContainerRef}/>*/}
+      <Card
+      style={{
+        borderRadius: "10px",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        paddingLeft: "5%",
+      }}
+    >
+      <CardContent style={{ flex: 1, maxWidth: "300px" }}>
+        <Box
+          component="form"
+          sx={{
+            "& > :not(style)": { m: 0.5, width: "25ch" },
+          }}
+          noValidate
+          autoComplete="off"
+          display="flex"
+          flexDirection="column"
+        >
+          <Stack spacing={5}>
+          <CustomTitle/>
+            <FormControl fullWidth>
+              <InputLabel id="spacing-label" style={{ marginTop: "5%" }}>Spacing</InputLabel>
+              <Slider
+                aria-label="spacing"
+                defaultValue={0.6}
+                valueLabelDisplay="auto"
+                step={0.1}
+                min={0.1}
+                max={1}
+                onChange={handleSpacing}
+                sx={{ color: "#063970" }}
+              />
+            </FormControl>
+            <FormControl fullWidth>
+              <InputLabel id="slitSep-label" style={{ marginTop: "5%" }}>Slit Separation</InputLabel>
+              <Slider
+                aria-label="slitSep"
+                defaultValue={0.6}
+                valueLabelDisplay="auto"
+                step={0.1}
+                min={0.1}
+                max={1}
+                onChange={handleSlitSep}
+                sx={{ color: "#063970" }}
+              />
+            </FormControl>
+            <FormControl fullWidth>
+              <InputLabel id="wave-label" style={{ marginTop: "5%" }}>Wave</InputLabel>
+              <Slider
+                aria-label="wave"
+                defaultValue={1}
+                valueLabelDisplay="auto"
+                step={1}
+                min={1}
+                max={5}
+                onChange={handleWave}
+                sx={{ color: "#063970" }}
+              />
+            </FormControl>
+            {loading ? (
+              <CircularProgress />
+            ) : (
+              <Button
+                variant="contained"
+                onClick={handleSubmit}
+                type="submit"
+                color="success"
+              >
+                Generate Model
+              </Button>
+            )}
+          </Stack>
+        </Box>
+      </CardContent>
+
+      <CardContent
+        style={{
+          flex: 3,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <div ref={animationContainerRef} style={{ width: "100%", height: "100%" }}></div>
+      </CardContent>
+    </Card>
       </Content>
     </Layout>
   );

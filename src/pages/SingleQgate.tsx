@@ -13,6 +13,8 @@ import {
   InputLabel,
   FormControl,
   Slider,
+  Card,
+  CardContent
 } from "@mui/material";
 import CircularProgress from '@mui/joy/CircularProgress';
 import { Layout } from "antd";
@@ -193,34 +195,56 @@ const SpinTraceEvolution = () => {
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
-      <Sider
-        // collapsible
-        // collapsed={collapsed}
-        // onCollapse={(value) => setCollapsed(value)}
-        style={{ padding: "1%", position: "fixed", height: "100%", }}
-        width={230}
-      >
-        <CustomTitle/>
+
+      <Content className="site-layout" style={{margin: "5%"}}>
+        <CustomPageHeader text="Spin Qubit Trace" size="h3"/>
+        {/*<div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%'}}*/}
+        {/*     ref={animationContainerRef}></div>*/}
+        <CustomDescriptionBox
+            title='What is qubit and a "spin"?'
+            msg={`In quantum computers, we use something called qubits to store information. Unlike regular computer bits (which are either 0 or 1), qubits can be a mix of both at the same time! One way we can control a qubit is by using the **spin** of a tiny particle, like an electron. Imagine the electron spinning like a top—this spin helps us control how the qubit behaves.`}
+        />
+        <CustomDescriptionBox
+            title='How does spin change?'
+            msg={`To control the spin of a particle, we apply a **magnetic field**. This makes the particle spin around in a circle! We measure how much it spins and use that to decide how well our quantum computer is working. The goal is to rotate the spin by just the right amount, which we call a **quantum gate**.`}
+        />
+        <CustomDescriptionBox
+            title='The Bloch Sphere'
+            imageUrl={infoFig}
+            msg={`We can picture the spin of an electron using a model called the **Bloch sphere**. It’s like a globe, and the spin is a point on the surface of the globe that moves around as the magnetic field changes. By looking at the Bloch sphere, we can see exactly how the spin is moving!`}
+        />
+        <CustomDescriptionBox
+            title='Try it out!'
+            msg={`Now it’s your turn to explore! In this experiment, you can adjust the magnetic field and see how it affects the spin of a qubit. Watch how the qubit’s spin changes on the Bloch sphere. Can you find the right amount of spin for the quantum gate?`}
+        />
+        <Card
+      style={{
+        borderRadius: "10px",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        paddingLeft: "5%",
+      }}
+    >
+      <CardContent style={{ flex: 1, maxWidth: "300px" }}>
         <Box
-            component="form"
-            sx={{
-              "& > :not(style)": { m: 0.5, width: "25ch" },
-            }}
-            noValidate
-            autoComplete="off"
-            style={horizontal_center}
+          component="form"
+          sx={{
+            "& > :not(style)": { m: 0.5, width: "25ch" },
+          }}
+          noValidate
+          autoComplete="off"
+          display="flex"
+          flexDirection="column"
         >
-
-          <Stack spacing={3}>
-
-            {/* ====== Select Inputs ====== */}
-            {/* Gate Select*/}
-            <FormControl variant="filled">
+          <Stack spacing={5}>
+          <CustomTitle/>
+          <FormControl variant="filled">
               <InputLabel variant="standard" htmlFor="uncontrolled-native" style={{color: "white", fontSize: "1.3rem", textAlign: "center"}}>
                 Initial State
               </InputLabel>
               <Select
-                sx={{ color: "#FFFFFF" }}
+                sx={{ color: "#000000" }}
                 labelId="gate-select"
                 value={gate.toString()}
                 label="Gate"
@@ -247,7 +271,7 @@ const SpinTraceEvolution = () => {
                 Initial State
               </InputLabel>
               <Select
-                sx={{ color: "#FFFFFF" }}
+                sx={{ color: "#000000" }}
                 labelId="initState-select"
                 value={initState.toString()}
                 label="Initial State"
@@ -266,12 +290,12 @@ const SpinTraceEvolution = () => {
             <FormControl variant="filled">
               <InputLabel
                 id="mag-select"
-                style={{color: "white", marginTop: "10px", marginBottom: "10px",textAlign: "center"}}
+                style={{color: "black", marginTop: "10px", marginBottom: "10px",textAlign: "center"}}
                 >
                 Magnetic field
                 </InputLabel>
               <Slider
-                sx={{ color: "#FFFFFF" }}
+                sx={{ color: "#063970" }}
                 aria-label="mag-select"
                 value={magF_B}
                 onChange={handleMagChange}
@@ -287,12 +311,12 @@ const SpinTraceEvolution = () => {
             <FormControl variant="filled">
               <InputLabel
                 id="t2-select"
-                style={{color: "white", marginTop: "10px", marginBottom: "10px", textAlign: "center"}}
+                style={{color: "black", marginTop: "10px", marginBottom: "10px", textAlign: "center"}}
                 >
                 Dephasing time
                 </InputLabel>
               <Slider
-                sx={{ color: "#FFFFFF" }}
+                sx={{ color: "#063970" }}
                 aria-label="t2-select"
                 value={t2}
                 onChange={handleT2Change}
@@ -317,50 +341,21 @@ const SpinTraceEvolution = () => {
                 Generate Model
               </Button>
             )}
-
-            {/* ====== Dashboard ====== */}
-            <Dashboard />
-
-            {/* ====== Snackbar ====== */}
-            <Snackbar
-              open={open}
-              autoHideDuration={6000}
-              onClose={handleClose}
-              anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-            >
-              <Alert
-                onClose={handleClose}
-                severity="success"
-                sx={{ width: "100%" }}
-              >
-                {success_msg}
-              </Alert>
-            </Snackbar>
           </Stack>
         </Box>
-      </Sider>
-      <Content className="site-layout" style={{margin: "5%", paddingLeft: 230}}>
-        <CustomPageHeader text="Spin Qubit Trace" size="h3"/>
-        {/*<div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%'}}*/}
-        {/*     ref={animationContainerRef}></div>*/}
-        <CustomDescriptionBox
-            title='What is qubit and a "spin"?'
-            msg={`In quantum computers, we use something called qubits to store information. Unlike regular computer bits (which are either 0 or 1), qubits can be a mix of both at the same time! One way we can control a qubit is by using the **spin** of a tiny particle, like an electron. Imagine the electron spinning like a top—this spin helps us control how the qubit behaves.`}
-        />
-        <CustomDescriptionBox
-            title='How does spin change?'
-            msg={`To control the spin of a particle, we apply a **magnetic field**. This makes the particle spin around in a circle! We measure how much it spins and use that to decide how well our quantum computer is working. The goal is to rotate the spin by just the right amount, which we call a **quantum gate**.`}
-        />
-        <CustomDescriptionBox
-            title='The Bloch Sphere'
-            imageUrl={infoFig}
-            msg={`We can picture the spin of an electron using a model called the **Bloch sphere**. It’s like a globe, and the spin is a point on the surface of the globe that moves around as the magnetic field changes. By looking at the Bloch sphere, we can see exactly how the spin is moving!`}
-        />
-        <CustomDescriptionBox
-            title='Try it out!'
-            msg={`Now it’s your turn to explore! In this experiment, you can adjust the magnetic field and see how it affects the spin of a qubit. Watch how the qubit’s spin changes on the Bloch sphere. Can you find the right amount of spin for the quantum gate?`}
-        />
-        <div style={{display: 'flex', justifyContent: 'center'}} ref={animationContainerRef}></div>
+      </CardContent>
+
+      <CardContent
+        style={{
+          flex: 3,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <div ref={animationContainerRef} style={{ width: "100%", height: "100%" }}></div>
+      </CardContent>
+    </Card>
         {/*<div ref={animationContainerRef}/>*/}
       </Content>
     </Layout>
