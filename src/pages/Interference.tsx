@@ -167,99 +167,139 @@ const Interference = () => {
   }
 
   return (
-    <Layout style={{ minHeight: "100vh" }}>
-      <Content className="site-layout" style={{margin: "5%"}}>
-        <CustomPageHeader text="Interference" size="h3"/>
-        <CustomDescriptionBox pageTitle="Interference"/>
-      <Card
-      style={{
-        borderRadius: "10px",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        paddingLeft: "5%",
-      }}
-    >
-      <CardContent style={{ flex: 1, maxWidth: "300px" }}>
-        <Box
-          component="form"
-          sx={{
-            "& > :not(style)": { m: 0.5, width: "25ch" },
-          }}
-          noValidate
-          autoComplete="off"
-          display="flex"
-          flexDirection="column"
-        >
-          <Stack spacing={5}>
-          <CustomTitle/>
-            <FormControl fullWidth>
-              <InputLabel id="spacing-label" style={{ marginTop: "5%" }}>Spacing</InputLabel>
-              <Slider
-                aria-label="spacing"
-                defaultValue={0.6}
-                valueLabelDisplay="auto"
-                step={0.1}
-                min={0.1}
-                max={1}
-                onChange={handleSpacing}
-                sx={{ color: "#063970" }}
-              />
-            </FormControl>
-            <FormControl fullWidth>
-              <InputLabel id="slitSep-label" style={{ marginTop: "5%" }}>Slit Separation</InputLabel>
-              <Slider
-                aria-label="slitSep"
-                defaultValue={0.6}
-                valueLabelDisplay="auto"
-                step={0.1}
-                min={0.1}
-                max={1}
-                onChange={handleSlitSep}
-                sx={{ color: "#063970" }}
-              />
-            </FormControl>
-            <FormControl fullWidth>
-              <InputLabel id="wave-label" style={{ marginTop: "5%" }}>Wave</InputLabel>
-              <Slider
-                aria-label="wave"
-                defaultValue={1}
-                valueLabelDisplay="auto"
-                step={1}
-                min={1}
-                max={5}
-                onChange={handleWave}
-                sx={{ color: "#063970" }}
-              />
-            </FormControl>
-            {loading ? (
-              <CircularProgress />
-            ) : (
-              <Button
-                variant="contained"
-                onClick={handleSubmit}
-                type="submit"
-                color="success"
-              >
-                Generate Model
-              </Button>
-            )}
-          </Stack>
-        </Box>
-      </CardContent>
+    <Layout 
+        style={{ 
+            minHeight: "100vh", 
+            display: "flex", 
+            justifyContent: "center", 
+            alignItems: "center" }}>
 
-      <CardContent
-        style={{
-          flex: 3,
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
-        <div ref={animationContainerRef} style={{ width: "100%", height: "100%" }}></div>
-      </CardContent>
-    </Card>
-      </Content>
+        <Content 
+            className="site-layout" 
+            style={{
+                margin: "5%", 
+                maxWidth: "70%", 
+                minWidth: "1000px",
+                border: "1px solid #063970" }}>
+
+            {/* Title for the page */}
+            <CustomPageHeader text="Interference" size="h3"/> 
+
+            {/* Content for the page imported from data.json */}
+            <CustomDescriptionBox pageTitle="Interference"/>
+
+            <Card
+                style={{
+                    borderRadius: "10px",
+                    display: "flex",
+                    flexDirection: "row",
+                    gap: "2%",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    padding: "2%",
+                    border: "1px solid #063970" }}>
+
+                <CardContent 
+                    style={{ 
+                    flex: 1, 
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    border: "1px solid red" }}>
+                    
+                    <Box
+                        component="form"
+                        sx={{
+                            "& > :not(style)": { width: "200px" },
+                            border: "1px solid ",
+                        }}
+                        noValidate
+                        autoComplete="off"
+                        display="flex"
+                        flexDirection="column" >
+                    
+                        <Stack spacing={5}>
+
+                            <CustomTitle pageName="Interference"/>
+
+                            <FormControl fullWidth>
+                                <InputLabel 
+                                    id="spacing-label" 
+                                    style={{ marginTop: "5%" }}>
+                                    Spacing
+                                </InputLabel>
+                                <Slider
+                                    aria-label="spacing"
+                                    defaultValue={0.6}
+                                    valueLabelDisplay="auto"
+                                    step={0.1}
+                                    min={0.1}
+                                    max={1}
+                                    onChange={handleSpacing}
+                                    sx={{ color: "#063970" }}/>
+                            </FormControl>
+
+                            <FormControl fullWidth>
+                                <InputLabel 
+                                    id="slitSep-label" 
+                                    style={{ marginTop: "5%" }}>
+                                    Slit Separation
+                                </InputLabel>
+                                <Slider
+                                    aria-label="slitSep"
+                                    defaultValue={0.6}
+                                    valueLabelDisplay="auto"
+                                    step={0.1}
+                                    min={0.1}
+                                    max={1}
+                                    onChange={handleSlitSep}
+                                    sx={{ color: "#063970" }}/>
+                            </FormControl>
+
+                            <FormControl fullWidth>
+                                <InputLabel 
+                                    id="wave-label" 
+                                    style={{ marginTop: "5%" }}>
+                                    Wave
+                                </InputLabel>
+                                <Slider
+                                    aria-label="wave"
+                                    defaultValue={1}
+                                    valueLabelDisplay="auto"
+                                    step={1}
+                                    min={1}
+                                    max={5}
+                                    onChange={handleWave}
+                                    sx={{ color: "#063970" }}/>
+                            </FormControl>
+
+                            {loading ? (
+                            <CircularProgress />
+                            ) : (
+                            <Button
+                                variant="contained"
+                                onClick={handleSubmit}
+                                type="submit"
+                                color="success">
+                                Generate Model
+                            </Button>
+                            )}
+                        </Stack>
+                    </Box>
+                </CardContent>
+
+                <CardContent
+                    style={{
+                    flex: 5,
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    border: "1px solid #063970",
+                    }}>
+                    <div ref={animationContainerRef}></div>
+                </CardContent>
+            </Card>
+        </Content>
     </Layout>
   );
 };

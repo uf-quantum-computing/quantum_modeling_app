@@ -12,7 +12,7 @@ const card_style = {
 // ==========================================
 // ==============  CustomTitle ==============
 // ==========================================
-const CustomTitle = () => {
+const CustomTitle = ({pageName = "Quantum"}) => {
   return (
     <div>
       <Link to="/" style={{ textDecoration: "none" }}>
@@ -26,7 +26,7 @@ const CustomTitle = () => {
                 margin: 0,
               }}
             >
-              Quantum Model Generator
+              {pageName} Model Generator
             </h2>
           </p>
         </Card>
