@@ -33,7 +33,12 @@ def get_tunneling(barrier, width, momentum):
     momentum = float(momentum)
 
     try:
-        print('Getting tunneling model')
-        return fs.get(ObjectId('6734f0c4cd8c9ba1c6f54b7c'))
-    except pymongo.errors.OperationFailure:
-        print('Operation Failure')
+        collection = db['tunneling']
+        tunneling_model = collection.find_one({'barrier': 1, 'thickness': 1, 'wave': 1})
+        if tunneling_model:
+            return tunneling_model
+        else:
+            return None
+    except pymongo.errors.OperationFailure as e:
+        print(e.details)
+        return None
