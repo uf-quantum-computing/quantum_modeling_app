@@ -10,6 +10,7 @@ import base64
 import os
 from pathlib import Path
 import portalocker
+from db import add_tunneling, get_tunneling
 
 #set swagger info
 api: Api = Api(
@@ -20,9 +21,7 @@ api: Api = Api(
 )
 
 app = Flask(__name__)
-
 api.init_app(app)
-
 CORS(app, resources={r"/*": {"origins": "*"}})
 
 @app.route('/receive_data/tunneling/<barrier>/<width>/<momentum>', methods=['GET'])
@@ -31,27 +30,35 @@ def Qtunneling(barrier, width, momentum):
     width = float(width)
     momentum = float(momentum)
 
-    print("You evoked the API successfully")
-    if Path(f'cache/tunneling/probs_{momentum}_{barrier}_{width}_3D.html').exists():
-        print(f'cache/tunneling/probs_{momentum}_{barrier}_{width}_3D.html')
-        with open(f'cache/tunneling/probs_{momentum}_{barrier}_{width}_3D.html',
-                  "r") as f:
-            portalocker.lock(f, portalocker.LOCK_SH)
-            GifRes = f.read()
+    print("You evoked the tunneling API successfully")
+    # Get tunneling models based on barrier, width, and momentum
+    tunneling_model = get_tunneling(barrier, width, momentum)
+    if tunneling_model:
+        print('Tunneling model found')
+        return {'GifRes': tunneling_model['frames']}
     else:
-        plt.close('all')
-        plt.switch_backend('Agg')
+        return {'tunneling_model': 'No tunneling model found'}
+    
+    # if Path(f'cache/tunneling/probs_{momentum}_{barrier}_{width}_3D.html').exists():
+    #     print(f'cache/tunneling/probs_{momentum}_{barrier}_{width}_3D.html')
+    #     with open(f'cache/tunneling/probs_{momentum}_{barrier}_{width}_3D.html',
+    #               "r") as f:
+    #         portalocker.lock(f, portalocker.LOCK_SH)
+    #         GifRes = f.read()
+    # else:
+    #     plt.close('all')
+    #     plt.switch_backend('Agg')
 
-        start_3d_time = time.time()  # Record the start time
-        wave_packet3D = t_wp(barrier_width=width, barrier_height=barrier, k0=momentum)
-        animator = t_ani(wave_packet3D)
-        GifRes = animator.animate3D()
+    #     start_3d_time = time.time()  # Record the start time
+    #     wave_packet3D = t_wp(barrier_width=width, barrier_height=barrier, k0=momentum)
+    #     animator = t_ani(wave_packet3D)
+    #     GifRes = animator.animate3D()
 
-        end_3d_time = time.time()    # Record the end time
-        elapsed_3d_time = end_3d_time - start_3d_time
-        print(f"Elapsed 3D generator time: {elapsed_3d_time} seconds")
+    #     end_3d_time = time.time()    # Record the end time
+    #     elapsed_3d_time = end_3d_time - start_3d_time
+    #     print(f"Elapsed 3D generator time: {elapsed_3d_time} seconds")
 
-    return {'GifRes': GifRes}
+    # return {'GifRes': GifRes}
 
 
 @app.route('/receive_data/interference/<spacing>/<slit_separation>/<int:momentum>', methods=['GET'])
@@ -101,15 +108,10 @@ def Qtrace(gate, init_state, mag, t2):
 
     return {'GifRes': GifRes}
     
-
-@app.route('/hello', methods=['GET', 'POST'])
-def welcome():
-    return "Hello World!"
-
-
 #blind namespace to swagger api page
 if __name__ == '__main__':
     app.debug = True
+    app.config['MONGO_URI'] = 'mongodb+srv://ufquantumcomputing:ufquantumcomputing@cluster0.4ulpp.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
 
-    #run backend server at port 5001
+    #run backend server at port 3001
     app.run(host="0.0.0.0", port=3001, threaded=False, debug=True)
