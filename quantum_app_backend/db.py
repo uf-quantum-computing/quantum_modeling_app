@@ -1,19 +1,17 @@
 import bson
-
-from flask import app
-from werkzeug.local import LocalProxy
 import pymongo
 import gridfs
-from pymongo.errors import DuplicateKeyError, OperationFailure
-from bson.objectid import ObjectId
-from bson.errors import InvalidId
 import os
+import configparser
 from mongo_connection import MONGO_URI
+
+config = configparser.ConfigParser()
+config.read(os.path.abspath(os.path.join(".ini")))
 
 # Create a gridfs instance from a mongodb instance
 class MongoGridFS:
     def __init__(self):
-        self.client = pymongo.MongoClient(MONGO_URI)
+        self.client = pymongo.MongoClient(config['MONGO']['MONGO_URI'])
         self.db = self.client['models']
         self.fs = gridfs.GridFS(self.db)
 

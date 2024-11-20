@@ -42,8 +42,6 @@ const Tunneling = () => {
   const [barrier, setBarrier] = useState<number>(1);
   const [thickness, setThickness] = useState<number>(1.0);
   const [wave, setWave] = useState<number>(1);
-  // const [tunneling_img2d_base64, set_Tunneling_img2d_base64] = useState(base64Text2d);
-  // const [tunneling_img3d_base64, set_Tunneling_img3d_base64] = useState(base64Text3d);
   const [animationJsHtml, setAnimationJsHtml] = useState('');
   const animationContainerRef = useRef<HTMLDivElement>(null);
   const [barrierSliderMoved, setBarrierSliderMoved] = useState(false);
