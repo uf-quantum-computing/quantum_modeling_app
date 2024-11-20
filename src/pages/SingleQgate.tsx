@@ -193,153 +193,185 @@ const SpinTraceEvolution = () => {
     setOpenSnackbar(true); // open snackbar
   }
 
-  return (
-    <Layout style={{ minHeight: "100vh" }}>
+return (
+    <Layout 
+        style={{ 
+            minHeight: "100vh", 
+            display: "flex", 
+            justifyContent: "center", 
+            alignItems: "center" }}>
+        
+        <Content 
+            className="site-layout" 
+            style={{
+                margin: "5%", 
+                maxWidth: "70%", 
+                minWidth: "1000px",
+                border: "1px solid #063970" }}>
 
-      <Content className="site-layout" style={{margin: "5%"}}>
+        {/* Title for the page */}
         <CustomPageHeader text="Spin Qubit Trace" size="h3"/>
+
+        {/* Content for the page imported from data.json */}
         <CustomDescriptionBox pageTitle="spin"/>
+
         <Card
-      style={{
-        borderRadius: "10px",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        paddingLeft: "5%",
-      }}
-    >
-      <CardContent style={{ flex: 1, maxWidth: "300px" }}>
-        <Box
-          component="form"
-          sx={{
-            "& > :not(style)": { m: 0.5, width: "25ch" },
-          }}
-          noValidate
-          autoComplete="off"
-          display="flex"
-          flexDirection="column"
-        >
-          <Stack spacing={5}>
-          <CustomTitle/>
-          <FormControl variant="filled">
-              <InputLabel variant="standard" htmlFor="uncontrolled-native" style={{color: "white", fontSize: "1.3rem", textAlign: "center"}}>
-                Initial State
-              </InputLabel>
-              <Select
-                sx={{ color: "#000000" }}
-                labelId="gate-select"
-                value={gate.toString()}
-                label="Gate"
-                onChange={handleGateChange}
-              >
-                <MenuItem value={1}>X gate (x)</MenuItem>
-                <MenuItem value={2}>Y gate (y)</MenuItem>
-                <MenuItem value={3}>Z gate (z)</MenuItem>
-                <MenuItem value={4}>Hadamard gate</MenuItem>
-                <MenuItem value={5}>S gate</MenuItem>
-                <MenuItem value={6}>T gate</MenuItem>
-              </Select>
-            </FormControl>
+            style={{
+                borderRadius: "10px",
+                display: "flex",
+                flexDirection: "row",
+                gap: "2%",
+                justifyContent: "center",
+                alignItems: "center",
+                padding: "2%",
+                border: "1px solid #063970" }}>
 
-            {/* Init State Select */}
-            <FormControl variant="filled">
-              {/*<InputLabel*/}
-              {/*  id="initState-select"*/}
-              {/*  style={{color: "white", marginTop: "10px", marginBottom: "10px", textAlign: "center", fontSize: "1.3rem"}}*/}
-              {/*  >*/}
-              {/*  Initial State*/}
-              {/*  </InputLabel>*/}
-              <InputLabel variant="standard" htmlFor="uncontrolled-native" style={{color: "white", fontSize: "1.3rem", textAlign: "center"}}>
-                Initial State
-              </InputLabel>
-              <Select
-                sx={{ color: "#000000" }}
-                labelId="initState-select"
-                value={initState.toString()}
-                label="Initial State"
-                onChange={handleInitStateChange}
-              >
-                <MenuItem value={1}>|+&gt;</MenuItem>
-                <MenuItem value={2}>|i+&gt;</MenuItem>
-                <MenuItem value={3}>|0&gt;</MenuItem>
-                <MenuItem value={4}>|-&gt;</MenuItem>
-                <MenuItem value={5}>|i-&gt;</MenuItem>
-                <MenuItem value={6}>|1&gt;</MenuItem>
-              </Select>
-            </FormControl>
+            <CardContent 
+                style={{ 
+                flex: 1, 
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                border: "1px solid red" }}>
 
-            {/* Mag slider */}
-            <FormControl variant="filled">
-              <InputLabel
-                id="mag-select"
-                style={{color: "black", marginTop: "10px", marginBottom: "10px",textAlign: "center"}}
+                <Box
+                    component="form"
+                    sx={{
+                        "& > :not(style)": { m: 0.5, width: "25ch" },
+                    }}
+                    noValidate
+                    autoComplete="off"
+                    display="flex"
+                    flexDirection="column">
+
+                    <Stack spacing={5}>
+                        <CustomTitle/>
+
+                        <FormControl variant="filled">
+                            <InputLabel 
+                                variant="standard" 
+                                htmlFor="uncontrolled-native" 
+                                style={{
+                                    color: "white", 
+                                    fontSize: "1.3rem", 
+                                    textAlign: "center"}}>
+                                Initial State
+                            </InputLabel>
+                            <Select
+                                sx={{ color: "#000000" }}
+                                labelId="gate-select"
+                                value={gate.toString()}
+                                label="Gate"
+                                onChange={handleGateChange}>
+                                <MenuItem value={1}>X gate (x)</MenuItem>
+                                <MenuItem value={2}>Y gate (y)</MenuItem>
+                                <MenuItem value={3}>Z gate (z)</MenuItem>
+                                <MenuItem value={4}>Hadamard gate</MenuItem>
+                                <MenuItem value={5}>S gate</MenuItem>
+                                <MenuItem value={6}>T gate</MenuItem>
+                            </Select>
+                        </FormControl>
+
+                        <FormControl variant="filled">
+                            <InputLabel 
+                                variant="standard" 
+                                htmlFor="uncontrolled-native" 
+                                style={{
+                                    color: "white", 
+                                    fontSize: "1.3rem", 
+                                    textAlign: "center"}}>
+                                Initial State
+                            </InputLabel>
+                            <Select
+                                sx={{ color: "#000000" }}
+                                labelId="initState-select"
+                                value={initState.toString()}
+                                label="Initial State"
+                                onChange={handleInitStateChange}>
+                                <MenuItem value={1}>|+&gt;</MenuItem>
+                                <MenuItem value={2}>|i+&gt;</MenuItem>
+                                <MenuItem value={3}>|0&gt;</MenuItem>
+                                <MenuItem value={4}>|-&gt;</MenuItem>
+                                <MenuItem value={5}>|i-&gt;</MenuItem>
+                                <MenuItem value={6}>|1&gt;</MenuItem>
+                            </Select>
+                        </FormControl>
+
+                        {/* Mag slider */}
+                        <FormControl variant="filled">
+                            <InputLabel
+                                id="mag-select"
+                                style={{
+                                    color: "black", 
+                                    marginTop: "10px", 
+                                    marginBottom: "10px",
+                                    textAlign: "center"}}>
+                                Magnetic field
+                            </InputLabel>
+                            <Slider
+                                sx={{ color: "#063970" }}
+                                aria-label="mag-select"
+                                value={magF_B}
+                                onChange={handleMagChange}
+                                min={0}
+                                max={50}
+                                defaultValue={10}
+                                valueLabelDisplay="auto"
+                                step={1}/>
+                        </FormControl>
+
+                        {/* T2 slider */}
+                        <FormControl variant="filled">
+                            <InputLabel
+                                id="t2-select"
+                                style={{
+                                    color: "black", 
+                                    marginTop: "10px", 
+                                    marginBottom: "10px", 
+                                    textAlign: "center"}}>
+                                Dephasing time
+                            </InputLabel>
+                            <Slider
+                                sx={{ color: "#063970" }}
+                                aria-label="t2-select"
+                                value={t2}
+                                onChange={handleT2Change}
+                                min={0.0}
+                                max={100}
+                                defaultValue={0.1}
+                                valueLabelDisplay="auto"
+                                step={0.1}/>
+                        </FormControl>
+
+                        {/* ====== Submit Button ====== */}
+                        {loading ? (
+                        <CircularProgress />
+                        ) : (
+                        <Button
+                            variant="contained"
+                            onClick={handleSubmit}
+                            type="submit"
+                            color="success"
+                        >
+                            Generate Model
+                        </Button>
+                        )}
+                    </Stack>
+                    </Box>
+                </CardContent>
+
+                <CardContent
+                    style={{
+                    flex: 3,
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    }}
                 >
-                Magnetic field
-                </InputLabel>
-              <Slider
-                sx={{ color: "#063970" }}
-                aria-label="mag-select"
-                value={magF_B}
-                onChange={handleMagChange}
-                min={0}
-                max={50}
-                defaultValue={10}
-                valueLabelDisplay="auto"
-                step={1}
-              />
-            </FormControl>
-
-            {/* T2 slider */}
-            <FormControl variant="filled">
-              <InputLabel
-                id="t2-select"
-                style={{color: "black", marginTop: "10px", marginBottom: "10px", textAlign: "center"}}
-                >
-                Dephasing time
-                </InputLabel>
-              <Slider
-                sx={{ color: "#063970" }}
-                aria-label="t2-select"
-                value={t2}
-                onChange={handleT2Change}
-                min={0.0}
-                max={100}
-                defaultValue={0.1}
-                valueLabelDisplay="auto"
-                step={0.1}
-              />
-            </FormControl>
-
-            {/* ====== Submit Button ====== */}
-            {loading ? (
-              <CircularProgress />
-            ) : (
-              <Button
-                variant="contained"
-                onClick={handleSubmit}
-                type="submit"
-                color="success"
-              >
-                Generate Model
-              </Button>
-            )}
-          </Stack>
-        </Box>
-      </CardContent>
-
-      <CardContent
-        style={{
-          flex: 3,
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
-        <div ref={animationContainerRef} style={{ width: "100%", height: "100%" }}></div>
-      </CardContent>
-    </Card>
-        {/*<div ref={animationContainerRef}/>*/}
-      </Content>
+                    <div ref={animationContainerRef} style={{ width: "100%", height: "100%" }}></div>
+                </CardContent>
+            </Card>
+        </Content>
     </Layout>
   );
 };

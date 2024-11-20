@@ -166,7 +166,7 @@ const Interference = () => {
     setOpenSnackbar(true); // open snackbar
   }
 
-  return (
+return (
     <Layout 
         style={{ 
             minHeight: "100vh", 
