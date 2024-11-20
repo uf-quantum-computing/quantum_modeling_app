@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask
 from flask_restx import Api
 from flask_cors import CORS
 from model_generators.tunneling import Wave_Packet3D as t_wp, Animator3D as t_ani
@@ -6,12 +6,9 @@ from model_generators.interference import Wave_Packet3D as i_wp, Animator3D as i
 from model_generators.Qgate1 import Qgate1
 import matplotlib.pyplot as plt
 import time
-import base64
-import os
 from pathlib import Path
 import portalocker
 from db import MongoGridFS
-from mongo_connection import MONGO_URI
 
 #set swagger info
 api: Api = Api(
