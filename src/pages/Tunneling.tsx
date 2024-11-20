@@ -181,137 +181,172 @@ const Tunneling = () => {
 
   // ========= return =========
   return (
-    <div>
-      <Layout style={{ minHeight: "100vh" }}>
-        <Layout style={{ margin: '5%' }}>
-          <Content>
-            <CustomPageHeader text="Tunneling" size="h3"/>
-            <CustomDescriptionBox pageTitle="tunneling" />
-          </Content>
-          <Card
-      style={{
-        borderRadius: "10px",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        paddingLeft: "5%",
-      }}
-    >
-      <CardContent style={{ flex: 1, maxWidth: "80%" }}>
-      <Box
-            component="form"
-            sx={{
-              "& > :not(style)": { m: 0.5, width: "25ch" },
-            }}
-            noValidate
-            autoComplete="off"
-            style={horizontal_center}
-          >
-          <Stack spacing={5}>
-          <CustomTitle/>
-          <FormControl variant="filled">
-                <InputLabel
-                  id="barrier-select"
-                  style={{color: "black", marginTop: "10px", marginBottom: "10px", marginLeft: "8 px", textAlign: "left"}}
-                  >
-                  Barrier
-                  </InputLabel>
-                <Slider
-                  sx={{ color: "#FFFFFF" }}
-                  aria-label="barrier-select"
-                  value={barrier}
-                  onChange={handleBarrier}
-                  min={1}
-                  max={3}
-                  defaultValue={1}
-                  valueLabelDisplay="auto"
-                  step={1}
-                />
-                <Typography variant="body2" color="white" align="right" style={{ alignSelf: 'flex-end', marginRight: '0px', marginTop: '2px' }}>
-          (eV)
-                </Typography>
-              </FormControl>
+    <Layout 
+        style={{ 
+            minHeight: "100vh", 
+            display: "flex", 
+            justifyContent: "center", 
+            alignItems: "center" }}>
 
-              {/* ====== Thickness Slider ====== */}
-              <FormControl variant="filled">
-                <InputLabel
-                  id="thickness-select"
-                  style={{color: "white", marginTop: "10px", marginBottom: "10px", marginLeft: "-8 px", textAlign: "left"}}
-                  >
-                  Thickness
-                  </InputLabel>
-                <Slider
-                  sx={{ color: "#FFFFFF" }}
-                  aria-label="spacing-select"
-                  value = {thickness}
-                  onChange={handleThickness}
-                  min={1}
-                  max={10}
-                  defaultValue={1.0}
-                  valueLabelDisplay="auto"
-                  step={0.1}
-                />
-                <Typography variant="body2" color="white" align="right" style={{ alignSelf: 'flex-end', marginRight: '0px', marginTop: '-2px' }}>
-                  (nm)
-                </Typography>
-              </FormControl>
+        <Content 
+            className="site-layout" 
+            style={{
+                margin: "5%", 
+                maxWidth: "70%", 
+                minWidth: "1000px",
+                border: "1px solid #063970"}}>
 
-              {/* ====== Wave Select ====== */}
-              <FormControl variant="filled">
-                <InputLabel
-                  id="wave-select"
-                  style={{color: "white", marginTop: "10px", marginBottom: "10px", marginLeft: "-8 px", textAlign: "left"}}
-                  >
-                  Wave number k
-                  </InputLabel>
-                <Slider
-                  sx={{ color: "#FFFFFF" }}
-                  aria-label="spacing-select"
-                  value={wave}
-                  onChange={handleWave}
-                  min={1}
-                  max={10}
-                  defaultValue={1}
-                  valueLabelDisplay="auto"
-                  step={1}
-                />
-                <Typography variant="body2" color="white" align="right" style={{ alignSelf: 'flex-end', marginRight: '0px', marginTop: '-2px' }}>
-                  (nm)
-                  <sup>-1</sup>
-                </Typography>
-              </FormControl>
+        {/* Title for the page */}
+        <CustomPageHeader text="Tunneling" size="h3"/>
+    
+        {/* Content for the page imported from data.json */}
+        <CustomDescriptionBox pageTitle="Tunneling" />
 
-              {/* ====== Submit Button ====== */}
-              {loading ? (
-                <CircularProgress />
-              ) : (
-                <Button
-                  variant="contained"
-                  onClick={handleSubmit}
-                  type="submit"
-                  color="success"
-                >
-                  Generate Model
-                </Button>
-              )}
-          </Stack>
-        </Box>
-      </CardContent>
+        <Card
+            style={{
+                borderRadius: "10px",
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+                paddingLeft: "2%",
+                border: "1px solid #063970" }}>
+            
+            <CardContent 
+                style={{ 
+                    flex: 1, 
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    border: "1px solid red" }}>
 
-      <CardContent
-        style={{
-          flex: 3,
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
-        <div style={{display: 'flex', justifyContent: 'center'}} ref={animationContainerRef}></div>
-      </CardContent>
-    </Card>
-        </Layout>
-      </Layout>
-    </div>
+                <Box
+                    component="form"
+                    sx={{
+                    "& > :not(style)": { m: 0.5, width: "25ch" },
+                    }}
+                    noValidate
+                    autoComplete="off"
+                    style={horizontal_center} >
+
+                    <Stack spacing={5}>
+
+                        <CustomTitle/>
+
+                        <FormControl variant="filled">
+                            <InputLabel
+                                id="barrier-select"
+                                style={{color: "black", marginTop: "10px", marginBottom: "10px", marginLeft: "8 px", textAlign: "left"}}>
+                                Barrier
+                            </InputLabel>
+                            <Slider
+                                sx={{ color: "#063970" }}
+                                aria-label="barrier-select"
+                                value={barrier}
+                                onChange={handleBarrier}
+                                min={1}
+                                max={3}
+                                defaultValue={1}
+                                valueLabelDisplay="auto"
+                                step={1}/>
+                            <Typography variant="body2" color="white" align="right" style={{ alignSelf: 'flex-end', marginRight: '0px', marginTop: '2px' }}>
+                                (eV)
+                            </Typography>
+                        </FormControl>
+
+                            {/* ====== Thickness Slider ====== */}
+                        <FormControl variant="filled">
+                            <InputLabel
+                                id="thickness-select"
+                                style={{color: "white", marginTop: "10px", marginBottom: "10px", marginLeft: "-8 px", textAlign: "left"}}>
+                                Thickness
+                            </InputLabel>
+                            <Slider
+                                sx={{ color: "#063970" }}
+                                aria-label="spacing-select"
+                                value = {thickness}
+                                onChange={handleThickness}
+                                min={1}
+                                max={10}
+                                defaultValue={1.0}
+                                valueLabelDisplay="auto"
+                                step={0.1}/>
+                            <Typography variant="body2" color="white" align="right" style={{ alignSelf: 'flex-end', marginRight: '0px', marginTop: '-2px' }}>
+                                (nm)
+                            </Typography>
+                        </FormControl>
+
+                        {/* ====== Wave Select ====== */}
+                        <FormControl variant="filled">
+                            <InputLabel
+                                id="wave-select"
+                                style={{color: "white", marginTop: "10px", marginBottom: "10px", marginLeft: "-8 px", textAlign: "left"}}>
+                                Wave number k
+                            </InputLabel>
+                            <Slider
+                                sx={{ color: "#063970" }}
+                                aria-label="spacing-select"
+                                value={wave}
+                                onChange={handleWave}
+                                min={1}
+                                max={10}
+                                defaultValue={1}
+                                valueLabelDisplay="auto"
+                                step={1}/>
+                            <Typography variant="body2" color="white" align="right" style={{ alignSelf: 'flex-end', marginRight: '0px', marginTop: '-2px' }}>
+                                (nm)
+                                <sup>-1</sup>
+                            </Typography>
+                        </FormControl>
+
+                        {/* ====== Submit Button ====== */}
+                        {loading ? (
+                            <CircularProgress />
+                        ) : (
+                            <Button
+                                variant="contained"
+                                onClick={handleSubmit}
+                                type="submit"
+                                color="success" >
+                                Generate Model
+                            </Button>
+                        )}
+                    </Stack>
+
+                </Box>
+
+            </CardContent>
+
+            <CardContent
+                style={{
+                flex: 10,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                }}
+            >
+                <div style={{ transform: 'scale(0.8)', transformOrigin: 'top left', width: '100%' }}>
+                <CardContent style={{ flex: 1, maxWidth: '80%' }}>
+                    <div 
+                        style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            maxWidth: '100%',
+                            maxHeight: '100%',
+                            overflow: 'auto',
+                        }}
+                        ref={animationContainerRef}
+                        ></div>
+                </CardContent>
+                </div>
+                
+            </CardContent>
+
+            
+        </Card>
+        </Content>
+    </Layout>
   );
 };
 
