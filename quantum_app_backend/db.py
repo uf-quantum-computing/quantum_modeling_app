@@ -11,34 +11,34 @@ import os
 from mongo_connection import MONGO_URI
 
 # Create a gridfs instance from a mongodb instance
-client = pymongo.MongoClient(MONGO_URI)
-db = client['models']
-fs = gridfs.GridFS(db)
+class MongoGridFS:
+    def __init__(self):
+        self.client = pymongo.MongoClient(MONGO_URI)
+        self.db = self.client['models']
+        self.fs = gridfs.GridFS(self.db)
 
-def add_tunneling():
-    # Write files from /cache/tunneling to MongoDB using GridFS
-    try:
-        # Write all tunneling models from ./cache/tunneling to MongoDB using GridFS
-        for file in os.listdir('cache/tunneling'):
-            with open(f'cache/tunneling/{file}', 'rb') as f:
-                print('Adding tunneling models from cache file')
-                fs.put(f, filename=file)
-    except Exception as e:
-        return e
+        if len(self.fs.list()) == 0:
+            self.add_tunneling()
 
-def get_tunneling(barrier, width, momentum):
-    # Read tunneling models from MongoDB using GridFS
-    barrier = float(barrier)
-    width = float(width)
-    momentum = float(momentum)
+    def add_tunneling(self):
+        # Write files from /cache/tunneling to MongoDB using GridFS
+        try:
+            # Write all tunneling models from ./cache/tunneling to MongoDB using GridFS
+            for file in os.listdir('cache/tunneling'):
+                with open(f'cache/tunneling/{file}', 'rb') as f:
+                    print('Adding tunneling models from cache file')
+                    self.fs.put(f, filename=file)
+        except Exception as e:
+            return e
 
-    try:
-        collection = db['tunneling']
-        tunneling_model = collection.find_one({'barrier': 1, 'thickness': 1, 'wave': 1})
-        if tunneling_model:
-            return tunneling_model
-        else:
+    def get_tunneling(self, barrier, width, momentum):
+        # Read tunneling models from MongoDB using GridFS
+        barrier = float(barrier)
+        width = float(width)
+        momentum = float(momentum)
+
+        try:
+            return self.fs.get_last_version(f'probs_{momentum}_{barrier}_{width}_3D.html')
+        except pymongo.errors.OperationFailure as e:
+            print(e.details)
             return None
-    except pymongo.errors.OperationFailure as e:
-        print(e.details)
-        return None

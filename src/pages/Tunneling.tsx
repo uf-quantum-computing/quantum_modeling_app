@@ -64,9 +64,8 @@ const Tunneling = () => {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      const responseData = await response.json();
-      // console.log("responseData: ", responseData);
-      setAnimationJsHtml(responseData.GifRes); // Adjust based on your API response structure
+      const responseData = await response.text();
+      setAnimationJsHtml(responseData); // Adjust based on your API response structure
       return response.ok;
     } catch (error) {
       console.error("Error fetching animation from server:", error);
@@ -77,13 +76,12 @@ const Tunneling = () => {
   useEffect(() => {
     const loadDefaultHtml = async () => {
       try {
-        console.log("triggered");
-        fetch("/tunneling/probs_1.0_1.0_1.0_3D.html")
-          .then((response) => response.text())
-          .then((text) => {
-            setAnimationJsHtml(text);
-            console.log(text);
-          });
+        console.log("triggered")
+        fetch('/tunneling/probs_1.0_1.0_1.0_3D.html')
+        .then((response) => response.text())
+        .then((text) => {
+          setAnimationJsHtml(text);
+        });
       } catch (error) {
         console.error("Failed to load default HTML content:", error);
       }
@@ -92,7 +90,7 @@ const Tunneling = () => {
     loadDefaultHtml();
   }, []);
 
-  // Your existing useEffect for handling animationJsHtml changes
+  // Existing useEffect for handling animationJsHtml changes
   useEffect(() => {
     if (animationJsHtml && animationDivRef.current) {
       const container = animationDivRef.current;
@@ -130,10 +128,6 @@ const Tunneling = () => {
     let barrier_str = barrier.toString();
     let thickness_str = thickness.toString();
     let wave_str = wave.toString();
-    console.log("barrier:", barrier_str);
-    console.log("thickness:", thickness_str);
-    console.log("wave:", wave_str);
-    let base_url = "https://us-central1-quantum-model-generator.cloudfunctions.net/tunneling"
 
     // if no input, set to default
     if (barrier_str === "") {
@@ -202,6 +196,56 @@ const Tunneling = () => {
 
   // ========= return =========
   return (
+    <div>
+      <Layout style={{ minHeight: "100vh" }}>
+        <Layout style={{ margin: '5%' }}>
+          <Content>
+            <CustomPageHeader text="Tunneling" size="h3"/>
+            <CustomDescriptionBox pageTitle="tunneling" />
+          </Content>
+          <Card
+      style={{
+        borderRadius: "10px",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        paddingLeft: "5%",
+      }}
+    >
+      <CardContent style={{ flex: 1, maxWidth: "80%" }}>
+      <Box
+            component="form"
+            sx={{
+              "& > :not(style)": { m: 0.5, width: "25ch" },
+            }}
+            noValidate
+            autoComplete="off"
+            style={horizontal_center}
+          >
+          <Stack spacing={5}>
+          <CustomTitle/>
+          <FormControl variant="filled">
+                <InputLabel
+                  id="barrier-select"
+                  style={{color: "black", marginTop: "10px", marginBottom: "10px", marginLeft: "8 px", textAlign: "left"}}
+                  >
+                  Barrier
+                  </InputLabel>
+                <Slider
+                  sx={{ color: "#FFFFFF" }}
+                  aria-label="barrier-select"
+                  value={barrier}
+                  onChange={handleBarrier}
+                  min={1}
+                  max={3}
+                  defaultValue={1}
+                  valueLabelDisplay="auto"
+                  step={1}
+                />
+                <Typography variant="body2" color="white" align="right" style={{ alignSelf: 'flex-end', marginRight: '0px', marginTop: '2px' }}>
+          (eV)
+                </Typography>
+              </FormControl>
     <Layout
       style={{
         minHeight: "100vh",
