@@ -1,9 +1,7 @@
-import bson
 import pymongo
 import gridfs
 import os
 import configparser
-from mongo_connection import MONGO_URI
 
 config = configparser.ConfigParser()
 config.read(os.path.abspath(os.path.join(".ini")))
