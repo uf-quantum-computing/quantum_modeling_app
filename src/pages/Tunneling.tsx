@@ -12,7 +12,8 @@ import {
   Slider,
   Typography,
   CardContent,
-  Card
+  Card,
+  AlertProps
 } from "@mui/material";
 import CircularProgress from '@mui/joy/CircularProgress';
 import { Layout } from "antd";
@@ -47,16 +48,17 @@ const Tunneling = () => {
   const [barrierSliderMoved, setBarrierSliderMoved] = useState(false);
   const [thicknessSliderMoved, setThicknessSliderMoved] = useState(false);
   const [waveSliderMoved, setWaveSliderMoved] = useState(false);
-  const [success_msg, set_Success_Msg] = useState(
-    "Tunneling model generated with barrier = " + barrier.toString() + ", thickness = " + thickness.toString() + ", and wave = " + wave.toString() + "!"
-  );
-  const [open, setOpenSnackbar] = useState(false);
+  const [snackbar_msg, setSnackbarMessage] = useState("Default tunneling model generated!");
+  const [severity, setSeverity] = useState<AlertProps['severity']>('success');
+  const [openSnackBar, setOpenSnackbar] = useState(false);
 
   async function getGifFromServer(request_url: string) {
     try {
       const response = await fetch(request_url, {method: 'GET'});
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        console.error("Error fetching animation from server");
+        setSeverity('error');
+        return null;
       }
       const responseData = await response.text();
       setAnimationJsHtml(responseData); // Adjust based on your API response structure
@@ -77,7 +79,8 @@ const Tunneling = () => {
           setAnimationJsHtml(text);
         });
       } catch (error) {
-        console.error('Failed to load default HTML content:', error);
+        setSnackbarMessage("Failed to load default model.");
+        setSeverity('error');
       }
     };
 
@@ -100,6 +103,12 @@ const Tunneling = () => {
       });
     }
   }, [animationJsHtml]);
+
+  useEffect(() => {
+    if (snackbar_msg) {
+      setOpenSnackbar(true);
+    }
+  }, [snackbar_msg]);
 
   // ========= handle functions =========
   const handleClose = (
@@ -154,7 +163,7 @@ const Tunneling = () => {
       setLoading(true);
       const gifData = await getGifFromServer(final_url);
       if (gifData) {
-        set_Success_Msg(
+        setSnackbarMessage(
           "Tunneling model generated with barrier = " +
             barrier_str +
             ", thickness = " +
@@ -163,11 +172,14 @@ const Tunneling = () => {
             wave_str +
             "!"
         );
-        setLoading(false);
-        setBarrierSliderMoved(false);
-        setThicknessSliderMoved(false);
-        setWaveSliderMoved(false);
       }
+      else {
+        setSnackbarMessage("Failed to generate model.");
+      }
+      setLoading(false);
+      setBarrierSliderMoved(false);
+      setThicknessSliderMoved(false);
+      setWaveSliderMoved(false);
     }
     setOpenSnackbar(true); // open snackbar
   }
@@ -301,6 +313,16 @@ const Tunneling = () => {
       >
         <div style={{display: 'flex', justifyContent: 'center'}} ref={animationContainerRef}></div>
       </CardContent>
+      <Snackbar
+        open={openSnackBar}
+        autoHideDuration={6000}
+        onClose={() => setOpenSnackbar(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert onClose={() => setOpenSnackbar(false)} severity={severity}>
+          {snackbar_msg}
+        </Alert>
+      </Snackbar>
     </Card>
         </Layout>
       </Layout>

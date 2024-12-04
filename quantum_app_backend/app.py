@@ -1,3 +1,4 @@
+import flask
 from flask import Flask
 from flask_restx import Api
 from flask_cors import CORS
@@ -32,10 +33,9 @@ def Qtunneling(barrier, width, momentum):
     # Get tunneling models based on barrier, width, and momentum
     tunneling_model = gridfs.get_tunneling(barrier, width, momentum) # GridOut
     if tunneling_model:
-        print(tunneling_model.filename)
         return tunneling_model.read()
     else:
-        return None
+        flask.abort(400)
 
 
 @app.route('/receive_data/interference/<spacing>/<slit_separation>/<int:momentum>', methods=['GET'])
@@ -43,29 +43,13 @@ def Qinterference(spacing, slit_separation, momentum):
     spacing = float(spacing)
     slit_separation = float(slit_separation)
 
-    print("You evoked the API successfully")
+    print("You evoked the interference API successfully")
     
-    if Path(f'cache/interference/probs_{momentum}_{spacing}_{slit_separation}_3D.html').exists():
-        print(f'cache/interference/probs_{momentum}_{spacing}_{slit_separation}_3D.html')
-        with open(f'cache/interference/probs_{momentum}_{spacing}_{slit_separation}_3D.html',
-                  "r") as f:
-            portalocker.lock(f, portalocker.LOCK_SH)
-            GifRes = f.read()
+    interference_model = gridfs.get_interference(momentum, spacing, slit_separation)
+    if interference_model:
+        return interference_model.read()
     else:
-        plt.close('all')
-        plt.switch_backend('Agg')
-
-        start_3d_time = time.time()
-        wave_packet3D = i_wp(slit_space=spacing, slit_sep=slit_separation, k0=momentum)
-        animator3D = i_ani(wave_packet3D)
-        GifRes = animator3D.animate3D()
-    
-        end_3d_time = time.time()  # Record the end time
-        elapsed_3d_time = end_3d_time - start_3d_time
-        print(f"Elapsed 3D generator time: {elapsed_3d_time} seconds")
-
-    return {'GifRes': GifRes}
-
+        flask.abort(400)
 
 @app.route('/receive_data/evotrace/<int:gate>/<int:init_state>/<int:mag>/<t2>', methods=['GET'])
 def Qtrace(gate, init_state, mag, t2):

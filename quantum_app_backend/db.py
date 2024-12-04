@@ -11,30 +11,57 @@ class MongoGridFS:
     def __init__(self):
         self.client = pymongo.MongoClient(config['MONGO']['MONGO_URI'])
         self.db = self.client['models']
-        self.fs = gridfs.GridFS(self.db)
+        self.tunneling_fs = gridfs.GridFSBucket(self.db, bucket_name='tunneling')
+        self.interference_fs = gridfs.GridFSBucket(self.db, bucket_name='interference')
 
-        if len(self.fs.list()) == 0:
-            self.add_tunneling()
+    def get_tunneling(self, barrier, width, momentum):
+        # Read tunneling models from MongoDB using GridFS
+        try:
+            model = self.tunneling_fs.find({'filename':f'probs_{momentum}_{barrier}_{width}_3D.html'})
+            if model:
+                return model.sort('uploadDate', pymongo.DESCENDING).limit(1)[0]
+        except IndexError as e:
+            print(e)
+            return None
 
-    def add_tunneling(self):
+    def get_interference(self, momentum, spacing, slit_separation):
+        # Read interference models from MongoDB using GridFS
+        try:
+            model = self.interference_fs.find({'filename':f'probs_{momentum}_{spacing}_{slit_separation}_3D.html'})
+            if model:
+                return model.sort('uploadDate', pymongo.DESCENDING).limit(1)[0]
+        except IndexError as e:
+            print(e)
+            return None
+
+def add_tunneling(db):
         # Write files from /cache/tunneling to MongoDB using GridFS
+        bucket = gridfs.GridFSBucket(db, bucket_name='tunneling')
         try:
             # Write all tunneling models from ./cache/tunneling to MongoDB using GridFS
             for file in os.listdir('cache/tunneling'):
                 with open(f'cache/tunneling/{file}', 'rb') as f:
                     print('Adding tunneling models from cache file')
-                    self.fs.put(f, filename=file)
-        except Exception as e:
+                    bucket.upload_from_stream(file, f)
+        except ValueError as e:
             return e
 
-    def get_tunneling(self, barrier, width, momentum):
-        # Read tunneling models from MongoDB using GridFS
-        barrier = float(barrier)
-        width = float(width)
-        momentum = float(momentum)
+def add_interference(db):
+        # Write files from /cache/interference to MongoDB using GridFS
+        bucket = gridfs.GridFSBucket(db, bucket_name='interference')
 
         try:
-            return self.fs.get_last_version(f'probs_{momentum}_{barrier}_{width}_3D.html')
-        except pymongo.errors.OperationFailure as e:
-            print(e.details)
-            return None
+            # Write all tunneling models from ./cache/interference to MongoDB using GridFS
+            for file in os.listdir('cache/interference'):
+                with open(f'cache/interference/{file}', 'rb') as f:
+                    print('Adding interference models from cache file')
+                    bucket.upload_from_stream(file, f)
+        except ValueError as e:
+            return e
+
+# Driver to write cache files to MongoDB
+if __name__ == '__main__':
+    client = pymongo.MongoClient(config['MONGO']['MONGO_URI'])
+    db = client['models']
+    add_tunneling(db)
+    add_interference(db)
