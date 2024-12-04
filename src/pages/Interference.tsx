@@ -13,9 +13,7 @@ import {
   Slider,
   Card,
   CardContent,
-  Typography,
-  Checkbox,
-  FormControlLabel
+  AlertProps,
 } from "@mui/material";
 import CircularProgress from '@mui/joy/CircularProgress';
 import { Layout } from "antd";
@@ -53,21 +51,21 @@ const Interference = () => {
   const [spacingSliderMoved, setSpacingSliderMoved] = useState(false);
   const [slitSepSliderMoved, setSlitSepSliderMoved] = useState(false);
   const [waveSliderMoved, setWaveSliderMoved] = useState(false);
-  const [success_msg, set_Success_Msg] = useState(
-    "Interference model generated with spacing = " + spacing.toString() + ", slitSep = " + slit_separation.toString() + ", and wave = " + momentum.toString() + "!"
-  );
-  const [open, setOpenSnackbar] = useState(false);
+  const [snackbarMsg, setSnackbarMessage] = useState("Default interference model generated!");
+  const [severity, setSeverity] = useState<AlertProps['severity']>('success');
+  const [openSnackBar, setOpenSnackbar] = useState(false);
 
   // ========= handle functions =========
   async function getGifFromServer(request_url: string) {
     try {
       const response = await fetch(request_url, {method: 'GET'});
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        console.error("Error fetching animation from server");
+        setSeverity('error');
+        return null;
       }
-      const responseData = await response.json();
-      // console.log("responseData: ", responseData);
-      setAnimationJsHtml(responseData.GifRes); // Adjust based on your API response structure
+      const responseData = await response.text();
+      setAnimationJsHtml(responseData); // Adjust based on your API response structure
       return response.ok;
     } catch (error) {
       console.error("Error fetching animation from server:", error);
@@ -87,6 +85,7 @@ const Interference = () => {
         });
       } catch (error) {
         console.error('Failed to load default HTML content:', error);
+        setSeverity('error');
       }
     };
 
@@ -109,6 +108,12 @@ const Interference = () => {
       });
     }
   }, [animationJsHtml]);
+
+  useEffect(() => {
+    if (snackbarMsg) {
+      setOpenSnackbar(true);
+    }
+  }, [snackbarMsg]);
 
   const handleClose = (
     event: React.SyntheticEvent | Event,
@@ -155,7 +160,7 @@ const Interference = () => {
       setLoading(true);
       const gifData = await getGifFromServer(final_url);
       if (gifData) {
-        set_Success_Msg(
+        setSnackbarMessage(
           "Interference model generated with barrier = " +
             spacing_str +
             ", thickness = " +
@@ -164,11 +169,15 @@ const Interference = () => {
             wave_str +
             "!"
         );
-        setLoading(false);
-        setSpacingSliderMoved(false);
-        setSlitSepSliderMoved(false);
-        setWaveSliderMoved(false);
+        
       }
+      else {
+        setSnackbarMessage("Failed to generate model.");
+      }
+      setLoading(false);
+      setSpacingSliderMoved(false);
+      setSlitSepSliderMoved(false);
+      setWaveSliderMoved(false);
     }
     setOpenSnackbar(true); // open snackbar
   }
@@ -371,6 +380,16 @@ return (
                 />
               </div>
             </Card>
+            <Snackbar
+              open={openSnackBar}
+              autoHideDuration={6000}
+              onClose={() => setOpenSnackbar(false)}
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+            >
+              <Alert onClose={() => setOpenSnackbar(false)} severity={severity}>
+                {snackbarMsg}
+              </Alert>
+            </Snackbar>
         </Content>
     </Layout>
   );
