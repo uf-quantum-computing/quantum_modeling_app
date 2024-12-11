@@ -3,8 +3,7 @@
 Computational Nano Lab, UFL
 
 ## Architecture Overview
-![image](https://github.com/user-attachments/assets/36da6434-28a5-4bd1-9704-8288bce7b5be)
-
+![image](https://github.com/user-attachments/assets/6abb6ef0-1a6d-466c-b85a-ab1bcdbac57a)
 
 ## Getting Started
 
