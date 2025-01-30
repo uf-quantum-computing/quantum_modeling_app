@@ -2,6 +2,7 @@ import pymongo
 import gridfs
 import os
 import configparser
+from collections import deque
 
 config = configparser.ConfigParser()
 config.read(os.path.abspath(os.path.join(".ini")))
@@ -13,6 +14,8 @@ class MongoGridFS:
         self.db = self.client['models']
         self.tunneling_fs = gridfs.GridFSBucket(self.db, bucket_name='tunneling')
         self.interference_fs = gridfs.GridFSBucket(self.db, bucket_name='interference')
+        self.tunneling_cache = deque()
+        self.interference_cache = deque()
 
     def get_tunneling(self, barrier, width, momentum):
         # Read tunneling models from MongoDB using GridFS
@@ -42,7 +45,7 @@ def add_tunneling(db):
             for file in os.listdir('cache/tunneling'):
                 with open(f'cache/tunneling/{file}', 'rb') as f:
                     print('Adding tunneling models from cache file')
-                    bucket.upload_from_stream(file, f)
+                    bucket.upload_from_stream(file, f, metadata={'filename': file})
         except ValueError as e:
             return e
 
