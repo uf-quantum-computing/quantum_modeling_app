@@ -3,9 +3,11 @@ import gridfs
 import os
 import configparser
 from collections import deque
+import re
 
 config = configparser.ConfigParser()
-config.read(os.path.abspath(os.path.join(".ini")))
+config_path = os.path.abspath(os.path.join("quantum_app_backend/.ini"))
+config.read(config_path)
 
 # Create a gridfs instance from a mongodb instance
 class MongoGridFS:
@@ -37,6 +39,14 @@ class MongoGridFS:
             print(e)
             return None
 
+def extract_metadata(filename, variables):
+    pattern = r"probs_(\d+(\.\d+)?)_(\d+(\.\d+)?)_(\d+(\.\d+)?)_3D\.html"
+    match = re.match(pattern, filename)
+    if match:
+        return dict(zip(variables, match.groups()))
+    else:
+        raise ValueError('Filename does not match the expected pattern')
+
 def add_tunneling(db):
         # Write files from /cache/tunneling to MongoDB using GridFS
         bucket = gridfs.GridFSBucket(db, bucket_name='tunneling')
@@ -45,7 +55,8 @@ def add_tunneling(db):
             for file in os.listdir('cache/tunneling'):
                 with open(f'cache/tunneling/{file}', 'rb') as f:
                     print('Adding tunneling models from cache file')
-                    bucket.upload_from_stream(file, f, metadata={'filename': file})
+                    metadata = extract_metadata(file, ['momentum', 'barrier', 'width'])
+                    bucket.upload_from_stream(file, f, metadata=metadata)
         except ValueError as e:
             return e
 
@@ -58,7 +69,8 @@ def add_interference(db):
             for file in os.listdir('cache/interference'):
                 with open(f'cache/interference/{file}', 'rb') as f:
                     print('Adding interference models from cache file')
-                    bucket.upload_from_stream(file, f)
+                    metadata = extract_metadata(file, ['momentum', 'spacing', 'slit_separation'])
+                    bucket.upload_from_stream(file, f, metadata=metadata)
         except ValueError as e:
             return e
 
@@ -66,5 +78,7 @@ def add_interference(db):
 if __name__ == '__main__':
     client = pymongo.MongoClient(config['MONGO']['MONGO_URI'])
     db = client['models']
+    db.drop_collection('tunneling')
     add_tunneling(db)
+    db.drop_collection('interference')
     add_interference(db)
