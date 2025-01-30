@@ -8,6 +8,7 @@ import re
 config = configparser.ConfigParser()
 config_path = os.path.abspath(os.path.join("quantum_app_backend/.ini"))
 config.read(config_path)
+VARIABLES = {'tunneling': ['momentum', 'barrier', 'width'], 'interference': ['momentum', 'spacing', 'slit_separation']}
 
 # Create a gridfs instance from a mongodb instance
 class MongoGridFS:
@@ -43,42 +44,34 @@ def extract_metadata(filename, variables):
     pattern = r"probs_(\d+(\.\d+)?)_(\d+(\.\d+)?)_(\d+(\.\d+)?)_3D\.html"
     match = re.match(pattern, filename)
     if match:
-        return dict(zip(variables, match.groups()))
+        return dict(zip(variables, [match.group(1), match.group(3), match.group(5)])) # To change hard code if handles more variables
     else:
         raise ValueError('Filename does not match the expected pattern')
 
-def add_tunneling(db):
-        # Write files from /cache/tunneling to MongoDB using GridFS
-        bucket = gridfs.GridFSBucket(db, bucket_name='tunneling')
-        try:
-            # Write all tunneling models from ./cache/tunneling to MongoDB using GridFS
-            for file in os.listdir('cache/tunneling'):
-                with open(f'cache/tunneling/{file}', 'rb') as f:
-                    print('Adding tunneling models from cache file')
-                    metadata = extract_metadata(file, ['momentum', 'barrier', 'width'])
-                    bucket.upload_from_stream(file, f, metadata=metadata)
-        except ValueError as e:
-            return e
-
-def add_interference(db):
-        # Write files from /cache/interference to MongoDB using GridFS
-        bucket = gridfs.GridFSBucket(db, bucket_name='interference')
-
-        try:
-            # Write all tunneling models from ./cache/interference to MongoDB using GridFS
-            for file in os.listdir('cache/interference'):
-                with open(f'cache/interference/{file}', 'rb') as f:
-                    print('Adding interference models from cache file')
-                    metadata = extract_metadata(file, ['momentum', 'spacing', 'slit_separation'])
-                    bucket.upload_from_stream(file, f, metadata=metadata)
-        except ValueError as e:
-            return e
+def add_model(db, model_name, model_vars):
+    bucket = gridfs.GridFSBucket(db, bucket_name=model_name)
+    try:
+        # Write all tunneling models from ./cache/tunneling to MongoDB using GridFS
+        path = f"quantum_app_backend/cache/{model_name}"
+        for file in os.listdir(path):
+            print(f'{file}')
+            try:
+                dup = bucket.find({'filename': file}).sort('uploadDate', pymongo.DESCENDING)
+                for old_file in dup:
+                    print(f'Removing old {model_name} file')
+                    bucket.delete(old_file._id)
+            except gridfs.errors.NoFile:
+                dup = None
+            with open(f'{path}/{file}', 'rb') as f:
+                print(f'Adding {model_name} file')
+                metadata = extract_metadata(file, model_vars)
+                bucket.upload_from_stream(file, f, metadata=metadata)
+    except ValueError as e:
+        return e
 
 # Driver to write cache files to MongoDB
 if __name__ == '__main__':
     client = pymongo.MongoClient(config['MONGO']['MONGO_URI'])
     db = client['models']
-    db.drop_collection('tunneling')
-    add_tunneling(db)
-    db.drop_collection('interference')
-    add_interference(db)
+    for model, variables in VARIABLES.items():
+        add_model(db, model, variables)
