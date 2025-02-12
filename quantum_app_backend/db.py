@@ -2,45 +2,66 @@ import pymongo
 import gridfs
 import os
 import configparser
-from collections import deque
 import re
 
 config = configparser.ConfigParser()
 config_path = os.path.abspath(os.path.join("quantum_app_backend/.ini"))
 config.read(config_path)
-VARIABLES = {'tunneling': ['momentum', 'barrier', 'width'], 'interference': ['momentum', 'spacing', 'slit_separation']}
+VARIABLES = {'tunneling': ['momentum', 'barrier', 'width'], 
+             'interference': ['momentum', 'spacing', 'slit_separation']}
 
-# Create a gridfs instance from a mongodb instance
-class MongoGridFS:
+class MongoConnector:
     def __init__(self):
         self.client = pymongo.MongoClient(config['MONGO']['MONGO_URI'])
         self.db = self.client['models']
-        self.tunneling_fs = gridfs.GridFSBucket(self.db, bucket_name='tunneling')
-        self.interference_fs = gridfs.GridFSBucket(self.db, bucket_name='interference')
-        self.tunneling_cache = deque()
-        self.interference_cache = deque()
 
-    def get_tunneling(self, barrier, width, momentum):
-        # Read tunneling models from MongoDB using GridFS
+    def set_collection(self, model):
+        self.collection = self.db[model]
+
+    def close(self):
+        self.client.close()
+
+    def get(self, parameters):
+        for key, value in parameters.items():
+            if key not in VARIABLES:
+                raise ValueError(f'{key} is not a valid model')
+            if value not in VARIABLES[key]:
+                raise ValueError(f'{value} is not a valid parameter for model {key}')
+        
         try:
-            model = self.tunneling_fs.find({'filename':f'probs_{momentum}_{barrier}_{width}_3D.html'})
+            model = self.collection.find({'parameters': parameters})
             if model:
-                return model.sort('uploadDate', pymongo.DESCENDING).limit(1)[0]
+                return model.sort('uploadDate', pymongo.DESCENDING).limit(1)[0].decode('utf-8')
         except IndexError as e:
             print(e)
             return None
 
-    def get_interference(self, momentum, spacing, slit_separation):
-        # Read interference models from MongoDB using GridFS
+    # def get_tunneling(self, barrier, width, momentum):
+    #     try:
+    #         model = self.tunneling_collection.find({'filename':f'probs_{momentum}_{barrier}_{width}_3D.html'})
+    #         if model:
+    #             return model.sort('uploadDate', pymongo.DESCENDING).limit(1)[0]
+    #     except IndexError as e:
+    #         print(e)
+    #         return None
+
+    # def get_interference(self, momentum, spacing, slit_separation):
+    #     try:
+    #         model = self.interference_collection.find({'filename':f'probs_{momentum}_{spacing}_{slit_separation}_3D.html'})
+    #         if model:
+    #             return model.sort('uploadDate', pymongo.DESCENDING).limit(1)[0]
+    #     except IndexError as e:
+    #         print(e)
+    #         return None
+        
+    def upload_model(self, parameters, animation):
         try:
-            model = self.interference_fs.find({'filename':f'probs_{momentum}_{spacing}_{slit_separation}_3D.html'})
-            if model:
-                return model.sort('uploadDate', pymongo.DESCENDING).limit(1)[0]
-        except IndexError as e:
+            self.collection.insert_one({'parameters': parameters, 'animation': animation.encode('utf-8')})
+        except ValueError as e:
             print(e)
             return None
 
-def extract_metadata(filename, variables):
+def parse_parameters(filename, variables):
     pattern = r"probs_(\d+(\.\d+)?)_(\d+(\.\d+)?)_(\d+(\.\d+)?)_3D\.html"
     match = re.match(pattern, filename)
     if match:
@@ -48,30 +69,8 @@ def extract_metadata(filename, variables):
     else:
         raise ValueError('Filename does not match the expected pattern')
 
-def add_model(db, model_name, model_vars):
-    bucket = gridfs.GridFSBucket(db, bucket_name=model_name)
-    try:
-        # Write all tunneling models from ./cache/tunneling to MongoDB using GridFS
-        path = f"quantum_app_backend/cache/{model_name}"
-        for file in os.listdir(path):
-            print(f'{file}')
-            try:
-                dup = bucket.find({'filename': file}).sort('uploadDate', pymongo.DESCENDING)
-                for old_file in dup:
-                    print(f'Removing old {model_name} file')
-                    bucket.delete(old_file._id)
-            except gridfs.errors.NoFile:
-                dup = None
-            with open(f'{path}/{file}', 'rb') as f:
-                print(f'Adding {model_name} file')
-                metadata = extract_metadata(file, model_vars)
-                bucket.upload_from_stream(file, f, metadata=metadata)
-    except ValueError as e:
-        return e
-
 # Driver to write cache files to MongoDB
 if __name__ == '__main__':
     client = pymongo.MongoClient(config['MONGO']['MONGO_URI'])
     db = client['models']
-    for model, variables in VARIABLES.items():
-        add_model(db, model, variables)
+    
