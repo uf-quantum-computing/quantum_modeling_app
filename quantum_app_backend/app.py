@@ -36,7 +36,6 @@ def Qtunneling(barrier, width, momentum):
 
     tunneling_model = mongo.get(parameters)
     if tunneling_model:
-        mongo.close()
         return tunneling_model
     else:
         return jsonify({'error': 'Model not found'}), 404
@@ -55,7 +54,6 @@ def Qinterference(spacing, slit_separation, momentum):
     parameters = {'momentum': momentum, 'spacing': spacing, 'slit_separation': slit_separation}
     interference_model = mongo.get(parameters)
     if interference_model:
-        mongo.close()
         return interference_model
     else:
         return jsonify({'error': 'Model not found'}), 404

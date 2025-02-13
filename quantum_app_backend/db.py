@@ -20,10 +20,6 @@ class MongoConnector:
         self.collection = self.db[model]
         self.model = model
 
-    def close(self):
-        self.model = ''
-        self.client.close()
-
     def get(self, parameters):
         for param, value in parameters.items():
             if param not in VARIABLES[self.model]:
