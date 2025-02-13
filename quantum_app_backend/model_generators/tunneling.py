@@ -10,8 +10,10 @@ import portalocker
 import os
 import time
 import sys
-sys.path.append('/Users/vyvooz/Documents/Coding Projects/quantum_modeling_app')
-from quantum_app_backend.db import MongoConnector
+current = os.path.dirname(os.path.realpath(__file__))
+parent = os.path.dirname(current)
+sys.path.append(parent)
+from db import MongoConnector
 
 def calculate_center_of_mass(x, psi):
     density = np.abs(psi)**2
@@ -162,16 +164,18 @@ class Animator3D:
     def animate3D(self):
         anim = FuncAnimation(self.fig, self.update, interval=1, frames=np.arange(0, self.wave_packet.Nt - 100, 10), repeat=False, blit=0)
         anim_js = anim.to_jshtml(fps=30)
-        path = os.path.abspath(os.path.join(f"quantum_app_backend/cache/tunneling/probs_{self.wave_packet.k0}_{self.wave_packet.v_max}_{self.wave_packet.w}_3D.html"))
+
+        ## No longer need to save the file locally
+        # path = os.path.abspath(os.path.join(f"quantum_app_backend/cache/tunneling/probs_{self.wave_packet.k0}_{self.wave_packet.v_max}_{self.wave_packet.w}_3D.html"))
         
-        if not Path(path).exists():
-            with open(path, "w", encoding="utf-8") as f:
-                portalocker.lock(f, portalocker.LOCK_EX)
-                f.write(anim_js)
+        # if not Path(path).exists():
+        #     with open(path, "w", encoding="utf-8") as f:
+        #         portalocker.lock(f, portalocker.LOCK_EX)
+        #         f.write(anim_js)
         
         return anim_js
 
-
+# Driver to upload tunneling models to MongoDB
 if __name__ == "__main__":
     mongo = MongoConnector()
     wave_packet = Wave_Packet3D(barrier_width=1, barrier_height=3, k0=2)
@@ -181,8 +185,12 @@ if __name__ == "__main__":
     mongo.set_collection('tunneling')
 
     start_time = time.time()
-    mongo.upload_model(parameters, animator.animate3D())
+    
+    anim_js = animator.animate3D()
+    mongo.upload_model(parameters, anim_js)
+
     end_time = time.time()
+
     print('Tunneling model inserted successfully')
     print(f"Time taken: {end_time - start_time}")
 

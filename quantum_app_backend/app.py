@@ -1,5 +1,5 @@
 import flask
-from flask import Flask
+from flask import Flask, jsonify
 from flask_restx import Api
 from flask_cors import CORS
 from model_generators.tunneling import Wave_Packet3D as t_wp, Animator3D as t_ani
@@ -7,9 +7,7 @@ from model_generators.interference import Wave_Packet3D as i_wp, Animator3D as i
 from model_generators.Qgate1 import Qgate1
 import matplotlib.pyplot as plt
 import time
-from pathlib import Path
-import portalocker
-from db import MongoGridFS
+from db import MongoConnector
 
 #set swagger info
 api: Api = Api(
@@ -22,34 +20,45 @@ api: Api = Api(
 app = Flask(__name__)
 api.init_app(app)
 CORS(app, resources={r"/*": {"origins": "*"}})
+mongo = MongoConnector()
 
 @app.route('/receive_data/tunneling/<barrier>/<width>/<momentum>', methods=['GET'])
 def Qtunneling(barrier, width, momentum):
+    print("You evoked the tunneling API successfully")
+    
     barrier = float(barrier)
     width = float(width)
     momentum = float(momentum)
 
-    print("You evoked the tunneling API successfully")
-    # Get tunneling models based on barrier, width, and momentum
-    tunneling_model = gridfs.get_tunneling(barrier, width, momentum) # GridOut
+    mongo.set_collection('tunneling')
+
+    parameters = {'momentum': momentum, 'barrier': barrier, 'width': width}
+
+    tunneling_model = mongo.get(parameters)
     if tunneling_model:
-        return tunneling_model.read()
+        mongo.close()
+        return tunneling_model
     else:
-        flask.abort(400)
+        return jsonify({'error': 'Model not found'}), 404
 
 
 @app.route('/receive_data/interference/<spacing>/<slit_separation>/<int:momentum>', methods=['GET'])
 def Qinterference(spacing, slit_separation, momentum):
+    print("You evoked the interference API successfully")
+
+    momentum = float(momentum)
     spacing = float(spacing)
     slit_separation = float(slit_separation)
 
-    print("You evoked the interference API successfully")
+    mongo.set_collection('interference')
     
-    interference_model = gridfs.get_interference(momentum, spacing, slit_separation)
+    parameters = {'momentum': momentum, 'spacing': spacing, 'slit_separation': slit_separation}
+    interference_model = mongo.get(parameters)
     if interference_model:
-        return interference_model.read()
+        mongo.close()
+        return interference_model
     else:
-        flask.abort(400)
+        return jsonify({'error': 'Model not found'}), 404
 
 @app.route('/receive_data/evotrace/<int:gate>/<int:init_state>/<int:mag>/<t2>', methods=['GET'])
 def Qtrace(gate, init_state, mag, t2):
@@ -69,10 +78,7 @@ def Qtrace(gate, init_state, mag, t2):
 
     return {'GifRes': GifRes}
     
-#blind namespace to swagger api page
 if __name__ == '__main__':
     app.debug = True
-    gridfs = MongoGridFS()
-
     #run backend server at port 3001
     app.run(host="0.0.0.0", port=3001, threaded=False, debug=True)
