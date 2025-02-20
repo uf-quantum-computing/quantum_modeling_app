@@ -1,20 +1,16 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, SetStateAction } from "react";
 // === UI Components ===
 import {
   Box,
   Button,
   Stack,
-  // SelectChangeEvent,
-  Alert,
-  Snackbar,
   InputLabel,
   FormControl,
   Slider,
   Typography,
-  CardContent,
-  Card
+  Card,
 } from "@mui/material";
-import CircularProgress from '@mui/joy/CircularProgress';
+import CircularProgress from "@mui/joy/CircularProgress";
 import { Layout } from "antd";
 import "antd/dist/antd.min.css";
 import host from "../setup/host";
@@ -23,12 +19,11 @@ import host from "../setup/host";
 import {
   CustomDescriptionBox,
   CustomPageHeader,
-  CustomTitle,
-  Dashboard,
 } from "../components";
+import CustomInputSection from "../components/CustomInputSection";
 
 // === sub component imports ===
-const { Sider, Content } = Layout;
+const { Content } = Layout;
 
 const horizontal_center = {
   display: "flex",
@@ -44,19 +39,27 @@ const Tunneling = () => {
   const [wave, setWave] = useState<number>(1);
   // const [tunneling_img2d_base64, set_Tunneling_img2d_base64] = useState(base64Text2d);
   // const [tunneling_img3d_base64, set_Tunneling_img3d_base64] = useState(base64Text3d);
-  const [animationJsHtml, setAnimationJsHtml] = useState('');
-  const animationContainerRef = useRef<HTMLDivElement>(null);
+  const [animationJsHtml, setAnimationJsHtml] = useState<string>("");
+  const animationDivRef = useRef<HTMLDivElement>(null);
+  // const animationContainerRef = useRef<HTMLDivElement>(null);
+  const animationFlexRef = useRef<HTMLDivElement>(null);
   const [barrierSliderMoved, setBarrierSliderMoved] = useState(false);
   const [thicknessSliderMoved, setThicknessSliderMoved] = useState(false);
   const [waveSliderMoved, setWaveSliderMoved] = useState(false);
   const [success_msg, set_Success_Msg] = useState(
-    "Tunneling model generated with barrier = " + barrier.toString() + ", thickness = " + thickness.toString() + ", and wave = " + wave.toString() + "!"
+    "Tunneling model generated with barrier = " +
+      barrier.toString() +
+      ", thickness = " +
+      thickness.toString() +
+      ", and wave = " +
+      wave.toString() +
+      "!"
   );
   const [open, setOpenSnackbar] = useState(false);
 
   async function getGifFromServer(request_url: string) {
     try {
-      const response = await fetch(request_url, {method: 'GET'});
+      const response = await fetch(request_url, { method: "GET" });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -73,15 +76,15 @@ const Tunneling = () => {
   useEffect(() => {
     const loadDefaultHtml = async () => {
       try {
-        console.log("triggered")
-        fetch('/tunneling/probs_1.0_1.0_1.0_3D.html')
-        .then((response) => response.text())
-        .then((text) => {
-          setAnimationJsHtml(text);
-        console.log(text)
-        });
+        console.log("triggered");
+        fetch("/tunneling/probs_1.0_1.0_1.0_3D.html")
+          .then((response) => response.text())
+          .then((text) => {
+            setAnimationJsHtml(text);
+            console.log(text);
+          });
       } catch (error) {
-        console.error('Failed to load default HTML content:', error);
+        console.error("Failed to load default HTML content:", error);
       }
     };
 
@@ -90,14 +93,14 @@ const Tunneling = () => {
 
   // Your existing useEffect for handling animationJsHtml changes
   useEffect(() => {
-    if (animationJsHtml && animationContainerRef.current) {
-      const container = animationContainerRef.current;
+    if (animationJsHtml && animationDivRef.current) {
+      const container = animationDivRef.current;
       container.innerHTML = animationJsHtml;
 
-      const scripts = Array.from(container.querySelectorAll('script'));
+      const scripts = Array.from(container.querySelectorAll("script"));
       scripts.forEach((scriptElement) => {
         const script = scriptElement as HTMLScriptElement;
-        const newScript = document.createElement('script');
+        const newScript = document.createElement("script");
         newScript.text = script.text;
         container.appendChild(newScript);
         script.parentNode?.removeChild(script);
@@ -106,30 +109,38 @@ const Tunneling = () => {
   }, [animationJsHtml]);
 
   // ========= handle functions =========
-  const handleClose = (
-    event: React.SyntheticEvent | Event,
-    reason?: string
-  ) => {
-    // function to close the snackbar
-    if (reason === "clickaway") {
-      return;
-    }
-    setOpenSnackbar(false);
-  };
-  const handleBarrier = (event: Event, barrierValue: number | number[]) => {
-    setBarrier(barrierValue as number);
-    setBarrierSliderMoved(true);
-  };
+  // const handleBarrier = (event: Event, barrierValue: number | number[]) => {
+  //   setBarrier(barrierValue as number);
+  //   setBarrierSliderMoved(true);
+  // };
 
-  const handleThickness = (event: Event, thicknessValue: number | number[]) => {
-    setThickness(thicknessValue as number);
-    setThicknessSliderMoved(true);
-  };
+  // const handleThickness = (event: Event, thicknessValue: number | number[]) => {
+  //   setThickness(thicknessValue as number);
+  //   setThicknessSliderMoved(true);
+  // };
 
-  const handleWave = (event: Event, waveValue: number | number[]) => {
-    setWave(waveValue as number);
-    setWaveSliderMoved(true);
-  };
+  // const handleWave = (event: Event, waveValue: number | number[]) => {
+  //   setWave(waveValue as number);
+  //   setWaveSliderMoved(true);
+  // };
+
+  const DynamicSlider = () => {
+    const [barrier, setBarrier] = useState(1);
+    const [thickness, setThickness] = useState(1);
+    const [wave, setWave] = useState(1);
+    const [loading, setLoading] = useState(false);
+  
+    const handleBarrier = (_: Event, newValue: number | number[]) => setBarrier(newValue as number);
+    const handleThickness = (_: Event, newValue: number | number[]) => setThickness(newValue as number);
+    const handleWave = (_: Event, newValue: number | number[]) => setWave(newValue as number);
+  
+    const handleSubmitSlider = () => {
+      setLoading(true);
+      setTimeout(() => {
+        setLoading(false);
+        alert(`Model Generated with Barrier: ${barrier}, Thickness: ${thickness}, Wave: ${wave}`);
+      }, 1000);
+    };
 
   async function handleSubmit(event: any) {
     event.preventDefault();
@@ -151,11 +162,9 @@ const Tunneling = () => {
       wave_str = "1";
     }
 
-    let base_url = host + "/receive_data/tunneling"
+    let base_url = host + "/receive_data/tunneling";
     let final_url =
-    base_url + "/" + barrier_str +
-    "/" + thickness_str +
-    "/" + wave_str;
+      base_url + "/" + barrier_str + "/" + thickness_str + "/" + wave_str;
 
     if (barrierSliderMoved || waveSliderMoved || thicknessSliderMoved) {
       setLoading(true);
@@ -179,174 +188,129 @@ const Tunneling = () => {
     setOpenSnackbar(true); // open snackbar
   }
 
+  let [scale, setState] = useState(1);
+  const handleResize = () => {    
+    if (!animationFlexRef.current || !animationDivRef.current) return;
+
+    const flexWidth = animationFlexRef.current.offsetWidth || 600;
+    const flexHeight = animationFlexRef.current.offsetHeight || 400; // Get available height
+    const divWidth = animationDivRef.current.offsetWidth || 600;
+    const divHeight = animationDivRef.current.offsetHeight || 400; 
+
+    // Calculate scale based on both width and height constraints
+    const widthScale = (flexWidth - 300) / 1200;
+    const heightScale = flexHeight / 700; // Assuming 700 is the original height of animation
+
+    const newScale = Math.min(widthScale, heightScale); // Ensure it doesn't exceed the box height
+
+    setState(newScale); // Update scale
+
+  };
+
+  useEffect(() => {
+    window.addEventListener("resize", handleResize);
+    handleResize(); // Call initially to set the scale
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   // ========= return =========
   return (
-    <Layout 
-        style={{ 
-            minHeight: "100vh", 
-            display: "flex", 
-            justifyContent: "center", 
-            alignItems: "center" }}>
-
-        <Content 
-            className="site-layout" 
-            style={{
-                margin: "5%", 
-                maxWidth: "70%", 
-                minWidth: "1000px",
-                border: "1px solid #063970"}}>
-
+    <Layout
+      style={{
+        minHeight: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <Content
+        className="site-layout"
+        style={{
+          margin: "5%",
+          maxWidth: "70%",
+          minWidth: "1000px",
+          border: "1px solid #063970",
+        }}
+      >
         {/* Title for the page */}
-        <CustomPageHeader text="Tunneling" size="h3"/>
-    
+        <CustomPageHeader text="Tunneling" size="h3" />
+
         {/* Content for the page imported from data.json */}
         <CustomDescriptionBox pageTitle="Tunneling" />
 
         <Card
+          style={{
+            borderRadius: "10px",
+            display: "flex",
+            flexDirection: "row",
+            width: "100%",
+          }}
+          ref={animationFlexRef}
+        >
+          {/* Left Box */}
+          <Box
+            component="form"
+            sx={{
+              "& > :not(style)": { m: 0.5, width: "25ch" },
+              padding: "10px",
+              width: "300px",
+              minWidth: "300px",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+            }}
+            noValidate
+            autoComplete="off"
+            style={horizontal_center}
+            
+          >
+            <CustomInputSection
+              barrier={barrier}
+              handleBarrier={handleBarrier}
+              thickness={thickness}
+              handleThickness={handleThickness}
+              wave={wave}
+              handleWave={handleWave}
+              handleSubmit={handleSubmitSlider}
+              loading={loading}
+            />
+          </Box>
+
+          {/* Right Box */}
+          <div
             style={{
-                borderRadius: "10px",
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "center",
-                alignItems: "center",
-                paddingLeft: "2%",
-                border: "1px solid #063970" }}>
-            
-            <CardContent 
-                style={{ 
-                    flex: 1, 
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    border: "1px solid red" }}>
-
-                <Box
-                    component="form"
-                    sx={{
-                    "& > :not(style)": { m: 0.5, width: "25ch" },
-                    }}
-                    noValidate
-                    autoComplete="off"
-                    style={horizontal_center} >
-
-                    <Stack spacing={5}>
-
-                        <CustomTitle/>
-
-                        <FormControl variant="filled">
-                            <InputLabel
-                                id="barrier-select"
-                                style={{color: "black", marginTop: "10px", marginBottom: "10px", marginLeft: "8 px", textAlign: "left"}}>
-                                Barrier
-                            </InputLabel>
-                            <Slider
-                                sx={{ color: "#063970" }}
-                                aria-label="barrier-select"
-                                value={barrier}
-                                onChange={handleBarrier}
-                                min={1}
-                                max={3}
-                                defaultValue={1}
-                                valueLabelDisplay="auto"
-                                step={1}/>
-                            <Typography variant="body2" color="white" align="right" style={{ alignSelf: 'flex-end', marginRight: '0px', marginTop: '2px' }}>
-                                (eV)
-                            </Typography>
-                        </FormControl>
-
-                            {/* ====== Thickness Slider ====== */}
-                        <FormControl variant="filled">
-                            <InputLabel
-                                id="thickness-select"
-                                style={{color: "white", marginTop: "10px", marginBottom: "10px", marginLeft: "-8 px", textAlign: "left"}}>
-                                Thickness
-                            </InputLabel>
-                            <Slider
-                                sx={{ color: "#063970" }}
-                                aria-label="spacing-select"
-                                value = {thickness}
-                                onChange={handleThickness}
-                                min={1}
-                                max={10}
-                                defaultValue={1.0}
-                                valueLabelDisplay="auto"
-                                step={0.1}/>
-                            <Typography variant="body2" color="white" align="right" style={{ alignSelf: 'flex-end', marginRight: '0px', marginTop: '-2px' }}>
-                                (nm)
-                            </Typography>
-                        </FormControl>
-
-                        {/* ====== Wave Select ====== */}
-                        <FormControl variant="filled">
-                            <InputLabel
-                                id="wave-select"
-                                style={{color: "white", marginTop: "10px", marginBottom: "10px", marginLeft: "-8 px", textAlign: "left"}}>
-                                Wave number k
-                            </InputLabel>
-                            <Slider
-                                sx={{ color: "#063970" }}
-                                aria-label="spacing-select"
-                                value={wave}
-                                onChange={handleWave}
-                                min={1}
-                                max={10}
-                                defaultValue={1}
-                                valueLabelDisplay="auto"
-                                step={1}/>
-                            <Typography variant="body2" color="white" align="right" style={{ alignSelf: 'flex-end', marginRight: '0px', marginTop: '-2px' }}>
-                                (nm)
-                                <sup>-1</sup>
-                            </Typography>
-                        </FormControl>
-
-                        {/* ====== Submit Button ====== */}
-                        {loading ? (
-                            <CircularProgress />
-                        ) : (
-                            <Button
-                                variant="contained"
-                                onClick={handleSubmit}
-                                type="submit"
-                                color="success" >
-                                Generate Model
-                            </Button>
-                        )}
-                    </Stack>
-
-                </Box>
-
-            </CardContent>
-
-            <CardContent
-                style={{
-                flex: 10,
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                }}
-            >
-                <div style={{ transform: 'scale(0.8)', transformOrigin: 'top left', width: '100%' }}>
-                <CardContent style={{ flex: 1, maxWidth: '80%' }}>
-                    <div 
-                        style={{
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            maxWidth: '100%',
-                            maxHeight: '100%',
-                            overflow: 'auto',
-                        }}
-                        ref={animationContainerRef}
-                        ></div>
-                </CardContent>
-                </div>
-                
-            </CardContent>
-
-            
+              overflow: "clip",
+              width: animationFlexRef.current ? animationFlexRef.current.offsetWidth - 300 : 600,
+            }}
+          >
+            <style>
+              {`
+                .animation {
+                  transform-origin: center left;
+                  scale: ${scale};  
+                }
+              `}
+            </style>
+            <div
+              style={{
+                backgroundColor: "white",
+                width: animationFlexRef.current ? animationFlexRef.current.offsetWidth - 300 : 600,
+               
+              }}
+              ref={animationDivRef}
+            />
+          </div>
         </Card>
-        </Content>
+      </Content>
     </Layout>
+  );
+};
+
+  return (
+    <DynamicSlider />
   );
 };
 
