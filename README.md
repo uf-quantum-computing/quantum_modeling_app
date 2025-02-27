@@ -3,8 +3,7 @@
 Computational Nano Lab, UFL
 
 ## Architecture Overview
-![image](https://github.com/user-attachments/assets/36da6434-28a5-4bd1-9704-8288bce7b5be)
-
+![image](https://github.com/user-attachments/assets/6abb6ef0-1a6d-466c-b85a-ab1bcdbac57a)
 
 ## Getting Started
 
@@ -65,10 +64,14 @@ For example, I run the backend and I get "Running on http://127.0.0.1:3001". Tak
 
 2. Utilize 2 terminals in parallel to run the back and the frontend.
 
-3. If you're cloning the project for the first time and changes to `/src/setup` are being tracked, run:
+3. Rename the `sample_ini` to `.ini` and replace the variable with the connection string from MongoDB Atlas.
 ```
-git update-index --assume-unchanged src/setup/
+mv sample_ini .ini
 ```
+
+[Get your Atlas cluster](https://docs.atlas.mongodb.com/getting-started/) with [sample data](https://docs.atlas.mongodb.com/sample-data/) set [connection string](https://docs.atlas.mongodb.com/connect-to-cluster/) and place in `DB_URI` parameter under `.ini`
+
+Make sure you have IP in the Atlas [access list](https://docs.atlas.mongodb.com/security/add-ip-address-to-list/) and username/password of your Atlas user correctly specified.
 
 ## File Structure
 - `/src/` - Contains the source code for the React website.

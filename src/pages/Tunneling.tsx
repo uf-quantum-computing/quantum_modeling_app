@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, SetStateAction } from "react";
 // === UI Components ===
 import {
+  AlertProps,
   Box,
   Button,
   Card,
@@ -46,27 +47,21 @@ const Tunneling = () => {
   const [barrierSliderMoved, setBarrierSliderMoved] = useState(false);
   const [thicknessSliderMoved, setThicknessSliderMoved] = useState(false);
   const [waveSliderMoved, setWaveSliderMoved] = useState(false);
-  const [success_msg, set_Success_Msg] = useState(
-    "Tunneling model generated with barrier = " +
-      barrier.toString() +
-      ", thickness = " +
-      thickness.toString() +
-      ", and wave = " +
-      wave.toString() +
-      "!"
-  );
-  const [open, setOpenSnackbar] = useState(false);
+  const [snackbar_msg, setSnackbarMessage] = useState("Default tunneling model generated!");
+  const [severity, setSeverity] = useState<AlertProps['severity']>('success');
+  const [openSnackBar, setOpenSnackbar] = useState(false);
 
   // ========= handle functions =========
   async function getGifFromServer(request_url: string) {
     try {
       const response = await fetch(request_url, { method: "GET" });
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        console.error("Error fetching animation from server");
+        setSeverity('error');
+        return null;
       }
-      const responseData = await response.json();
-      // console.log("responseData: ", responseData);
-      setAnimationJsHtml(responseData.GifRes); // Adjust based on your API response structure
+      const responseData = await response.text();
+      setAnimationJsHtml(responseData); // Adjust based on your API response structure
       return response.ok;
     } catch (error) {
       console.error("Error fetching animation from server:", error);
@@ -85,14 +80,15 @@ const Tunneling = () => {
             console.log(text);
           });
       } catch (error) {
-        console.error("Failed to load default HTML content:", error);
+        setSnackbarMessage("Failed to load default model.");
+        setSeverity('error');
       }
     };
 
     loadDefaultHtml();
   }, []);
 
-  // Your existing useEffect for handling animationJsHtml changes
+  // Existing useEffect for handling animationJsHtml changes
   useEffect(() => {
     if (animationJsHtml && animationDivRef.current) {
       const container = animationDivRef.current;
@@ -108,6 +104,12 @@ const Tunneling = () => {
       });
     }
   }, [animationJsHtml]);
+
+  useEffect(() => {
+    if (snackbar_msg) {
+      setOpenSnackbar(true);
+    }
+  }, [snackbar_msg]);
 
   // ========= handle functions =========
   const handleBarrier = (event: Event, barrierValue: number | number[]) => {
@@ -130,9 +132,6 @@ const Tunneling = () => {
     let barrier_str = barrier.toString();
     let thickness_str = thickness.toString();
     let wave_str = wave.toString();
-    console.log("barrier:", barrier_str);
-    console.log("thickness:", thickness_str);
-    console.log("wave:", wave_str);
 
     // if no input, set to default
     if (barrier_str === "") {
@@ -153,7 +152,7 @@ const Tunneling = () => {
       setLoading(true);
       const gifData = await getGifFromServer(final_url);
       if (gifData) {
-        set_Success_Msg(
+        setSnackbarMessage(
           "Tunneling model generated with barrier = " +
             barrier_str +
             ", thickness = " +
@@ -162,11 +161,14 @@ const Tunneling = () => {
             wave_str +
             "!"
         );
-        setLoading(false);
-        setBarrierSliderMoved(false);
-        setThicknessSliderMoved(false);
-        setWaveSliderMoved(false);
       }
+      else {
+        setSnackbarMessage("Failed to generate model.");
+      }
+      setLoading(false);
+      setBarrierSliderMoved(false);
+      setThicknessSliderMoved(false);
+      setWaveSliderMoved(false);
     }
     setOpenSnackbar(true); // open snackbar
   }
