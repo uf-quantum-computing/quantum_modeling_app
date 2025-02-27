@@ -44,17 +44,3 @@ class MongoConnector:
         except ValueError as e:
             print(e)
             return None
-
-def parse_parameters(filename, variables):
-    pattern = r"probs_(\d+(\.\d+)?)_(\d+(\.\d+)?)_(\d+(\.\d+)?)_3D\.html"
-    match = re.match(pattern, filename)
-    if match:
-        return dict(zip(variables, [match.group(1), match.group(3), match.group(5)])) # To change hard code if handles more variables
-    else:
-        raise ValueError('Filename does not match the expected pattern')
-
-# Driver to write cache files to MongoDB
-if __name__ == '__main__':
-    client = pymongo.MongoClient(os.getenv('MONGO_URI'))
-    db = client['models']
-    
