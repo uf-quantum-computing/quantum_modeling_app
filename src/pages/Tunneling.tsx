@@ -1,11 +1,18 @@
 import { useState, useEffect, useRef, SetStateAction } from "react";
 // === UI Components ===
 import {
-  Box,
-  Card,
   AlertProps,
-  Snackbar,
-  Alert,
+  Box,
+  Button,
+  Card,
+  Checkbox,
+  CircularProgress,
+  FormControl,
+  FormControlLabel,
+  InputLabel,
+  Slider,
+  Stack,
+  Typography,
 } from "@mui/material";
 import { Layout } from "antd";
 import "antd/dist/antd.min.css";
@@ -15,8 +22,8 @@ import host from "../setup/host";
 import {
   CustomDescriptionBox,
   CustomPageHeader,
+  CustomTitle,
 } from "../components";
-import CustomInputSection from "../components/CustomInputSection";
 
 // === sub component imports ===
 const { Content } = Layout;
@@ -29,15 +36,13 @@ const horizontal_center = {
 
 const Tunneling = () => {
   const [loading, setLoading] = useState(false);
+  const [isAdvanced, setIsAdvanced] = useState(false);
   // ========= states =========
   const [barrier, setBarrier] = useState<number>(1);
   const [thickness, setThickness] = useState<number>(1.0);
   const [wave, setWave] = useState<number>(1);
-  // const [tunneling_img2d_base64, set_Tunneling_img2d_base64] = useState(base64Text2d);
-  // const [tunneling_img3d_base64, set_Tunneling_img3d_base64] = useState(base64Text3d);
   const [animationJsHtml, setAnimationJsHtml] = useState<string>("");
   const animationDivRef = useRef<HTMLDivElement>(null);
-  // const animationContainerRef = useRef<HTMLDivElement>(null);
   const animationFlexRef = useRef<HTMLDivElement>(null);
   const [barrierSliderMoved, setBarrierSliderMoved] = useState(false);
   const [thicknessSliderMoved, setThicknessSliderMoved] = useState(false);
@@ -106,39 +111,20 @@ const Tunneling = () => {
   }, [snackbar_msg]);
 
   // ========= handle functions =========
-  // const handleBarrier = (event: Event, barrierValue: number | number[]) => {
-  //   setBarrier(barrierValue as number);
-  //   setBarrierSliderMoved(true);
-  // };
+  const handleBarrier = (event: Event, barrierValue: number | number[]) => {
+    setBarrier(barrierValue as number);
+    setBarrierSliderMoved(true);
+  };
 
-  // const handleThickness = (event: Event, thicknessValue: number | number[]) => {
-  //   setThickness(thicknessValue as number);
-  //   setThicknessSliderMoved(true);
-  // };
+  const handleThickness = (event: Event, thicknessValue: number | number[]) => {
+    setThickness(thicknessValue as number);
+    setThicknessSliderMoved(true);
+  };
 
-  // const handleWave = (event: Event, waveValue: number | number[]) => {
-  //   setWave(waveValue as number);
-  //   setWaveSliderMoved(true);
-  // };
-
-  const DynamicSlider = () => {
-    const [barrier, setBarrier] = useState(1);
-    const [thickness, setThickness] = useState(1);
-    const [wave, setWave] = useState(1);
-    const [loading, setLoading] = useState(false);
-  
-    const handleBarrier = (_: Event, newValue: number | number[]) => setBarrier(newValue as number);
-    const handleThickness = (_: Event, newValue: number | number[]) => setThickness(newValue as number);
-    const handleWave = (_: Event, newValue: number | number[]) => setWave(newValue as number);
-  
-    const handleSubmitSlider = () => {
-      setLoading(true);
-      setTimeout(() => {
-        setLoading(false);
-        setSnackbarMessage(`Model Generated with Barrier: ${barrier}, Thickness: ${thickness}, Wave: ${wave}`);
-      }, 1000);
-      setOpenSnackbar(true);
-    };
+  const handleWave = (event: Event, waveValue: number | number[]) => {
+    setWave(waveValue as number);
+    setWaveSliderMoved(true);
+  };
 
   async function handleSubmit(event: any) {
     event.preventDefault();
@@ -230,7 +216,6 @@ const Tunneling = () => {
           margin: "5%",
           maxWidth: "70%",
           minWidth: "1000px",
-          border: "1px solid #063970",
         }}
       >
         {/* Title for the page */}
@@ -265,16 +250,103 @@ const Tunneling = () => {
             style={horizontal_center}
             
           >
-            <CustomInputSection
-              barrier={barrier}
-              handleBarrier={handleBarrier}
-              thickness={thickness}
-              handleThickness={handleThickness}
-              wave={wave}
-              handleWave={handleWave}
-              handleSubmit={handleSubmitSlider}
-              loading={loading}
-            />
+            <Box
+              component="form"
+              sx={{
+                "& > :not(style)": { m: 0.5, width: "25ch" },
+                padding: "20px",
+                width: "200px",
+                minWidth: "200px",
+              }}
+              noValidate
+              autoComplete="off"
+            >
+              <Stack spacing={3}>
+              <CustomTitle />
+
+                {/* ====== Barrier Slider ====== */}
+                <FormControl variant="filled">
+                  <InputLabel id="barrier-select" style={{ color: "black", marginBottom: "10px" }}>
+                    Barrier
+                  </InputLabel>
+                  <Slider
+                    sx={{ color: "#063970" }}
+                    aria-label="barrier-select"
+                    value={barrier}
+                    onChange={handleBarrier}
+                    min={1}
+                    max={isAdvanced ? 5 : 3} // Beginner: 1-3, Advanced: 1-5
+                    step={1}
+                    valueLabelDisplay="auto"
+                  />
+                  <Typography variant="body2" color="black" align="right">
+                    (eV)
+                  </Typography>
+                </FormControl>
+
+                {/* ====== Thickness Slider ====== */}
+                <FormControl variant="filled">
+                  <InputLabel id="thickness-select" style={{ color: "black", marginBottom: "10px" }}>
+                    Thickness
+                  </InputLabel>
+                  <Slider
+                    sx={{ color: "#063970" }}
+                    aria-label="thickness-select"
+                    value={thickness}
+                    onChange={handleThickness}
+                    min={1}
+                    max={isAdvanced ? 20 : 10} // Beginner: 1-10, Advanced: 1-20
+                    step={isAdvanced ? 0.5 : 1} // Beginner step: 1, Advanced step: 0.5
+                    valueLabelDisplay="auto"
+                  />
+                  <Typography variant="body2" color="black" align="right">
+                    (nm)
+                  </Typography>
+                </FormControl>
+
+                {/* ====== Wave Number k Slider ====== */}
+                <FormControl variant="filled">
+                  <InputLabel id="wave-select" style={{ color: "black", marginBottom: "10px" }}>
+                    Wave number k
+                  </InputLabel>
+                  <Slider
+                    sx={{ color: "#063970" }}
+                    aria-label="wave-select"
+                    value={wave}
+                    onChange={handleWave}
+                    min={1}
+                    max={isAdvanced ? 15 : 10} // Beginner: 1-10, Advanced: 1-15
+                    step={1}
+                    valueLabelDisplay="auto"
+                  />
+                  <Typography variant="body2" color="black" align="right">
+                    (nm)<sup>-1</sup>
+                  </Typography>
+                </FormControl>
+
+                {/* ====== Submit Button ====== */}
+                {loading ? (
+                  <Box display="flex" justifyContent="center">
+                    <CircularProgress />
+                  </Box>
+                ) : (
+                  <Button variant="contained" onClick={handleSubmit} type="submit" color="success">
+                    Generate Model
+                  </Button>
+                )}
+                {/* Toggle Switch */}
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={isAdvanced}
+                      onChange={() => setIsAdvanced((prev) => !prev)}
+                    />
+                  }
+                  label={"Advanced Mode"}
+                  style={{ alignSelf: "center", color: "black" }}
+                />
+              </Stack>
+            </Box>
           </Box>
 
           {/* Right Box */}
@@ -304,11 +376,6 @@ const Tunneling = () => {
         </Card>
       </Content>
     </Layout>
-  );
-};
-
-  return (
-    <DynamicSlider />
   );
 };
 
