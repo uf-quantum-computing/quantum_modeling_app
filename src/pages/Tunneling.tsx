@@ -34,9 +34,9 @@ const horizontal_center = {
 };
 
 const Tunneling = () => {
+  // ========= states =========
   const [loading, setLoading] = useState(false);
   const [isAdvanced, setIsAdvanced] = useState(false);
-  // ========= states =========
   const [barrier, setBarrier] = useState<number>(1);
   const [thickness, setThickness] = useState<number>(1.0);
   const [wave, setWave] = useState<number>(1);
@@ -57,6 +57,7 @@ const Tunneling = () => {
   );
   const [open, setOpenSnackbar] = useState(false);
 
+  // ========= handle functions =========
   async function getGifFromServer(request_url: string) {
     try {
       const response = await fetch(request_url, { method: "GET" });
@@ -260,7 +261,7 @@ const Tunneling = () => {
               autoComplete="off"
             >
               <Stack spacing={3}>
-              <CustomTitle />
+              <CustomTitle pageName="Tunneling"/>
 
                 {/* ====== Barrier Slider ====== */}
                 <FormControl variant="filled">

@@ -12,7 +12,10 @@ import {
   FormControl,
   Slider,
   Card,
-  CardContent
+  CardContent,
+  Typography,
+  Checkbox,
+  FormControlLabel
 } from "@mui/material";
 import CircularProgress from '@mui/joy/CircularProgress';
 import { Layout } from "antd";
@@ -40,11 +43,13 @@ const { Sider, Content } = Layout;
 const Interference = () => {
   // ========= states =========
   const [loading, setLoading] = useState(false);
+  const [isAdvanced, setIsAdvanced] = useState(false);
   const [momentum, setMomentum] = useState<number>(1);
   const [spacing, setSpacing] = useState<number>(0.6);
   const [slit_separation, setSlitSeparation] = useState<number>(0.6);
   const [animationJsHtml, setAnimationJsHtml] = useState('');
-  const animationContainerRef = useRef<HTMLDivElement>(null);
+  const animationDivRef = useRef<HTMLDivElement>(null);
+  const animationFlexRef = useRef<HTMLDivElement>(null);
   const [spacingSliderMoved, setSpacingSliderMoved] = useState(false);
   const [slitSepSliderMoved, setSlitSepSliderMoved] = useState(false);
   const [waveSliderMoved, setWaveSliderMoved] = useState(false);
@@ -69,6 +74,7 @@ const Interference = () => {
       throw error;
     }
   }
+
   useEffect(() => {
     const loadDefaultHtml = async () => {
       try {
@@ -86,13 +92,14 @@ const Interference = () => {
 
     loadDefaultHtml();
   }, []);
+
   useEffect(() => {
-    if (animationJsHtml && animationContainerRef.current) {
-      const container = animationContainerRef.current;
+    if (animationJsHtml && animationDivRef.current) {
+      const container = animationDivRef.current;
       container.innerHTML = animationJsHtml; // Now TypeScript knows container is a div element
 
       // Ensure TypeScript treats each script as an HTMLScriptElement
-      const scripts = Array.from(container.querySelectorAll('script'));
+      const scripts = Array.from(container.querySelectorAll("script"));
       scripts.forEach((scriptElement) => {
         const script = scriptElement as HTMLScriptElement; // Type assertion
         const newScript = document.createElement('script');
@@ -166,138 +173,203 @@ const Interference = () => {
     setOpenSnackbar(true); // open snackbar
   }
 
+  let [scale, setState] = useState(1);
+  const handleResize = () => {    
+    if (!animationFlexRef.current || !animationDivRef.current) return;
+
+    const flexWidth = animationFlexRef.current.offsetWidth || 600;
+    const flexHeight = animationFlexRef.current.offsetHeight || 400; // Get available height
+    const divWidth = animationDivRef.current.offsetWidth || 600;
+    const divHeight = animationDivRef.current.offsetHeight || 400; 
+
+    // Calculate scale based on both width and height constraints
+    const widthScale = (flexWidth - 300) / 1200;
+    const heightScale = flexHeight / 700; // Assuming 700 is the original height of animation
+
+    const newScale = Math.min(widthScale, heightScale); // Ensure it doesn't exceed the box height
+
+    setState(newScale); // Update scale
+
+  };
+
+  useEffect(() => {
+    window.addEventListener("resize", handleResize);
+    handleResize(); // Call initially to set the scale
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
 return (
     <Layout 
-        style={{ 
-            minHeight: "100vh", 
-            display: "flex", 
-            justifyContent: "center", 
-            alignItems: "center" }}>
+      style={{ 
+        minHeight: "100vh", 
+        display: "flex", 
+        justifyContent: "center", 
+        alignItems: "center" 
+      }}
+    >
 
-        <Content 
-            className="site-layout" 
-            style={{
-                margin: "5%", 
-                maxWidth: "70%", 
-                minWidth: "1000px",
-                border: "1px solid #063970" }}>
+      <Content 
+        className="site-layout" 
+        style={{
+          margin: "5%", 
+          maxWidth: "70%", 
+          minWidth: "1000px",
+          }}
+        >
 
-            {/* Title for the page */}
-            <CustomPageHeader text="Interference" size="h3"/> 
+          {/* Title for the page */}
+          <CustomPageHeader text="Interference" size="h3"/> 
 
-            {/* Content for the page imported from data.json */}
-            <CustomDescriptionBox pageTitle="Interference"/>
+          {/* Content for the page imported from data.json */}
+          <CustomDescriptionBox pageTitle="Interference"/>
 
             <Card
+              style={{
+                borderRadius: "10px",
+                display: "flex",
+                flexDirection: "row",
+                width: "100%",
+              }}
+              ref={animationFlexRef}
+            >
+              {/* Left Box */}
+              <Box
+                component="form"
+                sx={{
+                  "& > :not(style)": { m: 0.5, width: "25ch" },
+                  padding: "10px",
+                  width: "300px",
+                  minWidth: "300px",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                }}
+                noValidate
+                autoComplete="off"
+                style={horizontal_center}
+              >
+                <Box
+                  component="form"
+                  sx={{
+                    "& > :not(style)": { m: 0.5, width: "25ch" },
+                    padding: "20px",
+                    width: "200px",
+                    minWidth: "200px",
+                  }}
+                  noValidate
+                  autoComplete="off"
+                >
+                  <Stack spacing={3}>
+                  <CustomTitle pageName="Interference"/>
+                    
+                    {/* ====== Spacing Slider ====== */}
+                    <FormControl variant="filled">
+                      <InputLabel id="spacing-label" style={{ marginTop: "5%" }}>
+                        Spacing
+                      </InputLabel>
+                      <Slider
+                        aria-label="spacing"
+                        defaultValue={0.6}
+                        valueLabelDisplay="auto"
+                        step={0.1}
+                        min={0.1}
+                        max={1}
+                        onChange={handleSpacing}
+                        sx={{ color: "#063970" }}/>
+                      {/* <Typography variant="body2" color="black" align="right">
+                        (eV)
+                      </Typography> */}
+                    </FormControl>
+
+                    {/* ====== Slit Seperation Slider ====== */}
+                    <FormControl variant="filled">
+                      <InputLabel id="slitSep-label" style={{ marginTop: "5%" }}>
+                        Slit Separation
+                      </InputLabel>
+                      <Slider
+                        aria-label="slitSep"
+                        defaultValue={0.6}
+                        valueLabelDisplay="auto"
+                        step={0.1}
+                        min={0.1}
+                        max={1}
+                        onChange={handleSlitSep}
+                        sx={{ color: "#063970" }}/>
+                      {/* <Typography variant="body2" color="black" align="right">
+                        (nm)
+                      </Typography> */}
+                    </FormControl>
+
+                    <FormControl variant="filled">
+                      <InputLabel id="wave-label" style={{ marginTop: "5%" }}>
+                        Wave
+                      </InputLabel>
+                      <Slider
+                        aria-label="wave"
+                        defaultValue={1}
+                        valueLabelDisplay="auto"
+                        step={1}
+                        min={1}
+                        max={5}
+                        onChange={handleWave}
+                        sx={{ color: "#063970" }}/>
+                      {/* <Typography variant="body2" color="black" align="right">
+                        (nm)<sup>-1</sup>
+                      </Typography> */}
+                    </FormControl>
+
+                    {/* ====== Submit Button ====== */}
+                    {loading ? (
+                      <Box display="flex" justifyContent="center">
+                        <CircularProgress />
+                      </Box>
+                    ) : (
+                      <Button variant="contained" onClick={handleSubmit} type="submit" color="success">
+                        Generate Model
+                      </Button>
+                    )}
+                    {/* Toggle Switch */}
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={isAdvanced}
+                          onChange={() => setIsAdvanced((prev) => !prev)}
+                        />
+                      }
+                      label={"Advanced Mode"}
+                      style={{ alignSelf: "center", color: "black" }}
+                    />
+                  </Stack>
+                </Box>
+              </Box>
+
+              {/* Right Box */}
+              <div
                 style={{
-                    borderRadius: "10px",
-                    display: "flex",
-                    flexDirection: "row",
-                    gap: "2%",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    padding: "2%",
-                    border: "1px solid #063970" }}>
-
-                <CardContent 
-                    style={{ 
-                    flex: 1, 
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    border: "1px solid red" }}>
-                    
-                    <Box
-                        component="form"
-                        sx={{
-                            "& > :not(style)": { width: "200px" },
-                            border: "1px solid ",
-                        }}
-                        noValidate
-                        autoComplete="off"
-                        display="flex"
-                        flexDirection="column" >
-                    
-                        <Stack spacing={5}>
-
-                            <CustomTitle pageName="Interference"/>
-
-                            <FormControl fullWidth>
-                                <InputLabel 
-                                    id="spacing-label" 
-                                    style={{ marginTop: "5%" }}>
-                                    Spacing
-                                </InputLabel>
-                                <Slider
-                                    aria-label="spacing"
-                                    defaultValue={0.6}
-                                    valueLabelDisplay="auto"
-                                    step={0.1}
-                                    min={0.1}
-                                    max={1}
-                                    onChange={handleSpacing}
-                                    sx={{ color: "#063970" }}/>
-                            </FormControl>
-
-                            <FormControl fullWidth>
-                                <InputLabel 
-                                    id="slitSep-label" 
-                                    style={{ marginTop: "5%" }}>
-                                    Slit Separation
-                                </InputLabel>
-                                <Slider
-                                    aria-label="slitSep"
-                                    defaultValue={0.6}
-                                    valueLabelDisplay="auto"
-                                    step={0.1}
-                                    min={0.1}
-                                    max={1}
-                                    onChange={handleSlitSep}
-                                    sx={{ color: "#063970" }}/>
-                            </FormControl>
-
-                            <FormControl fullWidth>
-                                <InputLabel 
-                                    id="wave-label" 
-                                    style={{ marginTop: "5%" }}>
-                                    Wave
-                                </InputLabel>
-                                <Slider
-                                    aria-label="wave"
-                                    defaultValue={1}
-                                    valueLabelDisplay="auto"
-                                    step={1}
-                                    min={1}
-                                    max={5}
-                                    onChange={handleWave}
-                                    sx={{ color: "#063970" }}/>
-                            </FormControl>
-
-                            {loading ? (
-                            <CircularProgress />
-                            ) : (
-                            <Button
-                                variant="contained"
-                                onClick={handleSubmit}
-                                type="submit"
-                                color="success">
-                                Generate Model
-                            </Button>
-                            )}
-                        </Stack>
-                    </Box>
-                </CardContent>
-
-                <CardContent
-                    style={{
-                    flex: 5,
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    border: "1px solid #063970",
-                    }}>
-                    <div ref={animationContainerRef}></div>
-                </CardContent>
+                  overflow: "clip",
+                  width: animationFlexRef.current ? animationFlexRef.current.offsetWidth - 300 : 600,
+                }}
+              >
+                <style>
+                  {`
+                    .animation {
+                      transform-origin: center center;
+                      scale: ${scale};  
+                    }
+                  `}
+                </style>
+                <div
+                  style={{
+                    backgroundColor: "white",
+                    width: animationFlexRef.current ? animationFlexRef.current.offsetWidth - 300 : 600,
+                  
+                  }}
+                  ref={animationDivRef}
+                />
+              </div>
             </Card>
         </Content>
     </Layout>
