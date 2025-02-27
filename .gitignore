@@ -15,7 +15,7 @@
 # misc
 .ini
 .DS_Store
-
+quantum_app_backend/cache
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

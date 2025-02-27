@@ -193,5 +193,3 @@ if __name__ == "__main__":
 
     print('Tunneling model inserted successfully')
     print(f"Time taken: {end_time - start_time}")
-
-    mongo.close()

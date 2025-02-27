@@ -1,18 +1,15 @@
 import pymongo
-import gridfs
-import os
-import configparser
 import re
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
-config = configparser.ConfigParser()
-config_path = os.path.abspath(os.path.join("quantum_app_backend/.ini"))
-config.read(config_path)
 VARIABLES = {'tunneling': ['momentum', 'barrier', 'width'], 
              'interference': ['momentum', 'spacing', 'slit_separation']}
 
 class MongoConnector:
     def __init__(self):
-        self.client = pymongo.MongoClient(config['MONGO']['MONGO_URI'])
+        self.client = pymongo.MongoClient(os.getenv('MONGO_URI'))
         self.db = self.client['models']
         self.model = ''
 
@@ -40,6 +37,9 @@ class MongoConnector:
         
     def upload_model(self, parameters, animation):
         try:
+            if self.collection.find({'parameters': parameters}):
+                # replace the existing document
+                self.collection.delete_one({'parameters': parameters})
             self.collection.insert_one({'parameters': parameters, 'animation': animation.encode('utf-8')})
         except ValueError as e:
             print(e)
