@@ -146,9 +146,16 @@ const Interference = () => {
     let spacing_str = spacing.toString();
     let slit_separation_str = slit_separation.toString();
     let wave_str = momentum.toString();
-    console.log("spacing:", spacing_str);
-    console.log("slit_separation:", slit_separation_str);
-    console.log("wave:", wave_str);
+    
+    if (spacing_str === "") {
+      spacing_str = "0.1";
+    }
+    if (slit_separation_str === "") {
+      slit_separation_str = "0.1";
+    }
+    if (wave_str === "") {
+      wave_str = "1";
+    }
 
     let base_url = host + "/receive_data/interference";
     let final_url =
@@ -187,7 +194,7 @@ const Interference = () => {
     if (!animationFlexRef.current || !animationDivRef.current) return;
 
     const flexWidth = animationFlexRef.current.offsetWidth || 600;
-    const flexHeight = animationFlexRef.current.offsetHeight || 400; // Get available height
+    const flexHeight = animationFlexRef.current.offsetHeight || 600; // Get available height
     const divWidth = animationDivRef.current.offsetWidth || 600;
     const divHeight = animationDivRef.current.offsetHeight || 400; 
 

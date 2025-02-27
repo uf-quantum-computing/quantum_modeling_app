@@ -10,6 +10,7 @@ import {
   FormControlLabel,
   InputLabel,
   Slider,
+  Snackbar,
   Stack,
   Typography,
 } from "@mui/material";
@@ -433,6 +434,16 @@ const Tunneling = () => {
         </Alert>
       </Snackbar>
         </Card>
+        <Snackbar
+                      open={openSnackBar}
+                      autoHideDuration={6000}
+                      onClose={() => setOpenSnackbar(false)}
+                      anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                    >
+                      <Alert onClose={() => setOpenSnackbar(false)} severity={severity}>
+                        {snackbar_msg}
+                      </Alert>
+                    </Snackbar>
       </Content>
     </Layout>
   );

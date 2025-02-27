@@ -14,7 +14,6 @@ parent = os.path.dirname(current)
 sys.path.append(parent)
 from db import MongoConnector
 
-
 def calculate_center_of_mass(x, psi):
     density = np.abs(psi)**2
     total_density = np.sum(density)
@@ -155,6 +154,8 @@ class Animator3D:
         self.ax.add_patch(wall_middle)
         self.ax.add_patch(wall_top)
 
+        self.fig.tight_layout(pad=1)
+
     def update(self, i):
         self.img.set_data(self.wave_packet.probs[i])
         self.img.set_zorder(1)
@@ -181,7 +182,7 @@ if __name__ == "__main__":
     wave_packet = Wave_Packet3D(slit_space=2, slit_sep=2, k0=2)
     animator = Animator3D(wave_packet)
 
-    parameters = {'momentum': wave_packet.k0, 'spacing': wave_packet.a, 'slit_separation': wave_packet.s}
+    parameters = {'momentum': float(wave_packet.k0), 'spacing': float(wave_packet.a), 'slit_separation': float(wave_packet.s)}
     mongo.set_collection('interference')
     
     start_time = time.time()
