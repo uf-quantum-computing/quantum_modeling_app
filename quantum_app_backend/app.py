@@ -33,6 +33,7 @@ def Qtunneling(barrier, width, momentum):
     mongo.set_collection('tunneling')
 
     parameters = {'momentum': momentum, 'barrier': barrier, 'width': width}
+    print(f'parameters: {parameters}')
 
     tunneling_model = mongo.get(parameters)
     if tunneling_model:

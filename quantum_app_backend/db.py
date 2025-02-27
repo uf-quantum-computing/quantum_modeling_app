@@ -55,6 +55,6 @@ def parse_parameters(filename, variables):
 
 # Driver to write cache files to MongoDB
 if __name__ == '__main__':
-    client = pymongo.MongoClient(config['MONGO']['MONGO_URI'])
+    client = pymongo.MongoClient(os.getenv('MONGO_URI'))
     db = client['models']
     
