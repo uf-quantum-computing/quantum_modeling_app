@@ -267,7 +267,7 @@ const Tunneling = () => {
 
                 {/* ====== Barrier Slider ====== */}
                 <FormControl variant="filled">
-                  <InputLabel id="barrier-select" style={{ color: "black", marginBottom: "10px" }}>
+                  <InputLabel id="barrier-select" style={{ color: "black", marginTop: "10px"}}>
                     Barrier
                   </InputLabel>
                   <Slider
@@ -287,11 +287,11 @@ const Tunneling = () => {
 
                 {/* ====== Thickness Slider ====== */}
                 <FormControl variant="filled">
-                  <InputLabel id="thickness-select" style={{ color: "black", marginBottom: "10px" }}>
+                  <InputLabel id="thickness-select" style={{ color: "black", marginTop: "10px"}}>
                     Thickness
                   </InputLabel>
                   <Slider
-                    sx={{ color: "#063970" }}
+                    sx={{ color: "#063970", alignContent: "center" }}
                     aria-label="thickness-select"
                     value={thickness}
                     onChange={handleThickness}
@@ -307,7 +307,7 @@ const Tunneling = () => {
 
                 {/* ====== Wave Number k Slider ====== */}
                 <FormControl variant="filled">
-                  <InputLabel id="wave-select" style={{ color: "black", marginBottom: "10px" }}>
+                  <InputLabel id="wave-select" style={{ color: "black", marginTop: "10px" }}>
                     Wave number k
                   </InputLabel>
                   <Slider
