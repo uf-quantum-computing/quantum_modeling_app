@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, SetStateAction } from "react";
 // === UI Components ===
 import {
+  Alert,
   AlertProps,
   Box,
   Button,
@@ -11,6 +12,7 @@ import {
   FormControlLabel,
   InputLabel,
   Slider,
+  Snackbar,
   Stack,
   Typography,
 } from "@mui/material";
@@ -375,6 +377,16 @@ const Tunneling = () => {
             />
           </div>
         </Card>
+        <Snackbar
+                      open={openSnackBar}
+                      autoHideDuration={6000}
+                      onClose={() => setOpenSnackbar(false)}
+                      anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                    >
+                      <Alert onClose={() => setOpenSnackbar(false)} severity={severity}>
+                        {snackbar_msg}
+                      </Alert>
+                    </Snackbar>
       </Content>
     </Layout>
   );

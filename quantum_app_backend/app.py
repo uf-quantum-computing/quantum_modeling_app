@@ -21,6 +21,7 @@ app = Flask(__name__)
 api.init_app(app)
 CORS(app, resources={r"/*": {"origins": "*"}})
 mongo = MongoConnector()
+cache = {}
 
 @app.route('/receive_data/tunneling/<barrier>/<width>/<momentum>', methods=['GET'])
 def Qtunneling(barrier, width, momentum):
@@ -32,14 +33,22 @@ def Qtunneling(barrier, width, momentum):
 
     mongo.set_collection('tunneling')
 
-    parameters = {'momentum': momentum, 'barrier': barrier, 'width': width}
-    print(f'parameters: {parameters}')
+    parameters = {'barrier': barrier, 'width': width, 'momentum': momentum }
 
     tunneling_model = mongo.get(parameters)
-    if tunneling_model:
-        return tunneling_model
-    else:
-        return jsonify({'error': 'Model not found'}), 404
+    if not tunneling_model:
+        plt.close('all')
+        plt.switch_backend('Agg')
+
+        print('Calculating tunneling')
+        animator = i_ani(i_wp(barrier_height=barrier, barrier_width=width, k0=momentum))
+        
+        print('Modeling tunneling')
+        tunneling_model = animator.animate3D()
+
+        print(f'Uploading tunneling model with parameters {parameters} to MongoDB')
+        mongo.upload_model(parameters, tunneling_model)
+    return tunneling_model
 
 
 @app.route('/receive_data/interference/<spacing>/<slit_separation>/<int:momentum>', methods=['GET'])
@@ -52,12 +61,21 @@ def Qinterference(spacing, slit_separation, momentum):
 
     mongo.set_collection('interference')
     
-    parameters = {'momentum': momentum, 'spacing': spacing, 'slit_separation': slit_separation}
+    parameters = {'spacing': spacing, 'slit_separation': slit_separation, 'momentum': momentum, }
     interference_model = mongo.get(parameters)
-    if interference_model:
-        return interference_model
-    else:
-        return jsonify({'error': 'Model not found'}), 404
+    if not interference_model:
+        plt.close('all')
+        plt.switch_backend('Agg')
+
+        print('Calculating interference')
+        animator = i_ani(i_wp(slit_space=spacing, slit_sep=slit_separation, k0=momentum))
+        
+        print('Modeling interference')
+        interference_model = animator.animate3D()
+
+        print(f'Uploading interference model with parameters {parameters} to MongoDB')
+        mongo.upload_model(parameters, interference_model)
+    return interference_model
 
 @app.route('/receive_data/evotrace/<int:gate>/<int:init_state>/<int:mag>/<t2>', methods=['GET'])
 def Qtrace(gate, init_state, mag, t2):

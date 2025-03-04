@@ -14,7 +14,6 @@ parent = os.path.dirname(current)
 sys.path.append(parent)
 from db import MongoConnector
 
-
 def calculate_center_of_mass(x, psi):
     density = np.abs(psi)**2
     total_density = np.sum(density)
@@ -130,7 +129,7 @@ class Wave_Packet3D:
 class Animator3D:
     def __init__(self, wave_packet):
         self.wave_packet = wave_packet
-        self.fig = plt.figure(figsize=(6.5, 5.5))
+        self.fig = plt.figure(figsize=(6, 5))
         self.ax = self.fig.add_subplot(111, xlim=(0, self.wave_packet.L), ylim=(0, self.wave_packet.L))
 
         self.img = self.ax.imshow(self.wave_packet.probs[0], extent=[0, self.wave_packet.L, 0, self.wave_packet.L],
@@ -154,6 +153,8 @@ class Animator3D:
         self.ax.add_patch(wall_bottom)
         self.ax.add_patch(wall_middle)
         self.ax.add_patch(wall_top)
+
+        self.fig.tight_layout(pad=1)
 
     def update(self, i):
         self.img.set_data(self.wave_packet.probs[i])
@@ -181,7 +182,7 @@ if __name__ == "__main__":
     wave_packet = Wave_Packet3D(slit_space=1, slit_sep=1, k0=2)
     animator = Animator3D(wave_packet)
 
-    parameters = {'momentum': wave_packet.k0, 'spacing': wave_packet.a, 'slit_separation': wave_packet.s}
+    parameters = {'momentum': float(wave_packet.k0), 'spacing': float(wave_packet.a), 'slit_separation': float(wave_packet.s)}
     mongo.set_collection('interference')
     
     start_time = time.time()

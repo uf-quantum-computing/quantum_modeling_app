@@ -122,11 +122,11 @@ class Animator3D:
     def __init__(self, wave_packet):
         self.wave_packet = wave_packet
         self.x_ticks = np.linspace(0, self.wave_packet.L, self.wave_packet.Nx - 2)
-        self.fig = plt.figure(figsize=(9, 4))
+        self.fig = plt.figure(figsize=(6, 3))
         self.ax_top = self.fig.add_subplot(121, xlim=(0, self.wave_packet.L), ylim=(0, self.wave_packet.L))
 
         self.img_top = self.ax_top.imshow(self.wave_packet.probs[0], extent=[0, self.wave_packet.L, 0, self.wave_packet.L],
-                                          cmap=plt.get_cmap("hot"), vmin=0, vmax=np.max(self.wave_packet.probs), zorder=1)
+                                          cmap=plt.get_cmap("hot"), vmin=0, vmax=np.max(self.wave_packet.probs), zorder=0)
         self.colorbar = self.fig.colorbar(self.img_top, ax=self.ax_top, orientation='vertical', fraction=.1, pad=0.05)
         self.ax_top.set_xlabel('X Position (nm)')
         self.ax_top.set_ylabel('Y Position (nm)')
@@ -153,6 +153,9 @@ class Animator3D:
         self.ax_front.set_ylabel('Probability Density')
         self.ax_front.text(0.5, 1.05, 'Front View', transform=self.ax_front.transAxes, ha='center')
 
+        self.fig.tight_layout(pad=1)
+        self.fig.subplots_adjust(wspace=0.5)
+
     def update(self, i):
         self.img_top.set_data(self.wave_packet.probs[i])  # Fill img_top with the modulus data of the wave function.
         self.img_top.set_zorder(1)
@@ -165,7 +168,7 @@ class Animator3D:
         anim = FuncAnimation(self.fig, self.update, interval=1, frames=np.arange(0, self.wave_packet.Nt - 100, 10), repeat=False, blit=0)
         anim_js = anim.to_jshtml(fps=30)
 
-        ## No longer need to save the file locally
+        ## Uncomment to save file locally
         # path = os.path.abspath(os.path.join(f"quantum_app_backend/cache/tunneling/probs_{self.wave_packet.k0}_{self.wave_packet.v_max}_{self.wave_packet.w}_3D.html"))
         
         # if not Path(path).exists():
@@ -178,10 +181,10 @@ class Animator3D:
 # Driver to upload tunneling models to MongoDB
 if __name__ == "__main__":
     mongo = MongoConnector()
-    wave_packet = Wave_Packet3D(barrier_width=1, barrier_height=3, k0=2)
+    wave_packet = Wave_Packet3D(barrier_width=1.0, barrier_height=3.0, k0=2.0)
     animator = Animator3D(wave_packet)
 
-    parameters = {'momentum': wave_packet.k0, 'barrier': wave_packet.v_max, 'width': wave_packet.w}
+    parameters = {'momentum': float(wave_packet.k0), 'barrier': float(wave_packet.v_max), 'width': float(wave_packet.w)}
     mongo.set_collection('tunneling')
 
     start_time = time.time()
