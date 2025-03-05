@@ -283,7 +283,7 @@ return (
                     
                     {/* ====== Spacing Slider ====== */}
                     <FormControl variant="filled">
-                      <InputLabel id="spacing-label" style={{ marginTop: "5%" }}>
+                      <InputLabel id="spacing-label" style={{color: "black", marginTop: "10px" }}>
                         Spacing
                       </InputLabel>
                       <Slider
@@ -302,7 +302,7 @@ return (
 
                     {/* ====== Slit Seperation Slider ====== */}
                     <FormControl variant="filled">
-                      <InputLabel id="slitSep-label" style={{ marginTop: "5%" }}>
+                      <InputLabel id="slitSep-label" style={{color: "black", marginTop: "10px" }}>
                         Slit Separation
                       </InputLabel>
                       <Slider
@@ -320,7 +320,7 @@ return (
                     </FormControl>
 
                     <FormControl variant="filled">
-                      <InputLabel id="wave-label" style={{ marginTop: "5%" }}>
+                      <InputLabel id="wave-label" style={{color: "black", marginTop: "10px" }}>
                         Wave
                       </InputLabel>
                       <Slider
