@@ -54,7 +54,7 @@ const Interference = () => {
   const [spacingSliderMoved, setSpacingSliderMoved] = useState(false);
   const [slitSepSliderMoved, setSlitSepSliderMoved] = useState(false);
   const [waveSliderMoved, setWaveSliderMoved] = useState(false);
-  const [snackbarMsg, setSnackbarMessage] = useState("Default interference model generated!");
+  const [snackbarMsg, setSnackbarMessage] = useState("");
   const [severity, setSeverity] = useState<AlertProps['severity']>('success');
   const [openSnackBar, setOpenSnackbar] = useState(false);
 
@@ -113,7 +113,7 @@ const Interference = () => {
   }, [animationJsHtml]);
 
   useEffect(() => {
-    if (snackbarMsg) {
+    if (snackbarMsg !== "") {
       setOpenSnackbar(true);
     }
   }, [snackbarMsg]);
