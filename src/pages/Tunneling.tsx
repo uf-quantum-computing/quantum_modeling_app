@@ -47,7 +47,7 @@ const Tunneling = () => {
   const [barrierSliderMoved, setBarrierSliderMoved] = useState(false);
   const [thicknessSliderMoved, setThicknessSliderMoved] = useState(false);
   const [waveSliderMoved, setWaveSliderMoved] = useState(false);
-  const [snackbar_msg, setSnackbarMessage] = useState("Default tunneling model generated!");
+  const [snackbar_msg, setSnackbarMessage] = useState("");
   const [severity, setSeverity] = useState<AlertProps['severity']>('success');
   const [openSnackBar, setOpenSnackbar] = useState(false);
 
@@ -105,7 +105,7 @@ const Tunneling = () => {
   }, [animationJsHtml]);
 
   useEffect(() => {
-    if (snackbar_msg) {
+    if (snackbar_msg !== "") {
       setOpenSnackbar(true);
     }
   }, [snackbar_msg]);
@@ -433,15 +433,15 @@ const Tunneling = () => {
       </Snackbar>
         </Card>
         <Snackbar
-                      open={openSnackBar}
-                      autoHideDuration={6000}
-                      onClose={() => setOpenSnackbar(false)}
-                      anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-                    >
-                      <Alert onClose={() => setOpenSnackbar(false)} severity={severity}>
-                        {snackbar_msg}
-                      </Alert>
-                    </Snackbar>
+          open={openSnackBar}
+          autoHideDuration={6000}
+          onClose={() => setOpenSnackbar(false)}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+          >
+          <Alert onClose={() => setOpenSnackbar(false)} severity={severity}>
+            {snackbar_msg}
+          </Alert>
+        </Snackbar>
       </Content>
     </Layout>
   );
