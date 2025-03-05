@@ -204,7 +204,7 @@ const SpinTraceEvolution = () => {
     const divHeight = animationDivRef.current.offsetHeight || 400; 
 
     // Calculate scale based on both width and height constraints
-    const widthScale = (flexWidth - 300) / 1200;
+    const widthScale = (flexWidth) / 1200;
     const heightScale = flexHeight / 700; // Assuming 700 is the original height of animation
 
     const newScale = Math.min(widthScale, heightScale); // Ensure it doesn't exceed the box height
@@ -400,7 +400,7 @@ return (
               <style>
                 {`
                   .animation {
-                    transform-origin: center left;
+                    transform-origin: center center;
                     scale: ${scale};  
                   }
                 `}
