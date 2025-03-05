@@ -270,10 +270,12 @@ const Tunneling = () => {
                 {/* ====== Barrier Slider ====== */}
                 <FormControl variant="filled">
                   <InputLabel id="barrier-select" style={{ color: "black", marginTop: "10px"}}>
-                    Barrier
+                    <Typography variant="body1" color="black" align="right">
+                      Barrier (eV)
+                    </Typography>
                   </InputLabel>
                   <Slider
-                    sx={{ color: "#063970" }}
+                    sx={{ color: isAdvanced ? "darkred" : "#063970" }}
                     aria-label="barrier-select"
                     value={barrier}
                     onChange={handleBarrier}
@@ -282,18 +284,17 @@ const Tunneling = () => {
                     step={1}
                     valueLabelDisplay="auto"
                   />
-                  <Typography variant="body2" color="black" align="right">
-                    (eV)
-                  </Typography>
                 </FormControl>
 
                 {/* ====== Thickness Slider ====== */}
                 <FormControl variant="filled">
                   <InputLabel id="thickness-select" style={{ color: "black", marginTop: "10px"}}>
-                    Thickness
+                    <Typography variant="body1" color="black" align="right">
+                      Thickness (nm)
+                    </Typography>
                   </InputLabel>
                   <Slider
-                    sx={{ color: "#063970", alignContent: "center" }}
+                    sx={{ color: isAdvanced ? "darkred" : "#063970"}}
                     aria-label="thickness-select"
                     value={thickness}
                     onChange={handleThickness}
@@ -302,18 +303,17 @@ const Tunneling = () => {
                     step={isAdvanced ? 0.5 : 1} // Beginner step: 1, Advanced step: 0.5
                     valueLabelDisplay="auto"
                   />
-                  <Typography variant="body2" color="black" align="right">
-                    (nm)
-                  </Typography>
                 </FormControl>
 
                 {/* ====== Wave Number k Slider ====== */}
                 <FormControl variant="filled">
                   <InputLabel id="wave-select" style={{ color: "black", marginTop: "10px" }}>
-                    Wave number k
+                    <Typography variant="body1" color="black" align="right">
+                      Wave number k (nm)<sup>-1</sup>
+                    </Typography>
                   </InputLabel>
                   <Slider
-                    sx={{ color: "#063970" }}
+                    sx={{ color: isAdvanced ? "darkred" : "#063970" }}
                     aria-label="wave-select"
                     value={wave}
                     onChange={handleWave}
@@ -322,9 +322,6 @@ const Tunneling = () => {
                     step={1}
                     valueLabelDisplay="auto"
                   />
-                  <Typography variant="body2" color="black" align="right">
-                    (nm)<sup>-1</sup>
-                  </Typography>
                 </FormControl>
 
                 {/* ====== Submit Button ====== */}
@@ -333,10 +330,11 @@ const Tunneling = () => {
                     <CircularProgress />
                   </Box>
                 ) : (
-                  <Button variant="contained" onClick={handleSubmit} type="submit" color="success">
+                  <Button variant="contained" onClick={handleSubmit} type="submit" color="success" style={{ marginTop: "40px" }}>
                     Generate Model
                   </Button>
                 )}
+
                 {/* Toggle Switch */}
                 <FormControlLabel
                   control={

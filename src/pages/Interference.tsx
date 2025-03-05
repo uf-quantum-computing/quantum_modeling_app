@@ -290,17 +290,15 @@ return (
                         Spacing
                       </InputLabel>
                       <Slider
+                        sx={{ color: isAdvanced ? "darkred" : "#063970" }}
                         aria-label="spacing"
-                        defaultValue={0.6}
+                        defaultValue={0.5}
                         valueLabelDisplay="auto"
-                        step={0.1}
+                        step={isAdvanced ? 0.1 : 0.4}
                         min={0.1}
                         max={1}
                         onChange={handleSpacing}
-                        sx={{ color: "#063970" }}/>
-                      {/* <Typography variant="body2" color="black" align="right">
-                        (eV)
-                      </Typography> */}
+                        />
                     </FormControl>
 
                     {/* ====== Slit Seperation Slider ====== */}
@@ -309,17 +307,15 @@ return (
                         Slit Separation
                       </InputLabel>
                       <Slider
+                        sx={{ color: isAdvanced ? "darkred" : "#063970" }}
                         aria-label="slitSep"
-                        defaultValue={0.6}
+                        defaultValue={0.5}
                         valueLabelDisplay="auto"
-                        step={0.1}
+                        step={isAdvanced ? 0.1 : 0.5}
                         min={0.1}
                         max={1}
                         onChange={handleSlitSep}
-                        sx={{ color: "#063970" }}/>
-                      {/* <Typography variant="body2" color="black" align="right">
-                        (nm)
-                      </Typography> */}
+                        />
                     </FormControl>
 
                     <FormControl variant="filled">
@@ -327,17 +323,15 @@ return (
                         Wave
                       </InputLabel>
                       <Slider
+                        sx={{ color: isAdvanced ? "darkred" : "#063970" }}
                         aria-label="wave"
                         defaultValue={1}
                         valueLabelDisplay="auto"
                         step={1}
                         min={1}
-                        max={5}
+                        max={isAdvanced ? 5 : 10}
                         onChange={handleWave}
-                        sx={{ color: "#063970" }}/>
-                      {/* <Typography variant="body2" color="black" align="right">
-                        (nm)<sup>-1</sup>
-                      </Typography> */}
+                        />
                     </FormControl>
 
                     {/* ====== Submit Button ====== */}
@@ -346,7 +340,7 @@ return (
                         <CircularProgress />
                       </Box>
                     ) : (
-                      <Button variant="contained" onClick={handleSubmit} type="submit" color="success">
+                      <Button variant="contained" onClick={handleSubmit} type="submit" color="success" style={{marginTop: "40px"}}>
                         Generate Model
                       </Button>
                     )}
