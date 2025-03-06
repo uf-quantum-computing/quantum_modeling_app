@@ -187,15 +187,6 @@ const Tunneling = () => {
       setLoading(true);
       const gifData = await getGifFromServer(final_url);
       if (gifData) {
-        setSnackbarMessage(
-          "Tunneling model generated with barrier = " +
-            barrier_str +
-            ", thickness = " +
-            thickness_str +
-            ", and wave = " +
-            wave_str +
-            "!"
-        );
         setSeverity('success');
       }
       else {
