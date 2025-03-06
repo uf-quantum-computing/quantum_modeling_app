@@ -60,5 +60,31 @@
         "title": "Try it out!",
         "msg": "Now it’s your turn to explore! In this experiment, you can adjust the magnetic field and see how it affects the spin of a qubit. Watch how the qubit’s spin changes on the Bloch sphere. Can you find the right amount of spin for the quantum gate?"
         }
+    ],
+    "quantumFourierTransform": [
+        {
+        "title": "The Fourier Transform",
+        "msg": "The Fourier transform is a powerful mathematical tool with applications in many areas, including signal processing and image compression. It is based on the idea that any periodic function can be represented as a series of sine and cosine waves of varying frequencies. It allows us to determine the amplitude of each of the frequencies that make up a complete waveform."
+        },
+        {
+        "title": "Waves",
+        "msg": "Waves are all around us, in the form of sound waves, light waves, or even matter waves (in fact, in quantum mechanics, the position and momentum of a particle are related by the Fourier transform). If you have used any device which uses WiFi (which sends information using electromagnetic waves) today, you have used the Fourier transform."
+        },
+        {
+        "title": "An analogy",
+        "msg": "Imagine that you are in a crowded room where there are lots of people talking at once. Although the overall sound is chaotic and unintelligible, you know that it is made up of many people's voices blended together. The Fourier transform tells us how loudly each person needs to be talking to create the overall sound you hear."
+        },
+        {
+        "title": "The Discrete Fourier Transform and Quantum Fourier Transform",
+        "msg": "Most real-world applications of the Fourier transform utilize an optimized version of the discrete Fourier transform (DFT). Instead of taking a continuous waveform as input, the DFT takes a set of sample points. The Quantum Fourier transform adapts the DFT for quantum computers, representing these sample points using qubits and performing the necessary mathematical operations on them using quantum gates. The QFT is an essential component of other quantum algorithms such as Shor's algorithm."
+        },
+        {
+        "title": "The Quantum Fourier transform",
+        "msg": "The QFT implements the DFT using a series of Hadamard and phase shift gates, represented as matrices. These gates transform the qubits from a state representing the sample points that were input to a state representing the Fourier transform."
+        },
+        {
+        "title": "Try it out!",
+        "msg": "Input an initial state and watch how the qubits transform as each quantum gate is applied."
+        }
     ]
 }
