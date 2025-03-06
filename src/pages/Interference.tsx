@@ -204,15 +204,6 @@ const Interference = () => {
       setLoading(true);
       const gifData = await getGifFromServer(final_url);
       if (gifData) {
-        setSnackbarMessage(
-          "Interference model generated with barrier = " +
-            spacing_str +
-            ", thickness = " +
-            slit_separation_str +
-            ", and wave = " +
-            wave_str +
-            "!"
-        );
         setSeverity('success');
       }
       else {
