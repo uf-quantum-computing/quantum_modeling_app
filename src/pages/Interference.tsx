@@ -284,7 +284,9 @@ return (
                     {/* ====== Spacing Slider ====== */}
                     <FormControl variant="filled">
                       <InputLabel id="spacing-label" style={{color: "black", marginTop: "10px" }}>
-                        Spacing
+                        <Typography variant="body1" color="black" align="right">
+                          Spacing (nm)
+                        </Typography>
                       </InputLabel>
                       <Slider
                         sx={{ color: isAdvanced ? "darkred" : "#063970" }}
@@ -301,7 +303,9 @@ return (
                     {/* ====== Slit Seperation Slider ====== */}
                     <FormControl variant="filled">
                       <InputLabel id="slitSep-label" style={{color: "black", marginTop: "10px" }}>
-                        Slit Separation
+                        <Typography variant="body1" color="black" align="right">
+                          Slit Seperation (nm)
+                        </Typography>
                       </InputLabel>
                       <Slider
                         sx={{ color: isAdvanced ? "darkred" : "#063970" }}
@@ -317,7 +321,9 @@ return (
 
                     <FormControl variant="filled">
                       <InputLabel id="wave-label" style={{color: "black", marginTop: "10px" }}>
-                        Wave
+                        <Typography variant="body1" color="black" align="right">
+                          Wave number k (nm)<sup>-1</sup>
+                        </Typography>
                       </InputLabel>
                       <Slider
                         sx={{ color: isAdvanced ? "darkred" : "#063970" }}
