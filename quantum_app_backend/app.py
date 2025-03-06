@@ -40,6 +40,21 @@ logger.addHandler(file_handler)
 logger.addHandler(console_handler)
 logger.setLevel(logging.DEBUG)
 
+# Add this after the logger setup
+class SocketHandler(logging.Handler):
+    def __init__(self, socketio):
+        super().__init__()
+        self.socketio = socketio
+        # No need for formatter since we're only using the message
+
+    def emit(self, record):
+        try:
+            # Only emit INFO level and above to avoid flooding the client
+            if record.levelno >= logging.INFO:
+                self.socketio.emit('status_update', {'message': record.getMessage()})
+        except Exception:
+            self.handleError(record)
+
 # Error handling decorator
 def handle_errors(f):
     @wraps(f)
@@ -64,11 +79,13 @@ app = Flask(__name__)
 api.init_app(app)
 CORS(app, resources={r"/*": {"origins": "*"}})
 socketio = SocketIO(app, cors_allowed_origins="*")
+socket_handler = SocketHandler(socketio)
+socket_handler.setLevel(logging.INFO)
+logger.addHandler(socket_handler)
 mongo = MongoConnector()
 
 def emit_status(message):
-    logger.info(f"Status update: {message}")
-    socketio.emit('status_update', {'message': message})
+    logger.info(message)
 
 @app.route('/receive_data/tunneling/<barrier>/<width>/<momentum>', methods=['GET'])
 @handle_errors
@@ -81,7 +98,7 @@ def Qtunneling(barrier, width, momentum):
         logger.error(f"Invalid parameters: {str(e)}")
         return jsonify({"error": "Invalid parameters"}), 400
 
-    logger.info(f"Tunneling request - barrier: {barrier}, width: {width}, momentum: {momentum}")
+    logger.debug(f"Tunneling request - barrier: {barrier}, width: {width}, momentum: {momentum}")
     
     t_collection = mongo.collection('tunneling')
     parameters = {'barrier': barrier, 'width': width, 'momentum': momentum}
@@ -120,7 +137,7 @@ def Qinterference(spacing, slit_separation, momentum):
         logger.error(f"Invalid parameters: {str(e)}")
         return jsonify({"error": "Invalid parameters"}), 400
 
-    logger.info(f"Interference request - spacing: {spacing}, slit_separation: {slit_separation}, momentum: {momentum}")
+    logger.debug(f"Interference request - spacing: {spacing}, slit_separation: {slit_separation}, momentum: {momentum}")
     
     i_collection = mongo.collection('interference')
     parameters = {'spacing': spacing, 'slit_separation': slit_separation, 'momentum': momentum}
@@ -128,15 +145,12 @@ def Qinterference(spacing, slit_separation, momentum):
     try:
         interference_model = mongo.get(i_collection, parameters)
         if not interference_model:
-            emit_status('Generating interference model...')
             plt.close('all')
             plt.switch_backend('Agg')
 
-            emit_status('Calculating interference model...')
             animator = i_ani(i_wp(slit_space=spacing, slit_sep=slit_separation, k0=momentum))
-            
-            emit_status('Animating interference model...')
             interference_model = animator.animate3D()
+
             socketio.start_background_task(mongo.upload, i_collection, parameters, interference_model)
             logger.info(f"Generated new interference model with parameters: {parameters}")
         else:
@@ -149,7 +163,7 @@ def Qinterference(spacing, slit_separation, momentum):
 @app.route('/receive_data/evotrace/<int:gate>/<int:init_state>/<int:mag>/<t2>', methods=['GET'])
 def Qtrace(gate, init_state, mag, t2):
     t2 = float(t2)
-    emit_status("You evoked the API successfully")
+    emit_status("Calculating...")
     plt.close('all')
     plt.switch_backend('Agg')
 
@@ -171,13 +185,11 @@ def handle_connect():
 
 @socketio.on('disconnect')
 def handle_disconnect():
-    logger.info("Client disconnected")
-    emit_status('Client disconnected')
+    logger.debug("Client disconnected")
 
 @socketio.on('message')
 def handle_message(data):
     logger.info(f"Received message: {data}")
-    print(f"{data}")
 
 if __name__ == '__main__':
     app.debug = True
