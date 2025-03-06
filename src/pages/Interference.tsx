@@ -22,7 +22,8 @@ import CircularProgress from '@mui/joy/CircularProgress';
 import { Layout } from "antd";
 import "antd/dist/antd.min.css";
 import host from "../setup/host";
-
+import { Socket } from "socket.io-client";
+import io from "socket.io-client";
 // === Custom Components ===
 import {
   Dashboard,
@@ -39,6 +40,9 @@ const horizontal_center = {
 
 // === sub component imports ===
 const { Sider, Content } = Layout;
+interface StatusUpdate {
+  message: string;
+}
 
 // ========================================================
 const Interference = () => {
@@ -57,6 +61,36 @@ const Interference = () => {
   const [snackbarMsg, setSnackbarMessage] = useState("");
   const [severity, setSeverity] = useState<AlertProps['severity']>('success');
   const [openSnackBar, setOpenSnackbar] = useState(false);
+
+    // ========= socket connection =========
+    useEffect(() => {
+      const socket = io(host);
+  
+      socket.on('connect', () => {
+        console.log('Connected to server');
+      });
+  
+      socket.on('connect_error', (error: any) => {
+        console.error('Connection error:', error);
+        setSnackbarMessage('Failed to connect to server');
+        setSeverity('error');
+        setOpenSnackbar(true);
+      });
+  
+      socket.on('status_update', (data: StatusUpdate) => {
+        setSnackbarMessage(data.message);
+        setSeverity('info');
+        setOpenSnackbar(true);
+      });
+  
+      socket.on('disconnect', () => {
+        console.log('Disconnected from server');
+      });
+  
+      return () => {
+        socket.disconnect();
+      };
+    }, []);
 
   // ========= handle functions =========
   async function getGifFromServer(request_url: string) {
@@ -179,10 +213,11 @@ const Interference = () => {
             wave_str +
             "!"
         );
-        
+        setSeverity('success');
       }
       else {
         setSnackbarMessage("Failed to generate model.");
+        setSeverity('error');
       }
       setLoading(false);
       setSpacingSliderMoved(false);
@@ -392,7 +427,6 @@ return (
             </Card>
             <Snackbar
               open={openSnackBar}
-              autoHideDuration={6000}
               onClose={() => setOpenSnackbar(false)}
               anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
             >
