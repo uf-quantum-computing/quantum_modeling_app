@@ -41,7 +41,7 @@ def Qtunneling(barrier, width, momentum):
         plt.switch_backend('Agg')
 
         print('Calculating tunneling')
-        animator = i_ani(i_wp(barrier_height=barrier, barrier_width=width, k0=momentum))
+        animator = t_ani(t_wp(barrier_height=barrier, barrier_width=width, k0=momentum))
         
         print('Modeling tunneling')
         tunneling_model = animator.animate3D()

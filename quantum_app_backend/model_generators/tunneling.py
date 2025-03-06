@@ -122,7 +122,7 @@ class Animator3D:
     def __init__(self, wave_packet):
         self.wave_packet = wave_packet
         self.x_ticks = np.linspace(0, self.wave_packet.L, self.wave_packet.Nx - 2)
-        self.fig = plt.figure(figsize=(6, 3))
+        self.fig = plt.figure(figsize=(12, 6))
         self.ax_top = self.fig.add_subplot(121, xlim=(0, self.wave_packet.L), ylim=(0, self.wave_packet.L))
 
         self.img_top = self.ax_top.imshow(self.wave_packet.probs[0], extent=[0, self.wave_packet.L, 0, self.wave_packet.L],
@@ -154,7 +154,6 @@ class Animator3D:
         self.ax_front.text(0.5, 1.05, 'Front View', transform=self.ax_front.transAxes, ha='center')
 
         self.fig.tight_layout(pad=1)
-        self.fig.subplots_adjust(wspace=0.5)
 
     def update(self, i):
         self.img_top.set_data(self.wave_packet.probs[i])  # Fill img_top with the modulus data of the wave function.

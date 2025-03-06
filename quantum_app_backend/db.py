@@ -39,6 +39,7 @@ class MongoConnector:
         try:
             if self.collection.find({'parameters': parameters}):
                 # replace the existing document
+                print('Replacing existing document')
                 self.collection.delete_one({'parameters': parameters})
             self.collection.insert_one({'parameters': parameters, 'animation': animation.encode('utf-8')})
         except ValueError as e:
