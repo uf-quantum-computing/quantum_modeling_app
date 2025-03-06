@@ -183,12 +183,11 @@ if __name__ == "__main__":
     animator = Animator3D(wave_packet)
 
     parameters = {'momentum': float(wave_packet.k0), 'spacing': float(wave_packet.a), 'slit_separation': float(wave_packet.s)}
-    mongo.set_collection('interference')
     
     start_time = time.time()
 
     anim_js = animator.animate3D()
-    mongo.upload_model(parameters, anim_js)
+    mongo.upload(mongo.collection('interference'), parameters, anim_js)
 
     end_time = time.time()
     
