@@ -7,7 +7,50 @@ from model_generators.interference import Wave_Packet3D as i_wp, Animator3D as i
 from model_generators.Qgate1 import Qgate1
 import matplotlib.pyplot as plt
 import time
+import logging
+from logging.handlers import RotatingFileHandler
+import os
 from db import MongoConnector
+from flask_socketio import SocketIO, emit
+from functools import wraps
+
+# Set up logging
+log_dir = 'logs'
+if not os.path.exists(log_dir):
+    os.makedirs(log_dir)
+
+formatter = logging.Formatter(
+    '[%(asctime)s] %(levelname)s in %(module)s: %(message)s'
+)
+
+file_handler = RotatingFileHandler(
+    os.path.join(log_dir, 'quantum_app.log'), 
+    maxBytes=10000000,  # 10MB
+    backupCount=5
+)
+file_handler.setFormatter(formatter)
+file_handler.setLevel(logging.INFO)
+
+console_handler = logging.StreamHandler()
+console_handler.setFormatter(formatter)
+console_handler.setLevel(logging.DEBUG)
+
+logger = logging.getLogger('quantum_app')
+logger.addHandler(file_handler)
+logger.addHandler(console_handler)
+logger.setLevel(logging.DEBUG)
+
+# Error handling decorator
+def handle_errors(f):
+    @wraps(f)
+    def wrapped(*args, **kwargs):
+        try:
+            return f(*args, **kwargs)
+        except Exception as e:
+            logger.error(f"Error in {f.__name__}: {str(e)}", exc_info=True)
+            emit_status(f"An error occurred: {str(e)}")
+            return jsonify({"error": str(e)}), 500
+    return wrapped
 
 #set swagger info
 api: Api = Api(
@@ -20,67 +63,93 @@ api: Api = Api(
 app = Flask(__name__)
 api.init_app(app)
 CORS(app, resources={r"/*": {"origins": "*"}})
+socketio = SocketIO(app, cors_allowed_origins="*")
 mongo = MongoConnector()
-cache = {}
+
+def emit_status(message):
+    logger.info(f"Status update: {message}")
+    socketio.emit('status_update', {'message': message})
 
 @app.route('/receive_data/tunneling/<barrier>/<width>/<momentum>', methods=['GET'])
+@handle_errors
 def Qtunneling(barrier, width, momentum):
-    print("You evoked the tunneling API successfully")
+    try:
+        barrier = float(barrier)
+        width = float(width)
+        momentum = float(momentum)
+    except ValueError as e:
+        logger.error(f"Invalid parameters: {str(e)}")
+        return jsonify({"error": "Invalid parameters"}), 400
+
+    logger.info(f"Tunneling request - barrier: {barrier}, width: {width}, momentum: {momentum}")
     
-    barrier = float(barrier)
-    width = float(width)
-    momentum = float(momentum)
-
     t_collection = mongo.collection('tunneling')
+    parameters = {'barrier': barrier, 'width': width, 'momentum': momentum}
 
-    parameters = {'barrier': barrier, 'width': width, 'momentum': momentum }
+    try:
+        tunneling_model = mongo.get(t_collection, parameters)
+        if not tunneling_model:
+            emit_status('Generating tunneling model...')
+            plt.close('all')
+            plt.switch_backend('Agg')
 
-    tunneling_model = mongo.get(t_collection, parameters)
-    if not tunneling_model:
-        plt.close('all')
-        plt.switch_backend('Agg')
-
-        print('Calculating tunneling')
-        animator = t_ani(t_wp(barrier_height=barrier, barrier_width=width, k0=momentum))
-        
-        print('Modeling tunneling')
-        tunneling_model = animator.animate3D()
-
-        print(f'Uploading tunneling model with parameters {parameters} to MongoDB')
-        mongo.upload(t_collection, parameters, tunneling_model)
-    return tunneling_model
-
+            emit_status('Calculating tunneling model...')
+            animator = t_ani(t_wp(barrier_height=barrier, barrier_width=width, k0=momentum))
+            
+            emit_status('Animating tunneling model...')
+            tunneling_model = animator.animate3D()
+            
+            # Upload to MongoDB asynchronously after returning response
+            socketio.start_background_task(mongo.upload, t_collection, parameters, tunneling_model)
+            logger.info(f"Generated new tunneling model with parameters: {parameters}")
+        else:
+            logger.info(f"Retrieved existing tunneling model with parameters: {parameters}")
+        return tunneling_model
+    except Exception as e:
+        logger.error(f"Error generating tunneling model: {str(e)}", exc_info=True)
+        raise
 
 @app.route('/receive_data/interference/<spacing>/<slit_separation>/<int:momentum>', methods=['GET'])
+@handle_errors
 def Qinterference(spacing, slit_separation, momentum):
-    print("You evoked the interference API successfully")
+    try:
+        momentum = float(momentum)
+        spacing = float(spacing)
+        slit_separation = float(slit_separation)
+    except ValueError as e:
+        logger.error(f"Invalid parameters: {str(e)}")
+        return jsonify({"error": "Invalid parameters"}), 400
 
-    momentum = float(momentum)
-    spacing = float(spacing)
-    slit_separation = float(slit_separation)
-
-    i_collection = mongo.collection('interference')
+    logger.info(f"Interference request - spacing: {spacing}, slit_separation: {slit_separation}, momentum: {momentum}")
     
-    parameters = {'spacing': spacing, 'slit_separation': slit_separation, 'momentum': momentum, }
-    interference_model = mongo.get(i_collection, parameters)
-    if not interference_model:
-        plt.close('all')
-        plt.switch_backend('Agg')
+    i_collection = mongo.collection('interference')
+    parameters = {'spacing': spacing, 'slit_separation': slit_separation, 'momentum': momentum}
 
-        print('Calculating interference')
-        animator = i_ani(i_wp(slit_space=spacing, slit_sep=slit_separation, k0=momentum))
-        
-        print('Modeling interference')
-        interference_model = animator.animate3D()
+    try:
+        interference_model = mongo.get(i_collection, parameters)
+        if not interference_model:
+            emit_status('Generating interference model...')
+            plt.close('all')
+            plt.switch_backend('Agg')
 
-        print(f'Uploading interference model with parameters {parameters} to MongoDB')
-        mongo.upload(i_collection, parameters, interference_model)
-    return interference_model
+            emit_status('Calculating interference model...')
+            animator = i_ani(i_wp(slit_space=spacing, slit_sep=slit_separation, k0=momentum))
+            
+            emit_status('Animating interference model...')
+            interference_model = animator.animate3D()
+            socketio.start_background_task(mongo.upload, i_collection, parameters, interference_model)
+            logger.info(f"Generated new interference model with parameters: {parameters}")
+        else:
+            logger.info(f"Retrieved existing interference model with parameters: {parameters}")
+        return interference_model
+    except Exception as e:
+        logger.error(f"Error generating interference model: {str(e)}", exc_info=True)
+        raise
 
 @app.route('/receive_data/evotrace/<int:gate>/<int:init_state>/<int:mag>/<t2>', methods=['GET'])
 def Qtrace(gate, init_state, mag, t2):
     t2 = float(t2)
-    print("You evoked the API successfully")
+    emit_status("You evoked the API successfully")
     plt.close('all')
     plt.switch_backend('Agg')
 
@@ -94,8 +163,23 @@ def Qtrace(gate, init_state, mag, t2):
     print(f"Elapsed 3D generator time: {elapsed_time} seconds")
 
     return {'GifRes': GifRes}
-    
+
+@socketio.on('connect')
+def handle_connect():
+    logger.info("Client connected")
+    emit('status_update', {'message': 'Connected to quantum model generator server'})
+
+@socketio.on('disconnect')
+def handle_disconnect():
+    logger.info("Client disconnected")
+    emit_status('Client disconnected')
+
+@socketio.on('message')
+def handle_message(data):
+    logger.info(f"Received message: {data}")
+    print(f"{data}")
+
 if __name__ == '__main__':
     app.debug = True
-    #run backend server at port 3001
-    app.run(host="0.0.0.0", port=3001, threaded=False, debug=True)
+    logger.info("Starting quantum modeling server")
+    socketio.run(app, host="0.0.0.0", port=3001, debug=True)
