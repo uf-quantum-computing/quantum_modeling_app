@@ -70,6 +70,10 @@ export default function Dashboard() {
           {" "}
           Spin Trace Evolution{" "}
         </MenuItem>
+        <MenuItem component={Link} to="/qft">
+          {" "}
+          Quantum Fourier Transform{" "}
+        </MenuItem>
       </Menu>
     </div>
   );

@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { Card, CardContent, Typography, Box, List, ListItem } from "@mui/material";
+import { Card, CardContent, Typography, Box } from "@mui/material";
 import ReactMarkdown from "react-markdown";
 import data from '../data/content.json';
 
