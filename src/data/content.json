@@ -61,7 +61,7 @@
         "msg": "Now it’s your turn to explore! In this experiment, you can adjust the magnetic field and see how it affects the spin of a qubit. Watch how the qubit’s spin changes on the Bloch sphere. Can you find the right amount of spin for the quantum gate?"
         }
     ],
-    "quantumFourierTransform": [
+    "qft": [
         {
         "title": "The Fourier Transform",
         "msg": "The Fourier transform is a powerful mathematical tool with applications in many areas, including signal processing and image compression. It is based on the idea that any periodic function can be represented as a series of sine and cosine waves of varying frequencies. It allows us to determine the amplitude of each of the frequencies that make up a complete waveform."

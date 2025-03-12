@@ -34,6 +34,7 @@ const Navbar: React.FC = () => {
                 <Link to="/tunneling">Tunneling</Link>
                 <Link to="/interference">Interference</Link>
                 <Link to="/spintraceevo">Spin Trace Evolution</Link>
+                <Link to="/qft">Quantum Fourier Transform</Link>
             </div>
         </nav>
     );
