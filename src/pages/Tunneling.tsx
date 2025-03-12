@@ -19,6 +19,8 @@ import {
 import { Layout } from "antd";
 import "antd/dist/antd.min.css";
 import host from "../setup/host";
+import { Socket } from "socket.io-client";
+import io from "socket.io-client";
 
 // === Custom Components ===
 import {
@@ -36,6 +38,10 @@ const horizontal_center = {
   justifyContent: "center",
 };
 
+interface StatusUpdate {
+  message: string;
+}
+
 const Tunneling = () => {
   // ========= states =========
   const [loading, setLoading] = useState(false);
@@ -52,6 +58,36 @@ const Tunneling = () => {
   const [snackbar_msg, setSnackbarMessage] = useState("");
   const [severity, setSeverity] = useState<AlertProps['severity']>('success');
   const [openSnackBar, setOpenSnackbar] = useState(false);
+
+  // ========= socket connection =========
+  useEffect(() => {
+    const socket = io(host);
+
+    socket.on('connect', () => {
+      console.log('Connected to server');
+    });
+
+    socket.on('connect_error', (error: any) => {
+      console.error('Connection error:', error);
+      setSnackbarMessage('Failed to connect to server');
+      setSeverity('error');
+      setOpenSnackbar(true);
+    });
+
+    socket.on('status_update', (data: StatusUpdate) => {
+      setSnackbarMessage(data.message);
+      setSeverity('info');
+      setOpenSnackbar(true);
+    });
+
+    socket.on('disconnect', () => {
+      console.log('Disconnected from server');
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
 
   // ========= handle functions =========
   async function getGifFromServer(request_url: string) {
@@ -154,18 +190,11 @@ const Tunneling = () => {
       setLoading(true);
       const gifData = await getGifFromServer(final_url);
       if (gifData) {
-        setSnackbarMessage(
-          "Tunneling model generated with barrier = " +
-            barrier_str +
-            ", thickness = " +
-            thickness_str +
-            ", and wave = " +
-            wave_str +
-            "!"
-        );
+        setSeverity('success');
       }
       else {
         setSnackbarMessage("Failed to generate model.");
+        setSeverity('error');
       }
       setLoading(false);
       setBarrierSliderMoved(false);
@@ -377,7 +406,6 @@ const Tunneling = () => {
         </Card>
         <Snackbar
           open={openSnackBar}
-          autoHideDuration={6000}
           onClose={() => setOpenSnackbar(false)}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
           >
