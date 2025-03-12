@@ -5,7 +5,6 @@ from matplotlib.animation import FuncAnimation, ArtistAnimation
 
 import bloch
 
-
 def HadamardGateNumerical(state):
     hdmrd = np.array([[1, 1], [1, -1]]) / np.sqrt(2)
     return hdmrd.dot(state)
