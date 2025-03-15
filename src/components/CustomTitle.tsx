@@ -1,7 +1,7 @@
 import React from "react";
 import { Card } from "@mui/material";
 
-const card_style = {
+const card_style: React.CSSProperties = {
   backgroundColor: "#063970",
   boxShadow: "0 0 5px -1px rgba(0,0,0,0.2)",
   borderRadius: "8px",
@@ -9,6 +9,11 @@ const card_style = {
   alignItems: "center",
   justifyContent: "center",
   padding: "8px",
+  color: "#FFFFFF",
+  fontWeight: "bolder",
+  textAlign: "center",
+  margin: 0,
+  fontSize: 24,
 };
 
 interface CustomTitleProps {
@@ -19,19 +24,9 @@ const CustomTitle: React.FC<CustomTitleProps> = ({ pageName }) => {
   return (
     <>
       <Card style={card_style}>
-        <h2
-          style={{
-            color: "#FFFFFF",
-            fontWeight: "bolder",
-            textAlign: "center",
-            margin: 0,
-            fontSize: 24,
-          }}
-        >
-          {pageName} Model Generator
-        </h2>
+        {pageName} Model Generator
       </Card>
-      <h4
+      <p
         style={{
           color: "#000000",
           textAlign: "center",
@@ -42,7 +37,7 @@ const CustomTitle: React.FC<CustomTitleProps> = ({ pageName }) => {
       >
         Select the values for the model and click 'Generate Model' when you're
         ready!
-      </h4>
+      </p>
     </>
   );
 };

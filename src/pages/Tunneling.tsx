@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, SetStateAction } from "react";
+import { useState, useEffect, useRef } from "react";
 // === UI Components ===
 import {
   Alert,
@@ -8,13 +8,9 @@ import {
   Card,
   Checkbox,
   CircularProgress,
-  FormControl,
   FormControlLabel,
-  InputLabel,
-  Slider,
   Snackbar,
   Stack,
-  Typography,
 } from "@mui/material";
 import host from "../setup/host";
 import { Socket } from "socket.io-client";
@@ -26,14 +22,18 @@ import {
   CustomDescriptionBox,
   CustomPageHeader,  
   CustomTitle,
+  CustomSlider,
 } from "../components";
 
 // === sub component imports ===
 
-const horizontal_center = {
+const formBoxStyles = {
+  padding: "16px",
+  width: "250px",
   display: "flex",
-  // alignItems: "center",  # vertical center
+  flexDirection: "column" as const,
   justifyContent: "center",
+  alignItems: "center",
 };
 
 interface StatusUpdate {
@@ -213,7 +213,7 @@ const Tunneling = () => {
 
     // Calculate scale based on both width and height constraints
     const widthScale = (flexWidth - 300) / 1200;
-    const heightScale = flexHeight / 700; // Assuming 700 is the original height of animation
+    const heightScale = flexHeight / 500; // Assuming 700 is the original height of animation
 
     const newScale = Math.min(widthScale, heightScale); // Ensure it doesn't exceed the box height
 
@@ -248,114 +248,43 @@ const Tunneling = () => {
           {/* Left Box */}
           <Box
             component="form"
-            sx={{
-              "& > :not(style)": { m: 0.5, width: "25ch" },
-              padding: "10px",
-              width: "300px",
-              minWidth: "300px",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-            }}
-            noValidate
-            autoComplete="off"
-            style={horizontal_center}
+            style={formBoxStyles}
           >
-            <Box
-              component="form"
-              sx={{
-                "& > :not(style)": { m: 0.5, width: "25ch" },
-                padding: "20px",
-                width: "200px",
-                minWidth: "200px",
-              }}
-              noValidate
-              autoComplete="off"
-            >
-              <Stack spacing={5}>
-                
+              <Stack spacing={3}>
                 <CustomTitle pageName="Tunneling" />
 
                 {/* ====== Barrier Slider ====== */}
-                <FormControl variant="filled">
-                  <InputLabel
-                    id="barrier-select"
-                    style={{ color: "black", marginTop: "10px" }}
-                  >
-                    <Typography variant="body1" color="black" align="right">
-                      Barrier (eV)
-                    </Typography>
-                  </InputLabel>
-                  {!isAdvanced ? (
-                    <Slider
-                      sx={{ color: "#063970" }}
-                      aria-label="barrier-select"
-                      defaultValue={0}
-                      min={0}
-                      max={3}
-                      step={1}
-                      valueLabelDisplay="auto"
-                      marks
-                    />
-                  ) : (
-                    <Slider
-                      sx={{ color: "darkred" }}
-                      aria-label="barrier-select"
-                      value={barrier}
-                      onChange={handleBarrier}
-                      min={1}
-                      max={5} // Beginner: 1-3, Advanced: 1-5
-                      step={1}
-                      valueLabelDisplay="auto"
-                      marks
-                    />
-                  )}
-                </FormControl>
+                <CustomSlider 
+                  value={barrier}
+                  onChange={handleBarrier}
+                  label="Barrier (eV)"
+                  isAdvanced={isAdvanced}
+                  min={0}
+                  max={isAdvanced ? 5 : 3}
+                  step={isAdvanced ? 0.1 : 1}
+                />
 
                 {/* ====== Thickness Slider ====== */}
-                <FormControl variant="filled">
-                  <InputLabel
-                    id="thickness-select"
-                    style={{ color: "black", marginTop: "10px" }}
-                  >
-                    <Typography variant="body1" color="black" align="right">
-                      Thickness (nm)
-                    </Typography>
-                  </InputLabel>
-                  <Slider
-                    sx={{ color: isAdvanced ? "darkred" : "#063970" }}
-                    aria-label="thickness-select"
-                    value={thickness}
-                    onChange={handleThickness}
-                    min={1}
-                    max={isAdvanced ? 20 : 10} // Beginner: 1-10, Advanced: 1-20
-                    step={isAdvanced ? 0.5 : 1} // Beginner step: 1, Advanced step: 0.5
-                    valueLabelDisplay="auto"
-                  />
-                  
-                </FormControl>
+                <CustomSlider
+                  value={thickness}
+                  onChange={handleThickness}
+                  label="Thickness (nm)"
+                  isAdvanced={isAdvanced}
+                  min={1}
+                  max={isAdvanced ? 5 : 3}
+                  step={isAdvanced? 0.1 : 1}
+                />
 
                 {/* ====== Wave Number k Slider ====== */}
-                <FormControl variant="filled">
-                  <InputLabel
-                    id="wave-select"
-                    style={{ color: "black", marginTop: "10px" }}
-                  >
-                    <Typography variant="body1" color="black" align="right">
-                      Wave number k (nm)<sup>-1</sup>
-                    </Typography>
-                  </InputLabel>
-                  <Slider
-                    sx={{ color: isAdvanced ? "darkred" : "#063970" }}
-                    aria-label="wave-select"
-                    value={wave}
-                    onChange={handleWave}
-                    min={1}
-                    max={isAdvanced ? 15 : 10} // Beginner: 1-10, Advanced: 1-15
-                    step={1}
-                    valueLabelDisplay="auto"
-                  />
-                </FormControl>
+                <CustomSlider
+                  value={wave}
+                  onChange={handleWave}
+                  label={<>Wave number k (nm)<sup>-1</sup></>}
+                  isAdvanced={isAdvanced}
+                  min={1}
+                  max={isAdvanced ? 10 : 5}
+                  step={isAdvanced ? 0.1 : 1}
+                />
 
                 {/* ====== Submit Button ====== */}
                 {loading ? (
@@ -386,7 +315,6 @@ const Tunneling = () => {
                   style={{ alignSelf: "center", color: "black" }}
                 />
               </Stack>
-            </Box>
           </Box>
 
           {/* Right Box */}
