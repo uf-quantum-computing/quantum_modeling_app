@@ -1,48 +1,49 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import { Card } from "@mui/material";
 
 const card_style = {
   backgroundColor: "#063970",
-  border: "1px solid #FFFFFF",
-  margin: "2%",
   boxShadow: "0 0 5px -1px rgba(0,0,0,0.2)",
-  padding: "2%",
+  borderRadius: "8px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  padding: "8px",
 };
-// ==========================================
-// ==============  CustomTitle ==============
-// ==========================================
-const CustomTitle = ({pageName = "Quantum"}) => {
+
+interface CustomTitleProps {
+  pageName: string;
+}
+
+const CustomTitle: React.FC<CustomTitleProps> = ({ pageName }) => {
   return (
-    <div>
-      <Link to="/" style={{ textDecoration: "none" }}>
-        <Card style={card_style}>
-          <p style={{ textAlign: "center" }}>
-            <h2
-              style={{
-                color: "#FFFFFF",
-                fontWeight: "bolder",
-                paddingTop: "5%",
-                margin: 0,
-              }}
-            >
-              {pageName} Model Generator
-            </h2>
-          </p>
-        </Card>
-      </Link>
+    <>
+      <Card style={card_style}>
+        <h2
+          style={{
+            color: "#FFFFFF",
+            fontWeight: "bolder",
+            textAlign: "center",
+            margin: 0,
+            fontSize: 24,
+          }}
+        >
+          {pageName} Model Generator
+        </h2>
+      </Card>
       <h4
         style={{
           color: "#000000",
           textAlign: "center",
-          paddingTop: "3%",
-          margin: 0,
           fontSize: 16,
+          margin: 0,
+          padding: 8,
         }}
       >
-        Select the values for the model and click Generate Model when you're ready!
+        Select the values for the model and click 'Generate Model' when you're
+        ready!
       </h4>
-    </div>
+    </>
   );
 };
 
