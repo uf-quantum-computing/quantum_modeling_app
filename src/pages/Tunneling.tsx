@@ -14,21 +14,19 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { Layout } from "antd";
-import "antd/dist/antd.min.css";
 import host from "../setup/host";
 import { Socket } from "socket.io-client";
 import io from "socket.io-client";
+import "./style.css";
 
 // === Custom Components ===
 import {
   CustomDescriptionBox,
-  CustomPageHeader,
+  CustomPageHeader,  
   CustomTitle,
 } from "../components";
 
 // === sub component imports ===
-const { Content } = Layout;
 
 const horizontal_center = {
   display: "flex",
@@ -231,85 +229,17 @@ const Tunneling = () => {
 
   // ========= return =========
   return (
-    <div>
-      <Layout style={{ minHeight: "100vh" }}>
-        <Layout style={{ margin: '5%' }}>
-          <Content>
-            <CustomPageHeader text="Tunneling" size="h3"/>
-            <CustomDescriptionBox pageTitle="tunneling" />
-          </Content>
-          <Card
-      style={{
-        borderRadius: "10px",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        paddingLeft: "5%",
-      }}
-    >
-      <CardContent style={{ flex: 1, maxWidth: "80%" }}>
-      <Box
-            component="form"
-            sx={{
-              "& > :not(style)": { m: 0.5, width: "25ch" },
-            }}
-            noValidate
-            autoComplete="off"
-            style={horizontal_center}
-          >
-          <Stack spacing={5}>
-          <CustomTitle/>
-          <FormControl variant="filled">
-                <InputLabel
-                  id="barrier-select"
-                  style={{color: "black", marginTop: "10px", marginBottom: "10px", marginLeft: "8 px", textAlign: "left"}}
-                  >
-                  Barrier
-                  </InputLabel>
-                <Slider
-                  sx={{ color: "#FFFFFF" }}
-                  aria-label="barrier-select"
-                  value={barrier}
-                  onChange={handleBarrier}
-                  min={1}
-                  max={3}
-                  defaultValue={1}
-                  valueLabelDisplay="auto"
-                  step={1}
-                />
-                <Typography variant="body2" color="white" align="right" style={{ alignSelf: 'flex-end', marginRight: '0px', marginTop: '2px' }}>
-          (eV)
-                </Typography>
-              </FormControl>
-    <Layout
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Content
-        className="site-layout"
-        style={{
-          margin: "5%",
-          maxWidth: "70%",
-          minWidth: "1000px",
-        }}
-      >
+    <div className="layout">
+      <div className="content">
         {/* Title for the page */}
         <CustomPageHeader text="Tunneling" size="h3" />
 
         {/* Content for the page imported from data.json */}
         <CustomDescriptionBox pageTitle="Tunneling" />
 
+        {/* Main Card For animation*/}
         <Card
-          style={{
-            borderRadius: "10px",
-            display: "flex",
-            flexDirection: "row",
-            width: "100%",
-          }}
+          data-type="bottom-card"
           ref={animationFlexRef}
         >
           {/* Left Box */}
@@ -327,7 +257,6 @@ const Tunneling = () => {
             noValidate
             autoComplete="off"
             style={horizontal_center}
-            
           >
             <Box
               component="form"
@@ -340,37 +269,58 @@ const Tunneling = () => {
               noValidate
               autoComplete="off"
             >
-              <Stack spacing={3}>
-              <CustomTitle pageName="Tunneling"/>
+              <Stack spacing={5}>
+                
+                <CustomTitle pageName="Tunneling" />
 
                 {/* ====== Barrier Slider ====== */}
                 <FormControl variant="filled">
-                  <InputLabel id="barrier-select" style={{ color: "black", marginTop: "10px"}}>
+                  <InputLabel
+                    id="barrier-select"
+                    style={{ color: "black", marginTop: "10px" }}
+                  >
                     <Typography variant="body1" color="black" align="right">
                       Barrier (eV)
                     </Typography>
                   </InputLabel>
-                  <Slider
-                    sx={{ color: isAdvanced ? "darkred" : "#063970" }}
-                    aria-label="barrier-select"
-                    value={barrier}
-                    onChange={handleBarrier}
-                    min={1}
-                    max={isAdvanced ? 5 : 3} // Beginner: 1-3, Advanced: 1-5
-                    step={1}
-                    valueLabelDisplay="auto"
-                  />
+                  {!isAdvanced ? (
+                    <Slider
+                      sx={{ color: "#063970" }}
+                      aria-label="barrier-select"
+                      defaultValue={0}
+                      min={0}
+                      max={3}
+                      step={1}
+                      valueLabelDisplay="auto"
+                      marks
+                    />
+                  ) : (
+                    <Slider
+                      sx={{ color: "darkred" }}
+                      aria-label="barrier-select"
+                      value={barrier}
+                      onChange={handleBarrier}
+                      min={1}
+                      max={5} // Beginner: 1-3, Advanced: 1-5
+                      step={1}
+                      valueLabelDisplay="auto"
+                      marks
+                    />
+                  )}
                 </FormControl>
 
                 {/* ====== Thickness Slider ====== */}
                 <FormControl variant="filled">
-                  <InputLabel id="thickness-select" style={{ color: "black", marginTop: "10px"}}>
+                  <InputLabel
+                    id="thickness-select"
+                    style={{ color: "black", marginTop: "10px" }}
+                  >
                     <Typography variant="body1" color="black" align="right">
                       Thickness (nm)
                     </Typography>
                   </InputLabel>
                   <Slider
-                    sx={{ color: isAdvanced ? "darkred" : "#063970"}}
+                    sx={{ color: isAdvanced ? "darkred" : "#063970" }}
                     aria-label="thickness-select"
                     value={thickness}
                     onChange={handleThickness}
@@ -379,11 +329,15 @@ const Tunneling = () => {
                     step={isAdvanced ? 0.5 : 1} // Beginner step: 1, Advanced step: 0.5
                     valueLabelDisplay="auto"
                   />
+                  
                 </FormControl>
 
                 {/* ====== Wave Number k Slider ====== */}
                 <FormControl variant="filled">
-                  <InputLabel id="wave-select" style={{ color: "black", marginTop: "10px" }}>
+                  <InputLabel
+                    id="wave-select"
+                    style={{ color: "black", marginTop: "10px" }}
+                  >
                     <Typography variant="body1" color="black" align="right">
                       Wave number k (nm)<sup>-1</sup>
                     </Typography>
@@ -406,7 +360,13 @@ const Tunneling = () => {
                     <CircularProgress />
                   </Box>
                 ) : (
-                  <Button variant="contained" onClick={handleSubmit} type="submit" color="success" style={{ marginTop: "40px" }}>
+                  <Button
+                    variant="contained"
+                    onClick={handleSubmit}
+                    type="submit"
+                    color="success"
+                    style={{ marginTop: "40px" }}
+                  >
                     Generate Model
                   </Button>
                 )}
@@ -430,7 +390,9 @@ const Tunneling = () => {
           <div
             style={{
               overflow: "clip",
-              width: animationFlexRef.current ? animationFlexRef.current.offsetWidth - 300 : 600,
+              width: animationFlexRef.current
+                ? animationFlexRef.current.offsetWidth - 300
+                : 600,
             }}
           >
             <style>
@@ -444,8 +406,9 @@ const Tunneling = () => {
             <div
               style={{
                 backgroundColor: "white",
-                width: animationFlexRef.current ? animationFlexRef.current.offsetWidth - 300 : 600,
-               
+                width: animationFlexRef.current
+                  ? animationFlexRef.current.offsetWidth - 300
+                  : 600,
               }}
               ref={animationDivRef}
             />
@@ -464,14 +427,14 @@ const Tunneling = () => {
         <Snackbar
           open={openSnackBar}
           onClose={() => setOpenSnackbar(false)}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-          >
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        >
           <Alert onClose={() => setOpenSnackbar(false)} severity={severity}>
             {snackbar_msg}
           </Alert>
         </Snackbar>
-      </Content>
-    </Layout>
+      </div>
+    </div>
   );
 };
 

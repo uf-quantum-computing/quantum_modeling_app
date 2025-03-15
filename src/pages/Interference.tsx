@@ -244,39 +244,18 @@ const Interference = () => {
   }, []);
 
 return (
-    <Layout 
-      style={{ 
-        minHeight: "100vh", 
-        display: "flex", 
-        justifyContent: "center", 
-        alignItems: "center" 
-      }}
-    >
-
-      <Content 
-        className="site-layout" 
-        style={{
-          margin: "5%", 
-          maxWidth: "70%", 
-          minWidth: "1000px",
-          }}
-        >
-
+    <div className="layout">
+      <div className="content">
           {/* Title for the page */}
           <CustomPageHeader text="Interference" size="h3"/> 
 
           {/* Content for the page imported from data.json */}
           <CustomDescriptionBox pageTitle="Interference"/>
 
-            <Card
-              style={{
-                borderRadius: "10px",
-                display: "flex",
-                flexDirection: "row",
-                width: "100%",
-              }}
-              ref={animationFlexRef}
-            >
+          <Card
+            data-type="bottom-card"
+            ref={animationFlexRef}
+          >
               {/* Left Box */}
               <Box
                 component="form"
@@ -422,8 +401,8 @@ return (
                 {snackbarMsg}
               </Alert>
             </Snackbar>
-        </Content>
-    </Layout>
+        </div>
+    </div>
   );
 };
 
