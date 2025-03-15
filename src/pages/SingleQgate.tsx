@@ -13,6 +13,8 @@ import {
   InputLabel,
   FormControl,
   Slider,
+  Card,
+  CardContent
 } from "@mui/material";
 import CircularProgress from '@mui/joy/CircularProgress';
 import { Layout } from "antd";
@@ -27,7 +29,7 @@ import {
   CustomDescriptionBox,
 } from "../components";
 
-import infoFig from '../images/Single_V4.png';
+// import infoFig from '../images/Single_V4.png';
 
 // === styles ===
 import { sidebar_style } from "../global_styles";
@@ -55,7 +57,8 @@ const SpinTraceEvolution = () => {
   const [magF_B, setMagF_B] = useState<number>(10);
   const [t2, setT2] = useState<number>(0.1);
   const [animationJsHtml, setAnimationJsHtml] = useState('');
-  const animationContainerRef = useRef<HTMLDivElement>(null);
+  const animationDivRef = useRef<HTMLDivElement>(null);
+  const animationFlexRef = useRef<HTMLDivElement>(null);
   const [gateDropChanged, setGateDropChanged] = useState(false);
   const [initStateDropChanged, setInitStateDropChanged] = useState(false);
   const [magSliderMoved, setMagSliderMoved] = useState(false);
@@ -101,8 +104,8 @@ const SpinTraceEvolution = () => {
   }, []);
 
   useEffect(() => {
-    if (animationJsHtml && animationContainerRef.current) {
-      const container = animationContainerRef.current;
+    if (animationJsHtml && animationDivRef.current) {
+      const container = animationDivRef.current;
       container.innerHTML = animationJsHtml; // Now TypeScript knows container is a div element
 
       // Ensure TypeScript treats each script as an HTMLScriptElement
@@ -191,167 +194,228 @@ const SpinTraceEvolution = () => {
     setOpenSnackbar(true); // open snackbar
   }
 
-  return (
-    <Layout style={{ minHeight: "100vh" }}>
-      <Sider
-        // collapsible
-        // collapsed={collapsed}
-        // onCollapse={(value) => setCollapsed(value)}
-        style={sidebar_style}
-        width={230}
-      >
-        <CustomTitle/>
+  let [scale, setState] = useState(1);
+  const handleResize = () => {    
+    if (!animationFlexRef.current || !animationDivRef.current) return;
+
+    const flexWidth = animationFlexRef.current.offsetWidth || 600;
+    const flexHeight = animationFlexRef.current.offsetHeight || 400; // Get available height
+    const divWidth = animationDivRef.current.offsetWidth || 600;
+    const divHeight = animationDivRef.current.offsetHeight || 400; 
+
+    // Calculate scale based on both width and height constraints
+    const widthScale = (flexWidth) / 1200;
+    const heightScale = flexHeight / 700; // Assuming 700 is the original height of animation
+
+    const newScale = Math.min(widthScale, heightScale); // Ensure it doesn't exceed the box height
+
+    setState(newScale); // Update scale
+
+  };
+
+  useEffect(() => {
+    window.addEventListener("resize", handleResize);
+    handleResize(); // Call initially to set the scale
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+return (
+    <Layout 
+      style={{ 
+        minHeight: "100vh", 
+        display: "flex", 
+        justifyContent: "center", 
+        alignItems: "center" }}>
+      
+      <Content 
+        className="site-layout" 
+        style={{
+            margin: "5%", 
+            maxWidth: "70%", 
+            minWidth: "1000px"}}>
+
+      {/* Title for the page */}
+      <CustomPageHeader text="Spin Qubit Trace" size="h3"/>
+
+      {/* Content for the page imported from data.json */}
+      <CustomDescriptionBox pageTitle="spin"/>
+
+      <Card
+          style={{
+              borderRadius: "10px",
+              display: "flex",
+              flexDirection: "row",
+              width: "100%"}}
+              ref={animationFlexRef}
+              >
+
+        {/* Left Box */}
         <Box
+          component="form"
+          sx={{
+            "& > :not(style)": { m: 0.5, width: "25ch" },
+            padding: "10px",
+            width: "300px",
+            minWidth: "300px",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+          }}
+          noValidate
+          autoComplete="off"
+          style={horizontal_center}
+        >
+          <Box
             component="form"
             sx={{
               "& > :not(style)": { m: 0.5, width: "25ch" },
+              padding: "20px",
+              width: "200px",
+              minWidth: "200px",
             }}
             noValidate
             autoComplete="off"
-            style={horizontal_center}
-        >
+          >
+            <Stack spacing={4}>
+              <CustomTitle pageName="Spin"/>
 
-          <Stack spacing={3}>
+              <FormControl variant="filled">
+                <InputLabel 
+                    variant="standard" 
+                    htmlFor="uncontrolled-native" 
+                    style={{
+                        color: "white", 
+                        fontSize: "1.3rem", 
+                        textAlign: "center"}}>
+                    Initial State
+                  </InputLabel>
+                    <Select
+                        sx={{ color: "#000000" }}
+                        labelId="gate-select"
+                        value={gate.toString()}
+                        label="Gate"
+                        onChange={handleGateChange}>
+                        <MenuItem value={1}>X gate (x)</MenuItem>
+                        <MenuItem value={2}>Y gate (y)</MenuItem>
+                        <MenuItem value={3}>Z gate (z)</MenuItem>
+                        <MenuItem value={4}>Hadamard gate</MenuItem>
+                        <MenuItem value={5}>S gate</MenuItem>
+                        <MenuItem value={6}>T gate</MenuItem>
+                    </Select>
+                </FormControl>
 
-            {/* ====== Select Inputs ====== */}
-            {/* Gate Select*/}
-            <FormControl variant="filled">
-              <InputLabel variant="standard" htmlFor="uncontrolled-native" style={{color: "white", fontSize: "1.3rem", textAlign: "center"}}>
-                Initial State
-              </InputLabel>
-              <Select
-                sx={{ color: "#FFFFFF" }}
-                labelId="gate-select"
-                value={gate.toString()}
-                label="Gate"
-                onChange={handleGateChange}
-              >
-                <MenuItem value={1}>X gate (x)</MenuItem>
-                <MenuItem value={2}>Y gate (y)</MenuItem>
-                <MenuItem value={3}>Z gate (z)</MenuItem>
-                <MenuItem value={4}>Hadamard gate</MenuItem>
-                <MenuItem value={5}>S gate</MenuItem>
-                <MenuItem value={6}>T gate</MenuItem>
-              </Select>
-            </FormControl>
+                <FormControl variant="filled">
+                    <InputLabel 
+                        variant="standard" 
+                        htmlFor="uncontrolled-native" 
+                        style={{
+                            color: "white", 
+                            fontSize: "1.3rem", 
+                            textAlign: "center"}}>
+                        Initial State
+                    </InputLabel>
+                    <Select
+                        sx={{ color: "#000000" }}
+                        labelId="initState-select"
+                        value={initState.toString()}
+                        label="Initial State"
+                        onChange={handleInitStateChange}>
+                        <MenuItem value={1}>|+&gt;</MenuItem>
+                        <MenuItem value={2}>|i+&gt;</MenuItem>
+                        <MenuItem value={3}>|0&gt;</MenuItem>
+                        <MenuItem value={4}>|-&gt;</MenuItem>
+                        <MenuItem value={5}>|i-&gt;</MenuItem>
+                        <MenuItem value={6}>|1&gt;</MenuItem>
+                    </Select>
+                </FormControl>
 
-            {/* Init State Select */}
-            <FormControl variant="filled">
-              {/*<InputLabel*/}
-              {/*  id="initState-select"*/}
-              {/*  style={{color: "white", marginTop: "10px", marginBottom: "10px", textAlign: "center", fontSize: "1.3rem"}}*/}
-              {/*  >*/}
-              {/*  Initial State*/}
-              {/*  </InputLabel>*/}
-              <InputLabel variant="standard" htmlFor="uncontrolled-native" style={{color: "white", fontSize: "1.3rem", textAlign: "center"}}>
-                Initial State
-              </InputLabel>
-              <Select
-                sx={{ color: "#FFFFFF" }}
-                labelId="initState-select"
-                value={initState.toString()}
-                label="Initial State"
-                onChange={handleInitStateChange}
-              >
-                <MenuItem value={1}>|+&gt;</MenuItem>
-                <MenuItem value={2}>|i+&gt;</MenuItem>
-                <MenuItem value={3}>|0&gt;</MenuItem>
-                <MenuItem value={4}>|-&gt;</MenuItem>
-                <MenuItem value={5}>|i-&gt;</MenuItem>
-                <MenuItem value={6}>|1&gt;</MenuItem>
-              </Select>
-            </FormControl>
+                {/* Mag slider */}
+                <FormControl variant="filled">
+                    <InputLabel
+                        id="mag-select"
+                        style={{
+                            color: "black", 
+                            marginTop: "10px"}}>
+                        Magnetic field
+                    </InputLabel>
+                    <Slider
+                        sx={{ color: "#063970" }}
+                        aria-label="mag-select"
+                        value={magF_B}
+                        onChange={handleMagChange}
+                        min={0}
+                        max={50}
+                        defaultValue={10}
+                        valueLabelDisplay="auto"
+                        step={1}/>
+                </FormControl>
 
-            {/* Mag slider */}
-            <FormControl variant="filled">
-              <InputLabel
-                id="mag-select"
-                style={{color: "white", marginTop: "10px", marginBottom: "10px",textAlign: "center"}}
+                {/* T2 slider */}
+                <FormControl variant="filled">
+                    <InputLabel
+                        id="t2-select"
+                        style={{
+                            color: "black", 
+                            marginTop: "10px"}}>
+                        Dephasing time
+                    </InputLabel>
+                    <Slider
+                        sx={{ color: "#063970" }}
+                        aria-label="t2-select"
+                        value={t2}
+                        onChange={handleT2Change}
+                        min={0.0}
+                        max={100}
+                        defaultValue={0.1}
+                        valueLabelDisplay="auto"
+                        step={0.1}/>
+                </FormControl>
+
+                {/* ====== Submit Button ====== */}
+                {loading ? (
+                <CircularProgress />
+                ) : (
+                <Button
+                    variant="contained"
+                    onClick={handleSubmit}
+                    type="submit"
+                    color="success"
                 >
-                Magnetic field
-                </InputLabel>
-              <Slider
-                sx={{ color: "#FFFFFF" }}
-                aria-label="mag-select"
-                value={magF_B}
-                onChange={handleMagChange}
-                min={0}
-                max={50}
-                defaultValue={10}
-                valueLabelDisplay="auto"
-                step={1}
-              />
-            </FormControl>
-
-            {/* T2 slider */}
-            <FormControl variant="filled">
-              <InputLabel
-                id="t2-select"
-                style={{color: "white", marginTop: "10px", marginBottom: "10px", textAlign: "center"}}
-                >
-                Dephasing time
-                </InputLabel>
-              <Slider
-                sx={{ color: "#FFFFFF" }}
-                aria-label="t2-select"
-                value={t2}
-                onChange={handleT2Change}
-                min={0.0}
-                max={100}
-                defaultValue={0.1}
-                valueLabelDisplay="auto"
-                step={0.1}
-              />
-            </FormControl>
-
-            {/* ====== Submit Button ====== */}
-            {loading ? (
-              <CircularProgress />
-            ) : (
-              <Button
-                variant="contained"
-                onClick={handleSubmit}
-                type="submit"
-                color="success"
-              >
-                Generate Model
-              </Button>
-            )}
-
-            {/* ====== Dashboard ====== */}
-            <Dashboard />
-
-            {/* ====== Snackbar ====== */}
-            <Snackbar
-              open={open}
-              autoHideDuration={6000}
-              onClose={handleClose}
-              anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+                    Generate Model
+                </Button>
+                )}
+            </Stack>
+            </Box>
+          </Box>
+            {/* Right Box */}
+            <div
+              style={{
+                overflow: "clip",
+                width: animationFlexRef.current ? animationFlexRef.current.offsetWidth - 300 : 600,
+              }}
             >
-              <Alert
-                onClose={handleClose}
-                severity="success"
-                sx={{ width: "100%" }}
-              >
-                {success_msg}
-              </Alert>
-            </Snackbar>
-          </Stack>
-        </Box>
-      </Sider>
-      <Content className="site-layout" style={{margin: "5%"}}>
-        <CustomPageHeader text="Spin Qubit Trace" size="h3"/>
-        {/*<div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%'}}*/}
-        {/*     ref={animationContainerRef}></div>*/}
-        <div style={{display: 'flex', justifyContent: 'center'}} ref={animationContainerRef}></div>
-        {/*<div ref={animationContainerRef}/>*/}
-        <CustomDescriptionBox
-            imageUrl={infoFig}
-            msg={`The program simulates the evolution of a spin in the presence of a magnetic field and decoherence for a given initial state.
-              Quantum gate performance is assessed when the rotation angle met the required angle of a quantum gate for the first time.
-              The left figure shows the simulated device structure. The applied magnetic field rotates an electron spin in a quantum dot defined by a gate. Spin rotation can be visualized in a Bloch sphere.
-            `}
-        />
+              <style>
+                {`
+                  .animation {
+                    transform-origin: center center;
+                    scale: ${scale};  
+                  }
+                `}
+              </style>
+              <div
+                style={{
+                  backgroundColor: "white",
+                  width: animationFlexRef.current ? animationFlexRef.current.offsetWidth - 300 : 600,
+                
+                }}
+                ref={animationDivRef}
+              />
+            </div>
+            
+        </Card>
       </Content>
     </Layout>
   );

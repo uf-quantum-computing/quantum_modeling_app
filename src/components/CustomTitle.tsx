@@ -1,49 +1,44 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import { Card } from "@mui/material";
 
-const card_style = {
-  backgroundColor: "rgba(52, 52, 52, 0)",
-  border: "1px solid #FFFFFF",
-  margin: "2%",
+const card_style: React.CSSProperties = {
+  backgroundColor: "#063970",
   boxShadow: "0 0 5px -1px rgba(0,0,0,0.2)",
-  padding: "2%",
+  borderRadius: "8px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  padding: "8px",
+  color: "#FFFFFF",
+  fontWeight: "bolder",
+  textAlign: "center",
+  margin: 0,
+  fontSize: 24,
 };
-// ==========================================
-// ==============  CustomTitle ==============
-// ==========================================
-const CustomTitle = () => {
+
+interface CustomTitleProps {
+  pageName: string;
+}
+
+const CustomTitle: React.FC<CustomTitleProps> = ({ pageName }) => {
   return (
-    <div>
-      <Link to="/" style={{ textDecoration: "none" }}>
-        <Card style={card_style}>
-          <p style={{ textAlign: "center" }}>
-            <h2
-              style={{
-                color: "#FFFFFF",
-                fontWeight: "bolder",
-                paddingTop: "3%",
-                paddingBottom: "3%",
-                margin: 0,
-              }}
-            >
-              Quantum Modeling App
-            </h2>
-          </p>
-        </Card>
-      </Link>
-      <h5
+    <>
+      <Card style={card_style}>
+        {pageName} Model Generator
+      </Card>
+      <p
         style={{
-          color: "#FFFFFF",
+          color: "#000000",
           textAlign: "center",
-          paddingTop: "3%", 
-          paddingBottom: "3%",
+          fontSize: 16,
           margin: 0,
+          padding: 8,
         }}
       >
-        Select the values for the model and press Generate Model when you're ready!
-      </h5>
-    </div>
+        Select the values for the model and click 'Generate Model' when you're
+        ready!
+      </p>
+    </>
   );
 };
 
