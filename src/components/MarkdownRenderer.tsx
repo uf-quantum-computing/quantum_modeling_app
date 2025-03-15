@@ -10,7 +10,7 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ data }) => {
     <div>
       {Object.entries(data).map(([title, content]) => (
         <div key={title}>
-          <h2>{title}</h2>
+          <h2 style={{margin: 0}}>{title}</h2>
           <ReactMarkdown>
             {content.markdown_text}
           </ReactMarkdown>

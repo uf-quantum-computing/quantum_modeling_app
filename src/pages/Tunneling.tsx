@@ -18,7 +18,7 @@ import "./style.css";
 // === Custom Components ===
 import {
   CustomDescriptionBox,
-  CustomPageHeader,  
+  CustomPageHeader,
   CustomTitle,
   CustomSlider,
 } from "../components";
@@ -52,32 +52,32 @@ const Tunneling = () => {
   const [thicknessSliderMoved, setThicknessSliderMoved] = useState(false);
   const [waveSliderMoved, setWaveSliderMoved] = useState(false);
   const [snackbar_msg, setSnackbarMessage] = useState("");
-  const [severity, setSeverity] = useState<AlertProps['severity']>('success');
+  const [severity, setSeverity] = useState<AlertProps["severity"]>("success");
   const [openSnackBar, setOpenSnackbar] = useState(false);
 
   // ========= socket connection =========
   useEffect(() => {
     const socket = io(host);
 
-    socket.on('connect', () => {
-      console.log('Connected to server');
+    socket.on("connect", () => {
+      console.log("Connected to server");
     });
 
-    socket.on('connect_error', (error: any) => {
-      console.error('Connection error:', error);
-      setSnackbarMessage('Failed to connect to server');
-      setSeverity('error');
+    socket.on("connect_error", (error: any) => {
+      console.error("Connection error:", error);
+      setSnackbarMessage("Failed to connect to server");
+      setSeverity("error");
       setOpenSnackbar(true);
     });
 
-    socket.on('status_update', (data: StatusUpdate) => {
+    socket.on("status_update", (data: StatusUpdate) => {
       setSnackbarMessage(data.message);
-      setSeverity('info');
+      setSeverity("info");
       setOpenSnackbar(true);
     });
 
-    socket.on('disconnect', () => {
-      console.log('Disconnected from server');
+    socket.on("disconnect", () => {
+      console.log("Disconnected from server");
     });
 
     return () => {
@@ -91,7 +91,7 @@ const Tunneling = () => {
       const response = await fetch(request_url, { method: "GET" });
       if (!response.ok) {
         console.error("Error fetching animation from server");
-        setSeverity('error');
+        setSeverity("error");
         return null;
       }
       const responseData = await response.text();
@@ -114,7 +114,7 @@ const Tunneling = () => {
         });
       } catch (error) {
         setSnackbarMessage("Failed to load default model.");
-        setSeverity('error');
+        setSeverity("error");
       }
     };
 
@@ -185,11 +185,10 @@ const Tunneling = () => {
       setLoading(true);
       const gifData = await getGifFromServer(final_url);
       if (gifData) {
-        setSeverity('success');
-      }
-      else {
+        setSeverity("success");
+      } else {
         setSnackbarMessage("Failed to generate model.");
-        setSeverity('error');
+        setSeverity("error");
       }
       setLoading(false);
       setBarrierSliderMoved(false);
@@ -200,13 +199,13 @@ const Tunneling = () => {
   }
 
   let [scale, setState] = useState(1);
-  const handleResize = () => {    
+  const handleResize = () => {
     if (!animationFlexRef.current || !animationDivRef.current) return;
 
     const flexWidth = animationFlexRef.current.offsetWidth || 600;
     const flexHeight = animationFlexRef.current.offsetHeight || 400; // Get available height
     const divWidth = animationDivRef.current.offsetWidth || 600;
-    const divHeight = animationDivRef.current.offsetHeight || 400; 
+    const divHeight = animationDivRef.current.offsetHeight || 400;
 
     // Calculate scale based on both width and height constraints
     const widthScale = (flexWidth - 300) / 1200;
@@ -215,7 +214,6 @@ const Tunneling = () => {
     const newScale = Math.min(widthScale, heightScale); // Ensure it doesn't exceed the box height
 
     setState(newScale); // Update scale
-
   };
 
   useEffect(() => {
@@ -227,7 +225,6 @@ const Tunneling = () => {
     };
   }, []);
 
-  // ========= return =========
   return (
     <div className="layout">
       <div className="content">
@@ -237,81 +234,78 @@ const Tunneling = () => {
         {/* Content for the page imported from data.json */}
         <CustomDescriptionBox pageTitle="Tunneling" />
 
-        {/* Main Card For animation*/}
-        <Card
-          data-type="bottom-card"
-          ref={animationFlexRef}
-        >
+        <Card data-type="bottom-card" ref={animationFlexRef}>
           {/* Left Box */}
-          <Box
-            component="form"
-            style={formBoxStyles}
-          >
-              <Stack spacing={3}>
-                <CustomTitle pageName="Tunneling" />
+          <Box component="form" style={formBoxStyles}>
+            <Stack spacing={3}>
+              <CustomTitle pageName="Tunneling" />
 
-                {/* ====== Barrier Slider ====== */}
-                <CustomSlider 
-                  value={barrier}
-                  onChange={handleBarrier}
-                  label="Barrier (eV)"
-                  isAdvanced={isAdvanced}
-                  min={0}
-                  max={isAdvanced ? 5 : 3}
-                  step={isAdvanced ? 0.1 : 1}
-                />
+              {/* ====== Barrier Slider ====== */}
+              <CustomSlider
+                value={barrier}
+                onChange={handleBarrier}
+                label="Barrier (eV)"
+                isAdvanced={isAdvanced}
+                min={0}
+                max={isAdvanced ? 5 : 3}
+                step={isAdvanced ? 0.1 : 1}
+              />
 
-                {/* ====== Thickness Slider ====== */}
-                <CustomSlider
-                  value={thickness}
-                  onChange={handleThickness}
-                  label="Thickness (nm)"
-                  isAdvanced={isAdvanced}
-                  min={1}
-                  max={isAdvanced ? 5 : 3}
-                  step={isAdvanced? 0.1 : 1}
-                />
+              {/* ====== Thickness Slider ====== */}
+              <CustomSlider
+                value={thickness}
+                onChange={handleThickness}
+                label="Thickness (nm)"
+                isAdvanced={isAdvanced}
+                min={1}
+                max={isAdvanced ? 5 : 3}
+                step={isAdvanced ? 0.1 : 1}
+              />
 
-                {/* ====== Wave Number k Slider ====== */}
-                <CustomSlider
-                  value={wave}
-                  onChange={handleWave}
-                  label={<>Wave number k (nm)<sup>-1</sup></>}
-                  isAdvanced={isAdvanced}
-                  min={1}
-                  max={isAdvanced ? 10 : 5}
-                  step={isAdvanced ? 0.1 : 1}
-                />
+              {/* ====== Wave Number k Slider ====== */}
+              <CustomSlider
+                value={wave}
+                onChange={handleWave}
+                label={
+                  <>
+                    Wave number k (nm)<sup>-1</sup>
+                  </>
+                }
+                isAdvanced={isAdvanced}
+                min={1}
+                max={isAdvanced ? 10 : 5}
+                step={isAdvanced ? 0.1 : 1}
+              />
 
-                {/* ====== Submit Button ====== */}
-                {loading ? (
-                  <Box display="flex" justifyContent="center">
-                    <CircularProgress />
-                  </Box>
-                ) : (
-                  <Button
-                    variant="contained"
-                    onClick={handleSubmit}
-                    type="submit"
-                    color="success"
-                    style={{ marginTop: "40px" }}
-                  >
-                    Generate Model
-                  </Button>
-                )}
+              {/* ====== Submit Button ====== */}
+              {loading ? (
+                <Box display="flex" justifyContent="center">
+                  <CircularProgress />
+                </Box>
+              ) : (
+                <Button
+                  variant="contained"
+                  onClick={handleSubmit}
+                  type="submit"
+                  color="success"
+                  style={{ marginTop: "40px" }}
+                >
+                  Generate Model
+                </Button>
+              )}
 
-                {/* Toggle Switch */}
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={isAdvanced}
-                      onChange={() => setIsAdvanced((prev) => !prev)}
-                    />
-                  }
-                  label={"Advanced Mode"}
-                  style={{ alignSelf: "center", color: "black" }}
-                />
-              </Stack>
+              {/* Toggle Switch */}
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={isAdvanced}
+                    onChange={() => setIsAdvanced((prev) => !prev)}
+                  />
+                }
+                label={"Advanced Mode"}
+                style={{ alignSelf: "center", color: "black" }}
+              />
+            </Stack>
           </Box>
 
           {/* Right Box */}
