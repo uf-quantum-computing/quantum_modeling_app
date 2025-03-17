@@ -6,18 +6,13 @@ import {
   Stack,
   Alert,
   Snackbar,
-  InputLabel,
-  FormControl,
-  Slider,
   Card,
-  Typography,
   Checkbox,
   FormControlLabel,
   AlertProps,
   CircularProgress,
 } from "@mui/material";
 import host from "../setup/host";
-import { Socket } from "socket.io-client";
 import io from "socket.io-client";
 // === Custom Components ===
 import {
@@ -26,12 +21,6 @@ import {
   CustomDescriptionBox,
   CustomSlider,
 } from "../components";
-
-const horizontal_center = {
-  display: "flex",
-  // alignItems: "center",  # vertical center
-  justifyContent: "center",
-};
 
 // === sub component imports ===
 const formBoxStyles = {
@@ -229,7 +218,7 @@ const Interference = () => {
 
     // Calculate scale based on both width and height constraints
     const widthScale = flexWidth / 1200;
-    const heightScale = flexHeight / 700; // Assuming 700 is the original height of animation
+    const heightScale = flexHeight / 600; // Assuming 700 is the original height of animation
 
     const newScale = Math.min(widthScale, heightScale); // Ensure it doesn't exceed the box height
 
