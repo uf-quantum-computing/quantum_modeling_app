@@ -11,7 +11,6 @@ import {
   Stack,
 } from "@mui/material";
 import host from "../setup/host";
-import { Socket } from "socket.io-client";
 import io from "socket.io-client";
 import "./style.css";
 
