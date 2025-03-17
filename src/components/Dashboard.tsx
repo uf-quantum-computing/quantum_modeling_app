@@ -36,7 +36,7 @@ export default function Dashboard() {
             fontWeight: "bolder",
             textTransform: "none",
             fontSize: 20,
-            paddingTop: "3%",
+            paddingTop: "2%",
             paddingBottom: "5%",
             margin: 0,
           }}

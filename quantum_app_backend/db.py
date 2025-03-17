@@ -1,12 +1,12 @@
 import pymongo
-import gridfs
-import os
-import configparser
 import re
+import os
+import logging
+from dotenv import load_dotenv
+load_dotenv()
 
-config = configparser.ConfigParser()
-config_path = os.path.abspath(os.path.join("quantum_app_backend/.ini"))
-config.read(config_path)
+logger = logging.getLogger('quantum_app')
+
 VARIABLES = {'tunneling': ['momentum', 'barrier', 'width'], 
              'interference': ['momentum', 'spacing', 'slit_separation']}
 

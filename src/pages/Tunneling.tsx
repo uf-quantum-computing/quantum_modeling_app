@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 // === UI Components ===
 import {
+  Alert,
+  AlertProps,
   Box,
   Button,
   Card,
@@ -106,12 +108,13 @@ const Tunneling = () => {
   useEffect(() => {
     const loadDefaultHtml = async () => {
       try {
-        console.log("triggered")
-        fetch('/tunneling/probs_1.0_1.0_1.0_3D.html')
-        .then((response) => response.text())
-        .then((text) => {
-          setAnimationJsHtml(text);
-        });
+        console.log("triggered");
+        fetch("/tunneling/probs_1.0_1.0_1.0_3D.html")
+          .then((response) => response.text())
+          .then((text) => {
+            setAnimationJsHtml(text);
+            console.log(text);
+          });
       } catch (error) {
         setSnackbarMessage("Failed to load default model.");
         setSeverity("error");
@@ -335,16 +338,6 @@ const Tunneling = () => {
               ref={animationDivRef}
             />
           </div>
-      <Snackbar
-        open={openSnackBar}
-        autoHideDuration={6000}
-        onClose={() => setOpenSnackbar(false)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        <Alert onClose={() => setOpenSnackbar(false)} severity={severity}>
-          {snackbar_msg}
-        </Alert>
-      </Snackbar>
         </Card>
         <Snackbar
           open={openSnackBar}
