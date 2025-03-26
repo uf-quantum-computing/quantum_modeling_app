@@ -26,3 +26,4 @@ portalocker
 matplotlib
 flask-pymongo
 dotenv
+flask-socketio
