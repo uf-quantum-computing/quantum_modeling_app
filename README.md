@@ -11,7 +11,7 @@ Computational Nano Lab, UFL
 * Node 👉 install [here](https://nodejs.org/en/download/package-manager)
 * Miniconda3 👉 install [here](https://docs.anaconda.com/miniconda/miniconda-install/)
 
-### Installation - Part 1
+### Installation - Part 1 - Frontend Hosting
 
 1. Clone the repository
     ```
@@ -27,8 +27,16 @@ Computational Nano Lab, UFL
     npm start
     ```
 
-### Installation - Part 2 
+### Installation - Part 2 - Hosting Backend APIs
 
+#### Run the container in Docker (Preferred)
+1. Run backend in Docker container
+    ```
+    cd quantum_app_backend
+    docker build -t flask-backend .
+    docker run -p 3001:3001 flask-backend
+    ```
+#### Run the envirnment in Conda (Preferred)
 1. Create a conda enviornment for the project
     ```
     conda create --name my_env_name python=3.12
@@ -49,11 +57,6 @@ Computational Nano Lab, UFL
 4. Run backend locally
     ```
     python app.py
-    ```
-5. Run backend in Docker container
-    ```
-    docker build -t flask-backend .
-    docker run -p 3001:3001 flask-backend
     ```
 
 ### Running Locally 
