@@ -50,8 +50,11 @@ Computational Nano Lab, UFL
     ```
     python app.py
     ```
+#### OR Run the container in Docker (Preferred)
+    
 5. Run backend in Docker container
     ```
+    cd quantum_app_backend
     docker build -t flask-backend .
     docker run -p 3001:3001 flask-backend
     ```
