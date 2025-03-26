@@ -64,10 +64,12 @@
     "qft": [
         {
         "title": "The Fourier Transform",
+        "imageUrl": "https://www.nti-audio.com/portals/0/pic/news/FFT-Time-Frequency-View-540.png",
         "msg": "The Fourier transform is a powerful mathematical tool with applications in many areas, including signal processing and image compression. It is based on the idea that any periodic function can be represented as a series of sine and cosine waves of varying frequencies. It allows us to determine the amplitude of each of the frequencies that make up a complete waveform."
         },
         {
         "title": "Waves",
+        "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/d/db/Sequential_superposition_of_plane_waves.gif",
         "msg": "Waves are all around us, in the form of sound waves, light waves, or even matter waves (in fact, in quantum mechanics, the position and momentum of a particle are related by the Fourier transform). If you have used any device which uses WiFi (which sends information using electromagnetic waves) today, you have used the Fourier transform."
         },
         {
@@ -80,6 +82,7 @@
         },
         {
         "title": "The Quantum Fourier transform",
+        "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Q_fourier_3qubits.png/900px-Q_fourier_3qubits.png",
         "msg": "The QFT implements the DFT using a series of Hadamard and phase shift gates, represented as matrices. These gates transform the qubits from a state representing the sample points that were input to a state representing the Fourier transform."
         },
         {
