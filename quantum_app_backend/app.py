@@ -5,6 +5,8 @@ from flask_cors import CORS
 from model_generators.tunneling import Wave_Packet3D as t_wp, Animator3D as t_ani
 from model_generators.interference import Wave_Packet3D as i_wp, Animator3D as i_ani
 from model_generators.Qgate1 import Qgate1
+from model_generators.QuantumFourierTransform import QFTStepByStepODE
+from model_generators.bloch import Bloch
 import matplotlib.pyplot as plt
 import time
 import logging
@@ -167,16 +169,27 @@ def Qtrace(gate, init_state, mag, t2):
     plt.close('all')
     plt.switch_backend('Agg')
 
-    start_time = time.time()  # Record the start time
     qg = Qgate1()
     qg.run(gate=gate, init_state=init_state, mag_f_B=mag, t2=t2)
     GifRes = qg.plot_evo()
-    
-    end_time = time.time()  # Record the end time
-    elapsed_time = end_time - start_time
-    print(f"Elapsed 3D generator time: {elapsed_time} seconds")
 
     return {'GifRes': GifRes}
+
+@app.route('/receive_data/qft', methods=['GET'])
+def Qfouriertransform():
+    logger.debug("Startting QFT generator")
+    anim = None
+    try:
+        qft_ode = QFTStepByStepODE(initial_state_str='011')
+        qft_ode.run(n_step=6)
+        anim = qft_ode.animate_bloch()
+
+        if not anim:
+            raise Exception("Error generating QFT model")
+    except Exception as e:
+        logger.error(f"Error generating QFT model: {str(e)}", exc_info=True)
+        raise
+    return anim.encode('utf-8')
 
 @socketio.on('connect')
 def handle_connect():
