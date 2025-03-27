@@ -31,4 +31,4 @@ EXPOSE 3001
 ENV FLASK_APP=app.py
 
 # Run the Flask app
-CMD ["gunicorn","--config", "gunicorn_config.py", "app:app"]
+CMD ["python3", "app.py"]
