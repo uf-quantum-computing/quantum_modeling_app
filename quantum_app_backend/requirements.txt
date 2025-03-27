@@ -27,3 +27,4 @@ matplotlib
 flask-pymongo
 dotenv
 flask-socketio
+gunicorn==23.0.0
