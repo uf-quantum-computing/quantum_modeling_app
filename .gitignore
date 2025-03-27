@@ -13,19 +13,17 @@
 /src/setup/
 
 # misc
+.ini
 .DS_Store
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
 
+quantum_app_backend/cache
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
 # other
 .vscode
+node_modules
 .firebase/
 
 # Created by https://www.toptal.com/developers/gitignore/api/python,macos,pycharm,visualstudiocode

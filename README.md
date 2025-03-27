@@ -3,8 +3,7 @@
 Computational Nano Lab, UFL
 
 ## Architecture Overview
-![image](https://github.com/user-attachments/assets/36da6434-28a5-4bd1-9704-8288bce7b5be)
-
+![image](https://github.com/user-attachments/assets/6abb6ef0-1a6d-466c-b85a-ab1bcdbac57a)
 
 ## Getting Started
 
@@ -12,7 +11,7 @@ Computational Nano Lab, UFL
 * Node 👉 install [here](https://nodejs.org/en/download/package-manager)
 * Miniconda3 👉 install [here](https://docs.anaconda.com/miniconda/miniconda-install/)
 
-### Installation - Part 1
+### Installation - Part 1 - Frontend Hosting
 
 1. Clone the repository
     ```
@@ -28,8 +27,16 @@ Computational Nano Lab, UFL
     npm start
     ```
 
-### Installation - Part 2 
+### Installation - Part 2 - Hosting Backend APIs
 
+#### Run the container in Docker (Preferred)
+1. Run backend in Docker container
+    ```
+    cd quantum_app_backend
+    docker build -t flask-backend .
+    docker run -p 3001:3001 flask-backend
+    ```
+#### Run the envirnment in Conda (Preferred)
 1. Create a conda enviornment for the project
     ```
     conda create --name my_env_name python=3.12
@@ -51,11 +58,6 @@ Computational Nano Lab, UFL
     ```
     python app.py
     ```
-5. Run backend in Docker container
-    ```
-    docker build -t flask-backend .
-    docker run -p 3001:3001 flask-backend
-    ```
 
 ### Running Locally 
 
@@ -65,10 +67,14 @@ For example, I run the backend and I get "Running on http://127.0.0.1:3001". Tak
 
 2. Utilize 2 terminals in parallel to run the back and the frontend.
 
-3. If you're cloning the project for the first time and changes to `/src/setup` are being tracked, run:
+3. Rename the `sample_ini` to `.ini` and replace the variable with the connection string from MongoDB Atlas.
 ```
-git update-index --assume-unchanged src/setup/
+mv sample_ini .ini
 ```
+
+[Get your Atlas cluster](https://docs.atlas.mongodb.com/getting-started/) with [sample data](https://docs.atlas.mongodb.com/sample-data/) set [connection string](https://docs.atlas.mongodb.com/connect-to-cluster/) and place in `DB_URI` parameter under `.ini`
+
+Make sure you have IP in the Atlas [access list](https://docs.atlas.mongodb.com/security/add-ip-address-to-list/) and username/password of your Atlas user correctly specified.
 
 ## File Structure
 - `/src/` - Contains the source code for the React website.
@@ -76,6 +82,11 @@ git update-index --assume-unchanged src/setup/
   - `/src/pages` - Where each sub-page files are located
 - `/backend_functions/` - Contains the backend code for handling requests and generating model gifs
   -  `/backend_functions/model_generators` - Contains the python code used to generate each model, ie `interference.py` or `tunneling.py`
+-  `/src/data/content.json` - Contains the data for each text block on a page.
+   -  If you are generating a new page you may use the component `<CustomDescriptionBox pageTitle=<name>/>`. This will make a box for each item in the pages content. The message will be rendered in markdown style for a better visual experience.
+   -  It can handle image urls with the `imageUrl` parameter or a file in the public folder with `imagePath`
+   -  For example `"imagePath": "/Single_V4.png"`
+   -  For example `"imageUrl": "https://quantumawareness.net/wp-content/uploads/2019/01/doubleslottest-1400x793-71-2.jpg"`
 
 ## Tech Stack
 ### React

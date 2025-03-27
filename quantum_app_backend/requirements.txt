@@ -24,3 +24,6 @@ ipython>=8.17.2
 odeintw
 portalocker
 matplotlib
+flask-pymongo
+dotenv
+flask-socketio

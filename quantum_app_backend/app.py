@@ -1,15 +1,73 @@
-from flask import Flask, jsonify, request
+import flask
+from flask import Flask, jsonify
 from flask_restx import Api
 from flask_cors import CORS
 from model_generators.tunneling import Wave_Packet3D as t_wp, Animator3D as t_ani
 from model_generators.interference import Wave_Packet3D as i_wp, Animator3D as i_ani
 from model_generators.Qgate1 import Qgate1
+from model_generators.QuantumFourierTransform import QFTStepByStepODE
+from model_generators.bloch import Bloch
 import matplotlib.pyplot as plt
 import time
-import base64
+import logging
+from logging.handlers import RotatingFileHandler
 import os
-from pathlib import Path
-import portalocker
+from db import MongoConnector
+from flask_socketio import SocketIO, emit
+from functools import wraps
+
+# Set up logging
+log_dir = 'logs'
+if not os.path.exists(log_dir):
+    os.makedirs(log_dir)
+
+formatter = logging.Formatter(
+    '[%(asctime)s] %(levelname)s in %(module)s: %(message)s'
+)
+
+file_handler = RotatingFileHandler(
+    os.path.join(log_dir, 'quantum_app.log'), 
+    maxBytes=10000000,  # 10MB
+    backupCount=5
+)
+file_handler.setFormatter(formatter)
+file_handler.setLevel(logging.INFO)
+
+console_handler = logging.StreamHandler()
+console_handler.setFormatter(formatter)
+console_handler.setLevel(logging.DEBUG)
+
+logger = logging.getLogger('quantum_app')
+logger.addHandler(file_handler)
+logger.addHandler(console_handler)
+logger.setLevel(logging.DEBUG)
+
+# Add this after the logger setup
+class SocketHandler(logging.Handler):
+    def __init__(self, socketio):
+        super().__init__()
+        self.socketio = socketio
+        # No need for formatter since we're only using the message
+
+    def emit(self, record):
+        try:
+            # Only emit INFO level and above to avoid flooding the client
+            if record.levelno >= logging.INFO:
+                self.socketio.emit('status_update', {'message': record.getMessage()})
+        except Exception:
+            self.handleError(record)
+
+# Error handling decorator
+def handle_errors(f):
+    @wraps(f)
+    def wrapped(*args, **kwargs):
+        try:
+            return f(*args, **kwargs)
+        except Exception as e:
+            logger.error(f"Error in {f.__name__}: {str(e)}", exc_info=True)
+            emit_status(f"An error occurred: {str(e)}")
+            return jsonify({"error": str(e)}), 500
+    return wrapped
 
 #set swagger info
 api: Api = Api(
@@ -20,96 +78,133 @@ api: Api = Api(
 )
 
 app = Flask(__name__)
-
 api.init_app(app)
-
 CORS(app, resources={r"/*": {"origins": "*"}})
+socketio = SocketIO(app, cors_allowed_origins="*")
+socket_handler = SocketHandler(socketio)
+socket_handler.setLevel(logging.INFO)
+logger.addHandler(socket_handler)
+mongo = MongoConnector()
+
+def emit_status(message):
+    logger.info(message)
 
 @app.route('/receive_data/tunneling/<barrier>/<width>/<momentum>', methods=['GET'])
+@handle_errors
 def Qtunneling(barrier, width, momentum):
-    barrier = float(barrier)
-    width = float(width)
-    momentum = float(momentum)
+    try:
+        barrier = float(barrier)
+        width = float(width)
+        momentum = float(momentum)
+    except ValueError as e:
+        logger.error(f"Invalid parameters: {str(e)}")
+        return jsonify({"error": "Invalid parameters"}), 400
 
-    print("You evoked the API successfully")
-    if Path(f'cache/tunneling/probs_{momentum}_{barrier}_{width}_3D.html').exists():
-        print(f'cache/tunneling/probs_{momentum}_{barrier}_{width}_3D.html')
-        with open(f'cache/tunneling/probs_{momentum}_{barrier}_{width}_3D.html',
-                  "r") as f:
-            portalocker.lock(f, portalocker.LOCK_SH)
-            GifRes = f.read()
-    else:
-        plt.close('all')
-        plt.switch_backend('Agg')
+    logger.debug(f"Tunneling request - barrier: {barrier}, width: {width}, momentum: {momentum}")
+    
+    t_collection = mongo.collection('tunneling')
+    parameters = {'barrier': barrier, 'width': width, 'momentum': momentum}
 
-        start_3d_time = time.time()  # Record the start time
-        wave_packet3D = t_wp(barrier_width=width, barrier_height=barrier, k0=momentum)
-        animator = t_ani(wave_packet3D)
-        GifRes = animator.animate3D()
+    try:
+        tunneling_model = mongo.get(t_collection, parameters)
+        if not tunneling_model:
+            emit_status('Generating tunneling model...')
+            plt.close('all')
+            plt.switch_backend('Agg')
 
-        end_3d_time = time.time()    # Record the end time
-        elapsed_3d_time = end_3d_time - start_3d_time
-        print(f"Elapsed 3D generator time: {elapsed_3d_time} seconds")
-
-    return {'GifRes': GifRes}
-
+            emit_status('Calculating tunneling model...')
+            animator = t_ani(t_wp(barrier_height=barrier, barrier_width=width, k0=momentum))
+            
+            emit_status('Animating tunneling model...')
+            tunneling_model = animator.animate3D()
+            
+            # Upload to MongoDB asynchronously after returning response
+            socketio.start_background_task(mongo.upload, t_collection, parameters, tunneling_model)
+            logger.info(f"Generated new tunneling model with parameters: {parameters}")
+        else:
+            logger.info(f"Retrieved existing tunneling model with parameters: {parameters}")
+        return tunneling_model
+    except Exception as e:
+        logger.error(f"Error generating tunneling model: {str(e)}", exc_info=True)
+        raise
 
 @app.route('/receive_data/interference/<spacing>/<slit_separation>/<int:momentum>', methods=['GET'])
+@handle_errors
 def Qinterference(spacing, slit_separation, momentum):
-    spacing = float(spacing)
-    slit_separation = float(slit_separation)
+    try:
+        momentum = float(momentum)
+        spacing = float(spacing)
+        slit_separation = float(slit_separation)
+    except ValueError as e:
+        logger.error(f"Invalid parameters: {str(e)}")
+        return jsonify({"error": "Invalid parameters"}), 400
 
-    print("You evoked the API successfully")
+    logger.debug(f"Interference request - spacing: {spacing}, slit_separation: {slit_separation}, momentum: {momentum}")
     
-    if Path(f'cache/interference/probs_{momentum}_{spacing}_{slit_separation}_3D.html').exists():
-        print(f'cache/interference/probs_{momentum}_{spacing}_{slit_separation}_3D.html')
-        with open(f'cache/interference/probs_{momentum}_{spacing}_{slit_separation}_3D.html',
-                  "r") as f:
-            portalocker.lock(f, portalocker.LOCK_SH)
-            GifRes = f.read()
-    else:
-        plt.close('all')
-        plt.switch_backend('Agg')
+    i_collection = mongo.collection('interference')
+    parameters = {'spacing': spacing, 'slit_separation': slit_separation, 'momentum': momentum}
 
-        start_3d_time = time.time()
-        wave_packet3D = i_wp(slit_space=spacing, slit_sep=slit_separation, k0=momentum)
-        animator3D = i_ani(wave_packet3D)
-        GifRes = animator3D.animate3D()
-    
-        end_3d_time = time.time()  # Record the end time
-        elapsed_3d_time = end_3d_time - start_3d_time
-        print(f"Elapsed 3D generator time: {elapsed_3d_time} seconds")
+    try:
+        interference_model = mongo.get(i_collection, parameters)
+        if not interference_model:
+            plt.close('all')
+            plt.switch_backend('Agg')
 
-    return {'GifRes': GifRes}
+            animator = i_ani(i_wp(slit_space=spacing, slit_sep=slit_separation, k0=momentum))
+            interference_model = animator.animate3D()
 
+            socketio.start_background_task(mongo.upload, i_collection, parameters, interference_model)
+            logger.info(f"Generated new interference model with parameters: {parameters}")
+        else:
+            logger.info(f"Retrieved existing interference model with parameters: {parameters}")
+        return interference_model
+    except Exception as e:
+        logger.error(f"Error generating interference model: {str(e)}", exc_info=True)
+        raise
 
 @app.route('/receive_data/evotrace/<int:gate>/<int:init_state>/<int:mag>/<t2>', methods=['GET'])
 def Qtrace(gate, init_state, mag, t2):
     t2 = float(t2)
-    print("You evoked the API successfully")
+    emit_status("Calculating...")
     plt.close('all')
     plt.switch_backend('Agg')
 
-    start_time = time.time()  # Record the start time
     qg = Qgate1()
     qg.run(gate=gate, init_state=init_state, mag_f_B=mag, t2=t2)
     GifRes = qg.plot_evo()
-    
-    end_time = time.time()  # Record the end time
-    elapsed_time = end_time - start_time
-    print(f"Elapsed 3D generator time: {elapsed_time} seconds")
 
     return {'GifRes': GifRes}
-    
 
-@app.route('/hello', methods=['GET', 'POST'])
-def welcome():
-    return "Hello World!"
+@app.route('/receive_data/qft', methods=['GET'])
+def Qfouriertransform():
+    logger.debug("Startting QFT generator")
+    anim = None
+    try:
+        qft_ode = QFTStepByStepODE(initial_state_str='011')
+        qft_ode.run(n_step=6)
+        anim = qft_ode.animate_bloch()
 
+        if not anim:
+            raise Exception("Error generating QFT model")
+    except Exception as e:
+        logger.error(f"Error generating QFT model: {str(e)}", exc_info=True)
+        raise
+    return anim
 
-#blind namespace to swagger api page
+@socketio.on('connect')
+def handle_connect():
+    logger.info("Client connected")
+    emit('status_update', {'message': 'Connected to quantum model generator server'})
+
+@socketio.on('disconnect')
+def handle_disconnect():
+    logger.debug("Client disconnected")
+
+@socketio.on('message')
+def handle_message(data):
+    logger.info(f"Received message: {data}")
+
 if __name__ == '__main__':
     app.debug = True
-
-    #run backend server at port 5001
-    app.run(host="0.0.0.0", port=3001, threaded=False, debug=True)
+    logger.info("Starting quantum modeling server")
+    socketio.run(app, host="0.0.0.0", port=3001, debug=True)
