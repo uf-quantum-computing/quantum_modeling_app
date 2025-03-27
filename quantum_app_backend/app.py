@@ -189,7 +189,7 @@ def Qfouriertransform():
     except Exception as e:
         logger.error(f"Error generating QFT model: {str(e)}", exc_info=True)
         raise
-    return anim.encode('utf-8')
+    return anim
 
 @socketio.on('connect')
 def handle_connect():
