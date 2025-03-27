@@ -8,7 +8,7 @@ from matplotlib.animation import HTMLWriter
 
 
 # Local Bloch class that supports multi-sphere plotting (n=3).
-from bloch import Bloch
+from model_generators.bloch import Bloch
 
 
 ##############################################################################
