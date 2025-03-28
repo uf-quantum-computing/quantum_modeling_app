@@ -1,20 +1,30 @@
-import flask
-from flask import Flask, jsonify
+from gevent import monkey
+monkey.patch_all()
+
+from flask import Flask, jsonify, request
 from flask_restx import Api
 from flask_cors import CORS
 from model_generators.tunneling import Wave_Packet3D as t_wp, Animator3D as t_ani
 from model_generators.interference import Wave_Packet3D as i_wp, Animator3D as i_ani
 from model_generators.Qgate1 import Qgate1
 from model_generators.QuantumFourierTransform import QFTStepByStepODE
-from model_generators.bloch import Bloch
 import matplotlib.pyplot as plt
-import time
 import logging
 from logging.handlers import RotatingFileHandler
 import os
 from db import MongoConnector
 from flask_socketio import SocketIO, emit
 from functools import wraps
+
+sid = None
+
+#set swagger info
+api: Api = Api(
+    title='quantum_modeling',
+    version='1.0',
+    description='v1.0',
+    prefix='/v1'
+)
 
 # Set up logging
 log_dir = 'logs'
@@ -31,7 +41,7 @@ file_handler = RotatingFileHandler(
     backupCount=5
 )
 file_handler.setFormatter(formatter)
-file_handler.setLevel(logging.INFO)
+file_handler.setLevel(logging.DEBUG)
 
 console_handler = logging.StreamHandler()
 console_handler.setFormatter(formatter)
@@ -42,22 +52,19 @@ logger.addHandler(file_handler)
 logger.addHandler(console_handler)
 logger.setLevel(logging.DEBUG)
 
-# Add this after the logger setup
 class SocketHandler(logging.Handler):
-    def __init__(self, socketio):
+    def __init__(self):
         super().__init__()
-        self.socketio = socketio
-        # No need for formatter since we're only using the message
 
     def emit(self, record):
         try:
             # Only emit INFO level and above to avoid flooding the client
             if record.levelno >= logging.INFO:
-                self.socketio.emit('status_update', {'message': record.getMessage()})
-        except Exception:
-            self.handleError(record)
+                global sid
+                emit('status_update', {'message': record.getMessage()}, room=sid, namespace='/')
+        except Exception as e:
+            logger.error(f"Socket emission failed: {str(e)}", exc_info=True)
 
-# Error handling decorator
 def handle_errors(f):
     @wraps(f)
     def wrapped(*args, **kwargs):
@@ -69,19 +76,11 @@ def handle_errors(f):
             return jsonify({"error": str(e)}), 500
     return wrapped
 
-#set swagger info
-api: Api = Api(
-    title='quantum_modeling',
-    version='1.0',
-    description='v1.0',
-    prefix='/v1'
-)
-
 app = Flask(__name__)
 api.init_app(app)
 CORS(app, resources={r"/*": {"origins": "*"}})
-socketio = SocketIO(app, cors_allowed_origins="*")
-socket_handler = SocketHandler(socketio)
+socketio = SocketIO(app, async_mode='gevent', cors_allowed_origins="*", logger=True, engineio_logger=True)
+socket_handler = SocketHandler()
 socket_handler.setLevel(logging.INFO)
 logger.addHandler(socket_handler)
 mongo = MongoConnector()
@@ -108,21 +107,18 @@ def Qtunneling(barrier, width, momentum):
     try:
         tunneling_model = mongo.get(t_collection, parameters)
         if not tunneling_model:
-            emit_status('Generating tunneling model...')
             plt.close('all')
             plt.switch_backend('Agg')
 
-            emit_status('Calculating tunneling model...')
             animator = t_ani(t_wp(barrier_height=barrier, barrier_width=width, k0=momentum))
             
-            emit_status('Animating tunneling model...')
             tunneling_model = animator.animate3D()
             
-            # Upload to MongoDB asynchronously after returning response
+            # Upload to MongoDB asynchronously after emitting response
+            emit_status(f"Generated new tunneling model with parameters: {parameters}")
             socketio.start_background_task(mongo.upload, t_collection, parameters, tunneling_model)
-            logger.info(f"Generated new tunneling model with parameters: {parameters}")
         else:
-            logger.info(f"Retrieved existing tunneling model with parameters: {parameters}")
+            emit_status(f"Retrieved existing tunneling model with parameters: {parameters}")
         return tunneling_model
     except Exception as e:
         logger.error(f"Error generating tunneling model: {str(e)}", exc_info=True)
@@ -154,9 +150,9 @@ def Qinterference(spacing, slit_separation, momentum):
             interference_model = animator.animate3D()
 
             socketio.start_background_task(mongo.upload, i_collection, parameters, interference_model)
-            logger.info(f"Generated new interference model with parameters: {parameters}")
+            emit_status(f"Generated new interference model with parameters: {parameters}")
         else:
-            logger.info(f"Retrieved existing interference model with parameters: {parameters}")
+            emit_status(f"Retrieved existing interference model with parameters: {parameters}")
         return interference_model
     except Exception as e:
         logger.error(f"Error generating interference model: {str(e)}", exc_info=True)
@@ -193,7 +189,9 @@ def Qfouriertransform():
 
 @socketio.on('connect')
 def handle_connect():
-    logger.info("Client connected")
+    global sid
+    sid = request.sid
+    logger.debug("Client connected")
     emit('status_update', {'message': 'Connected to quantum model generator server'})
 
 @socketio.on('disconnect')
@@ -202,9 +200,9 @@ def handle_disconnect():
 
 @socketio.on('message')
 def handle_message(data):
-    logger.info(f"Received message: {data}")
+    logger.debug(f"Received message: {data}")
 
 if __name__ == '__main__':
     app.debug = True
-    logger.info("Starting quantum modeling server")
-    socketio.run(app, host="0.0.0.0", port=3001, debug=True)
+    logger.debug("Starting quantum modeling server")
+    socketio.run(app, host="0.0.0.0", port=3001, debug=False)
