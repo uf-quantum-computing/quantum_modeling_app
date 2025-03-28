@@ -111,7 +111,6 @@ const Interference = () => {
           .then((response) => response.text())
           .then((text) => {
             setAnimationJsHtml(text);
-            console.log(text);
           });
       } catch (error) {
         console.error("Failed to load default HTML content:", error);
