@@ -23,7 +23,7 @@ const Home = () => {
           <h1 style={{ fontSize: "128px", color: "white", margin: 0 }}>
             Quantum Modeling
           </h1>
-          <p>Quantum phenomena visualized & explained.</p>
+          <p style={{fontSize: "28px"}}>Quantum phenomena visualized & explained.</p>
 
           <Link
             to="/Tunneling"
@@ -31,16 +31,7 @@ const Home = () => {
               textDecoration: "none",
             }}
           >
-            <h2
-              style={{
-                color: "white",
-                // padding: "0.25em 1em",
-                // border: "2px solid white",
-                // borderRadius: "3px",
-              }}
-            >
-              
-              <button
+            <button
               style={{
                 backgroundColor: "white",
                 borderRadius: "5px",
@@ -48,19 +39,18 @@ const Home = () => {
                 color: "navy",
                 fontSize: "25px",
                 padding: "10px",
-                cursor: "pointer"
+                cursor: "pointer",
+                marginLeft: "20px",
+                marginRight: "40px",
              }}
              > Start Modeling</button>
-
-              <div className="down-arrow"></div>
-              
-            </h2>
           </Link>
+          <div className="down-arrow"></div>
         </div>
       </div>
 
       {/* Info */}
-      <div style={{ margin: "5%" }}>
+      <div style={{ padding: "25px" }}>
         <p>
           Welcome to the Quantum Computing Lab at the University of Florida! Our
           team works under Dr. Jing Guo in the Electrical Engineering Department
@@ -82,7 +72,7 @@ const Home = () => {
         <p>
           Our model generators and documentation to create your own models and
           more can be found{" "}
-          <a href="https://github.com/imjoelrios/quantum_modeling_app">here</a>!
+          <a href="https://github.com/uf-quantum-computing/quantum_modeling_app">here</a>!
         </p>
       </div>
     </div>

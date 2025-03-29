@@ -59,9 +59,7 @@ const Tunneling = () => {
 
   // ========= socket connection =========
   useEffect(() => {
-    const socket = io(host, {
-      transports: ['websocket']
-    });
+    const socket = io(host);
 
     socket.on("connect", () => {
       console.log("Connected to server");
