@@ -63,6 +63,7 @@
     "@babel/plugin-proposal-private-property-in-object": "^7.16.7",
     "@types/react-katex": "^3.0.4",
     "@types/styled-components": "^5.1.26",
-    "jest-sonar-reporter": "^2.0.0"
+    "jest-sonar-reporter": "^2.0.0",
+    "firebase-tools": "^13.3.0"
   }
 }

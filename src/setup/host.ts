@@ -1,2 +1,2 @@
-const host = 'http://localhost:3001';
+const host = 'http://44.240.61.16:3001';
 export default host;
