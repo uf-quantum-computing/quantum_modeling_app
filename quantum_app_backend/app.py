@@ -174,18 +174,18 @@ def Qtrace(gate, init_state, mag, t2):
 @app.route('/receive_data/qft', methods=['GET'])
 def Qfouriertransform():
     logger.debug("Startting QFT generator")
-    anim = None
+    anim_js = None
     try:
         qft_ode = QFTStepByStepODE(initial_state_str='011')
         qft_ode.run(n_step=6)
-        anim = qft_ode.animate_bloch()
+        anim_js = qft_ode.animate_bloch()
 
-        if not anim:
+        if not anim_js:
             raise Exception("Error generating QFT model")
     except Exception as e:
         logger.error(f"Error generating QFT model: {str(e)}", exc_info=True)
         raise
-    return anim
+    return anim_js
 
 @socketio.on('connect')
 def handle_connect():

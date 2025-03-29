@@ -396,19 +396,24 @@ class QFTStepByStepODE:
             blit=False
         )
 
+        anim_js = anim.to_jshtml(fps=30)
         # plt.show()
         # or, to save:
-
-        anim_js = anim.to_jshtml(fps=30)
-        with open(f"qft_with_bloch_and_probs_{self.n_step}.html", "w") as f:
-            f.write(anim_js)
-
+        
+        ## Uncomment to save file locally
+        # path = os.path.abspath(os.path.join(f"quantum_app_backend/cache/qft/qft_with_bloch_and_probs_{self.n_step}.html"))
+        
+        # if not Path(path).exists():
+        #     with open(path, "w", encoding="utf-8") as f:
+        #         portalocker.lock(f, portalocker.LOCK_EX)
+        #         f.write(anim_js)
+        
         # html_writer = HTMLWriter()
         # anim.save(f"qft_with_bloch_and_probs_{self.n_step}.html", writer=html_writer)
 
         # print(f"Animation saved as qft_with_bloch_and_probs_{self.n_step}.html")        
         #
-        return anim
+        return anim_js
 
 
 ##############################################################################
