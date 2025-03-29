@@ -59,7 +59,9 @@ const Tunneling = () => {
 
   // ========= socket connection =========
   useEffect(() => {
-    const socket = io(host);
+    const socket = io(host, {
+      transports: ['websocket']
+    });
 
     socket.on("connect", () => {
       console.log("Connected to server");
@@ -113,7 +115,6 @@ const Tunneling = () => {
           .then((response) => response.text())
           .then((text) => {
             setAnimationJsHtml(text);
-            console.log(text);
           });
       } catch (error) {
         setSnackbarMessage("Failed to load default model.");
