@@ -28,4 +28,3 @@ flask-pymongo
 dotenv
 flask-socketio
 gunicorn==23.0.0
-gevent==24.11.1
