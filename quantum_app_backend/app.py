@@ -202,4 +202,4 @@ def handle_message(data):
 if __name__ == '__main__':
     app.debug = True
     logger.debug("Starting quantum modeling server")
-    socketio.run(app, host="0.0.0.0", port=3001, debug=False)
+    socketio.run(app, host="0.0.0.0", port=3001, debug=False, allow_unsafe_werkzeug=True)
