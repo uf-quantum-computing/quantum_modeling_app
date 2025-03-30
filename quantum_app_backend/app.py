@@ -1,6 +1,3 @@
-from gevent import monkey
-monkey.patch_all()
-
 from flask import Flask, jsonify, request
 from flask_restx import Api
 from flask_cors import CORS
@@ -79,7 +76,7 @@ def handle_errors(f):
 app = Flask(__name__)
 api.init_app(app)
 CORS(app, resources={r"/*": {"origins": "*"}})
-socketio = SocketIO(app, async_mode='gevent', cors_allowed_origins="*", logger=True, engineio_logger=True)
+socketio = SocketIO(app, cors_allowed_origins="*", logger=True, engineio_logger=True)
 socket_handler = SocketHandler()
 socket_handler.setLevel(logging.INFO)
 logger.addHandler(socket_handler)
