@@ -99,7 +99,6 @@ const Interference = () => {
       return response.ok;
     } catch (error) {
       console.error("Error fetching animation from server:", error);
-      throw error;
     }
   }
 
